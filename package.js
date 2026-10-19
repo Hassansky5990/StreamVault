@@ -1,0 +1,8 @@
+{
+  "name": "streamvault",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "compression": "^1.7.4", "express": "^4.19.2" }
+}
