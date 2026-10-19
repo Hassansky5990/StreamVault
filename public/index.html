@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StreamVault</title>
+<link rel="preconnect" href="https://image.tmdb.org">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14101c;--surf:#1f1a2b;--line:#2f2840;--text:#f2ede4;--mute:#a79fb8;--acc:#f2b134;
+--serif:'Fraunces',Georgia,serif;--sans:'Figtree',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font:400 16px/1.5 var(--sans);overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+header{position:fixed;inset:0 0 auto;z-index:20;display:flex;align-items:center;gap:28px;padding:14px 4vw;
+ background:linear-gradient(var(--bg),transparent);transition:background .3s}
+header.solid{background:var(--bg)}
+.logo{font:800 24px var(--serif);color:var(--acc)}
+nav{display:flex;gap:18px;flex:1}
+nav button{color:var(--mute);padding:6px 2px}
+nav button.on,nav button:hover{color:var(--text)}
+#q{background:var(--surf);border:1px solid var(--line);color:var(--text);border-radius:99px;padding:8px 16px;width:min(240px,40vw)}
+.hero{min-height:78vh;display:flex;align-items:flex-end;padding:0 4vw 9vh;background-size:cover;background-position:center top;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 8%,transparent 70%),linear-gradient(0deg,var(--bg),transparent 45%)}
+.hero>div{position:relative;max-width:560px}
+.hero h1{font:800 clamp(34px,6vw,64px)/1.05 var(--serif);margin-bottom:12px}
+.hero p{color:#d8d0e6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:18px}
+.btn{background:var(--acc);color:#1a1200;font-weight:600;padding:10px 22px;border-radius:8px;margin-right:10px}
+.btn.alt{background:#ffffff1f;color:var(--text)}
+main{padding-bottom:60px;margin-top:-4vh;position:relative}
+.row{margin:26px 0}
+.row h2{font:600 21px var(--serif);padding:0 4vw 10px}
+.track{display:flex;gap:12px;overflow-x:auto;padding:4px 4vw 14px;scroll-snap-type:x proximity;scrollbar-width:none}
+.card{flex:0 0 auto;width:clamp(120px,14vw,190px);aspect-ratio:2/3;border-radius:10px;background:var(--surf);overflow:hidden;
+ position:relative;scroll-snap-align:start;transition:transform .2s}
+.card:hover{transform:scale(1.05);z-index:2}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card .t{position:absolute;inset:auto 0 0;padding:24px 8px 8px;font-size:13px;background:linear-gradient(transparent,#000c);opacity:0;transition:.2s}
+.card:hover .t,.card:focus-visible .t{opacity:1}
+.sk{background:linear-gradient(90deg,var(--surf),var(--line),var(--surf));background-size:200%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200%}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;padding:100px 4vw 0}
+.grid .card{width:auto}
+.empty{padding:120px 4vw;color:var(--mute)}
+.layer{position:fixed;inset:0;z-index:50;background:#000a;display:none;align-items:center;justify-content:center;padding:3vw}
+.layer.open{display:flex}
+.panel{background:var(--surf);border-radius:14px;max-width:880px;width:100%;max-height:92vh;overflow:auto;position:relative}
+.panel .bd{height:min(46vw,380px);background-size:cover;background-position:center}
+.panel .in{padding:22px 26px 28px}
+.panel h2{font:800 30px var(--serif)}
+.meta{color:var(--mute);margin:6px 0 12px}
+.x{position:absolute;top:10px;right:12px;background:#000a;border-radius:50%;width:36px;height:36px;font-size:20px;z-index:2}
+.player{width:100%;max-width:1100px;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
+.player video,.player iframe{width:100%;height:100%;border:0}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:640px){
+ nav{position:fixed;inset:auto 0 0;z-index:30;background:var(--bg);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
+ nav button{padding:8px 16px}
+ header{gap:12px}#q{flex:1;width:auto}
+ main{padding-bottom:90px}.hero{min-height:70vh}
+ .panel .in{padding:18px}.layer{padding:0}.panel{border-radius:0;max-height:100vh;height:100%}
+}
+</style>
+</head>
+<body>
+<header id="hd"><span class="logo">StreamVault</span>
+<nav><button class="on" data-v="home">Home</button><button data-v="list">My List</button><button data-v="lib">Library</button></nav>
+<input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
+<div id="hero"></div><main id="app"></main>
+<div class="layer" id="md"><div class="panel" id="mp"></div></div>
+<div class="layer" id="pl"><button class="x" id="px" aria-label="Close player">×</button><div class="player" id="pv"></div></div>
+
+<script>
+const $=s=>document.querySelector(s),IMG='https://image.tmdb.org/t/p/';
+const api=(path,p={})=>fetch('/api/tmdb?'+new URLSearchParams({path,...p})).then(r=>{if(!r.ok)throw 0;return r.json()});
+const store={get:(k,d)=>{try{return JSON.parse(localStorage[k])}catch{return d}},set:(k,v)=>localStorage[k]=JSON.stringify(v)};
+const ROWS=[['Trending this week','/trending/all/week'],['Popular movies','/movie/popular',{},'movie'],
+['Anime series','/discover/tv',{with_genres:16,with_original_language:'ja',sort_by:'popularity.desc'},'tv'],
+['Popular TV shows','/tv/popular',{},'tv'],['Top rated movies','/movie/top_rated',{},'movie'],
+['Top rated TV','/tv/top_rated',{},'tv'],['Action','/discover/movie',{with_genres:28,sort_by:'popularity.desc'},'movie'],
+['Comedy','/discover/movie',{with_genres:35,sort_by:'popularity.desc'},'movie'],
+['Sci-fi','/discover/movie',{with_genres:878,sort_by:'popularity.desc'},'movie'],
+['Horror','/discover/movie',{with_genres:27,sort_by:'popularity.desc'},'movie'],
+['Animation','/discover/movie',{with_genres:16,sort_by:'popularity.desc'},'movie']];
+const type=i=>i.media_type||(i.title?'movie':'tv'),name=i=>i.title||i.name,year=i=>(i.release_date||i.first_air_date||'').slice(0,4);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function card(i,def){
+ if(!i.poster_path)return'';
+ const b=document.createElement('button');b.className='card';b.dataset.id=i.id;b.dataset.t=def||type(i);
+ b.innerHTML=`<img loading="lazy" decoding="async" alt="${esc(name(i))}" src="${IMG}w342${i.poster_path}"><span class="t">${esc(name(i))}</span>`;
+ b.onclick=()=>openInfo(i.id,def||type(i));return b}
+
+async function home(){
+ $('#app').innerHTML='';$('#hero').style.display='';
+ const wrap=$('#app');
+ ROWS.forEach(async([title,path,params,def],n)=>{
+  const sec=document.createElement('section');sec.className='row';sec.style.order=n;
+  sec.innerHTML=`<h2>${title}</h2><div class="track">${'<div class="card sk"></div>'.repeat(8)}</div>`;wrap.append(sec);
+  try{const d=await api(path,params),t=sec.querySelector('.track');t.innerHTML='';
+   d.results.forEach(i=>{const c=card(i,def);c&&t.append(c)});
+   if(n===0)hero(d.results.find(i=>i.backdrop_path))}catch{sec.remove()}});
+ const cw=store.get('cw',[]);
+ if(cw.length){const s=document.createElement('section');s.className='row';s.style.order=-1;
+  s.innerHTML='<h2>Continue watching</h2><div class="track"></div>';
+  cw.forEach(x=>{const b=document.createElement('button');b.className='card';b.innerHTML=`<span class="t" style="opacity:1">${esc(x.title)}</span>`;b.style.background='var(--line)';b.onclick=()=>playLib(x);s.querySelector('.track').append(b)});wrap.append(s)}}
+
+function hero(i){if(!i)return;const h=$('#hero');
+ h.innerHTML=`<section class="hero" style="background-image:url(${IMG}w1280${i.backdrop_path})"><div><h1>${esc(name(i))}</h1><p>${esc(i.overview)}</p>
+ <button class="btn" id="hp">Watch trailer</button><button class="btn alt" id="hi">More info</button></div></section>`;
+ $('#hp').onclick=()=>trailer(i.id,type(i));$('#hi').onclick=()=>openInfo(i.id,type(i))}
+
+async function openInfo(id,t){
+ const d=await api(`/${t}/${id}`,{append_to_response:'videos,credits'}).catch(()=>null);if(!d)return;
+ const list=store.get('mylist',[]),saved=list.some(x=>x.id===id&&x.t===t);
+ const cast=(d.credits?.cast||[]).slice(0,6).map(c=>c.name).join(', ');
+ const rt=d.runtime?d.runtime+' min':d.number_of_seasons?d.number_of_seasons+' seasons':'';
+ $('#mp').innerHTML=`<button class="x" id="mx" aria-label="Close">×</button>
+ <div class="bd" style="background-image:linear-gradient(0deg,var(--surf),transparent 60%),url(${d.backdrop_path?IMG+'w780'+d.backdrop_path:''})"></div>
+ <div class="in"><h2>${esc(name(d))}</h2>
+ <p class="meta">${year(d)} · ${rt} · ★ ${(d.vote_average||0).toFixed(1)} · ${(d.genres||[]).map(g=>esc(g.name)).join(', ')}</p>
+ <p style="margin-bottom:14px">${esc(d.overview)}</p><p class="meta">${cast?'Cast: '+esc(cast):''}</p>
+ <button class="btn" id="mt">Watch trailer</button><button class="btn alt" id="ms">${saved?'Remove from My List':'+ My List'}</button></div>`;
+ $('#md').classList.add('open');
+ $('#mx').onclick=()=>$('#md').classList.remove('open');
+ $('#mt').onclick=()=>trailer(id,t,d);
+ $('#ms').onclick=e=>{let l=store.get('mylist',[]);
+  l=saved?l.filter(x=>!(x.id===id&&x.t===t)):[...l,{id,t,poster_path:d.poster_path,title:d.title,name:d.name}];
+  store.set('mylist',l);openInfo(id,t)}}
+
+async function trailer(id,t,d){
+ d=d||await api(`/${t}/${id}`,{append_to_response:'videos'});
+ const v=(d.videos?.results||[]).filter(v=>v.site==='YouTube').sort((a,b)=>(b.type==='Trailer')-(a.type==='Trailer'))[0];
+ if(!v)return alert('No trailer is available for this title.');
+ // cc_load_policy=1 turns captions on by default
+ $('#pv').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&cc_load_policy=1&hl=en&rel=0" allow="autoplay;fullscreen;encrypted-media" allowfullscreen></iframe>`;
+ $('#pl').classList.add('open')}
+
+function playLib(x){
+ const key='pos:'+x.url,v=document.createElement('video');
+ v.controls=true;v.autoplay=true;v.preload='metadata';v.src=x.url;
+ x.subs.forEach((s,n)=>{const k=document.createElement('track');k.kind='subtitles';k.src=s.url;k.srclang=s.lang;k.label=s.lang.toUpperCase();if(n===0)k.default=true;v.append(k)});
+ v.onloadedmetadata=()=>{v.currentTime=store.get(key,0)};
+ let last=0;v.ontimeupdate=()=>{if(Date.now()-last<4000)return;last=Date.now();store.set(key,v.currentTime);
+  store.set('cw',[x,...store.get('cw',[]).filter(c=>c.url!==x.url)].slice(0,12))};
+ v.onended=()=>store.set(key,0);
+ $('#pv').replaceChildren(v);$('#pl').classList.add('open');v.focus()}
+
+function closePlayer(){$('#pl').classList.remove('open');$('#pv').innerHTML=''}
+$('#px').onclick=closePlayer;
+addEventListener('keydown',e=>{
+ if(e.key==='Escape'){closePlayer();$('#md').classList.remove('open')}
+ const v=$('#pv video');if(!v||e.target.id==='q')return;
+ if(e.key===' '){e.preventDefault();v.paused?v.play():v.pause()}
+ if(e.key==='ArrowRight')v.currentTime+=10;if(e.key==='ArrowLeft')v.currentTime-=10;
+ if(e.key==='f')v.requestFullscreen?.();if(e.key==='m')v.muted=!v.muted});
+
+function showGrid(items,msg){$('#hero').style.display='none';const a=$('#app');a.innerHTML='';
+ if(!items.length){a.innerHTML=`<p class="empty">${msg}</p>`;return}
+ const g=document.createElement('div');g.className='grid';items.forEach(i=>{const c=card(i,i.t);c&&g.append(c)});a.append(g)}
+
+async function library(){
+ $('#hero').style.display='none';const a=$('#app');a.innerHTML='<p class="empty">Scanning your library…</p>';
+ const items=await fetch('/api/library').then(r=>r.json()).catch(()=>[]);
+ if(!items.length){a.innerHTML='<p class="empty">Your library is empty. Add video files (.mp4, .webm) and matching .srt or .vtt subtitle files to the media folder, then reload.</p>';return}
+ const g=document.createElement('div');g.className='grid';a.innerHTML='';a.append(g);
+ items.forEach(x=>{const b=document.createElement('button');b.className='card sk';
+  b.innerHTML=`<span class="t" style="opacity:1">${esc(x.title)}${x.subs.length?'':' (no subtitles)'}</span>`;b.onclick=()=>playLib(x);g.append(b);
+  // fetch a real poster for the file name, if the catalogue finds one
+  api('/search/multi',{query:x.title.replace(/\(?\b(19|20)\d\d\b\)?.*$/,'').trim()}).then(d=>{
+   const p=d.results.find(r=>r.poster_path);if(p){b.classList.remove('sk');b.insertAdjacentHTML('afterbegin',`<img loading="lazy" alt="" src="${IMG}w342${p.poster_path}">`)}}).catch(()=>{})})}
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));$('#q').value='';
+ ({home,lib:library,list:()=>showGrid(store.get('mylist',[]),'Nothing here yet. Open a title and choose “+ My List”.')})[b.dataset.v]()});
+
+let tm;$('#q').oninput=e=>{clearTimeout(tm);const q=e.target.value.trim();
+ tm=setTimeout(async()=>{if(!q)return home();
+  const d=await api('/search/multi',{query:q}).catch(()=>({results:[]}));
+  showGrid(d.results.filter(i=>i.media_type!=='person'),'No results for that search.')},350)};
+addEventListener('scroll',()=>$('#hd').classList.toggle('solid',scrollY>40),{passive:true});
+home();
+</script>
+</body>
+</html>
