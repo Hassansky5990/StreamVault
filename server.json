@@ -51,5 +51,5 @@ app.get('/subs/*', (req, res) => {
   if (/\.srt$/i.test(f)) t = 'WEBVTT\n\n' + t.replace(/\r/g, '').replace(/(\d\d:\d\d:\d\d),(\d{3})/g, '$1.$2');
   res.type('text/vtt').send(t);
 });
-
-app.listen(PORT, () => console.log(`StreamVault running on http://localhost:${PORT}`));
+if (require.main === module) app.listen(PORT, () => console.log(`StreamVault running on http://localhost:${PORT}`));
+module.exports = app;
