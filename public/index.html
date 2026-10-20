@@ -45,7 +45,9 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;padding:100px 4vw 0}
 .grid .card{width:auto}
 .empty{padding:120px 4vw;color:var(--mute);text-align:center}
-.layer{position:fixed;inset:0;z-index:50;background:#000a;display:none;align-items:center;justify-content:center;padding:3vw}
+
+/* Layer & Player Sizing Fixes */
+.layer{position:fixed;inset:0;z-index:50;background:#000a;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
 .layer.open{display:flex}
 .panel{background:var(--surf);border-radius:14px;max-width:880px;width:100%;max-height:92vh;overflow:auto;position:relative;outline:none}
 .panel .bd{height:min(46vw,380px);background-size:cover;background-position:center}
@@ -53,10 +55,11 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 .panel h2{font:800 30px var(--serif)}
 .meta{color:var(--mute);margin:6px 0 12px}
 .x{position:absolute;top:10px;right:12px;background:#000a;border-radius:50%;width:36px;height:36px;font-size:20px;z-index:2;color:var(--text);display:flex;align-items:center;justify-content:center}
-.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1150px;gap:12px;position:relative}
-.player{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 12px 40px #000c}
+
+.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1150px;gap:12px;position:relative;margin:auto}
+.player{width:100%;aspect-ratio:16/9;max-height:68vh;background:#000;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 12px 40px #000c}
 .player video,.player iframe{width:100%;height:100%;border:0;display:block}
-.player-bar{display:flex;gap:10px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surf);padding:12px 16px;border-radius:12px;border:1px solid var(--line)}
+.player-bar{display:flex;gap:10px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surf);padding:10px 14px;border-radius:12px;border:1px solid var(--line)}
 .player-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:7px 12px;border-radius:6px;font-size:13px;color:var(--text);transition:all 0.2s}
 .icon-btn:hover{background:var(--line);color:var(--acc)}
@@ -88,6 +91,7 @@ nav button{white-space:nowrap}
  header{gap:12px}#q{flex:1;width:auto}
  main{padding-bottom:90px}.hero{min-height:70vh}
  .panel .in{padding:18px}.layer{padding:0}.panel{border-radius:0;max-height:100vh;height:100%}
+ .player{max-height: none;}
 }
 </style>
 </head>
@@ -102,50 +106,45 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v3.5 · Advanced Multi-Server Player Engine.</footer>
+<footer>StreamVault v3.5 · Powered by Multi-Server Engine.</footer>
 
 <!-- Details Modal -->
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
-<!-- Enhanced Player Modal -->
+<!-- Player Modal -->
 <div class="layer" id="pl">
   <button class="x" id="px" aria-label="Close player">×</button>
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     <div class="player-bar" id="pbar">
       <div class="player-group">
-        <!-- Expanded Multi-Server Selector (10 Servers) -->
         <select id="srcSelect" style="border-color:var(--acc);font-weight:600">
-          <option value="vidsrcpro">Server 1 (VidSrc Pro - Fast)</option>
-          <option value="vidsrccc">Server 2 (VidSrc CC - 1080p)</option>
-          <option value="vidsrcin">Server 3 (VidSrc In - Multi)</option>
-          <option value="autoembed">Server 4 (AutoEmbed - Ultra)</option>
-          <option value="2embed">Server 5 (2Embed - Global)</option>
-          <option value="vidlink">Server 6 (VidLink - Clean UI)</option>
-          <option value="superembed">Server 7 (SuperEmbed - Backup)</option>
-          <option value="smashystream">Server 8 (SmashyStream - Multi)</option>
-          <option value="movieapi">Server 9 (MovieAPI - Smooth)</option>
-          <option value="vidsrcto">Server 10 (VidSrc.to - HD)</option>
+          <option value="vidsrcpro">Server 1 (VidSrc Pro)</option>
+          <option value="vidsrccc">Server 2 (VidSrc CC)</option>
+          <option value="vidsrcin">Server 3 (VidSrc In)</option>
+          <option value="autoembed">Server 4 (AutoEmbed)</option>
+          <option value="2embed">Server 5 (2Embed)</option>
+          <option value="vidlink">Server 6 (VidLink)</option>
+          <option value="superembed">Server 7 (SuperEmbed)</option>
+          <option value="smashystream">Server 8 (SmashyStream)</option>
+          <option value="movieapi">Server 9 (MovieAPI)</option>
+          <option value="vidsrcto">Server 10 (VidSrc.to)</option>
         </select>
 
-        <!-- Try Next Fallback Server Button -->
-        <button class="icon-btn" id="nextServerBtn" title="If current server fails, jump to next server immediately">
+        <button class="icon-btn" id="nextServerBtn" title="Try Next Server">
           🔄 Next Server
         </button>
 
-        <!-- Subtitle Uploader -->
         <label class="icon-btn" style="cursor:pointer;" title="Upload Subtitles (.srt/.vtt)">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           Add Subs
           <input type="file" id="subFileInput" accept=".srt,.vtt">
         </label>
         
-        <!-- Auto-Next Toggle Feature -->
         <button class="icon-btn" id="autoNextToggle" title="Auto-Next Episode: ON" style="border-color:var(--acc);">
           ⚡ Auto-Next: <span id="autoNextStatus">ON</span>
         </button>
 
-        <!-- Fullscreen Button -->
         <button class="icon-btn" id="pFs" title="Toggle Fullscreen">
           <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
         </button>
@@ -153,7 +152,6 @@ nav button{white-space:nowrap}
 
       <span id="pTitle" style="font-size:14px;color:var(--mute);font-weight:600"></span>
 
-      <!-- TV Episode Controls -->
       <div class="player-group" id="tvBtns" style="display:none">
         <button class="icon-btn" id="pPrev">
           <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
@@ -378,7 +376,6 @@ $('#autoNextToggle').onclick = () => {
   toast(`Auto-Next Episode is now ${autoNextEnabled ? 'ENABLED' : 'DISABLED'}`);
 };
 
-// Advanced Multi-Server Mapper (10 Servers)
 function getEmbedUrl(provider, id, t, s, e) {
   switch(provider) {
     case 'vidsrcpro': return t === 'movie' ? `https://vidsrc.pro/embed/movie/${id}` : `https://vidsrc.pro/embed/tv/${id}/${s}/${e}`;
@@ -403,7 +400,6 @@ function renderIframe() {
   $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
 }
 
-// Fallback to Next Server
 $('#nextServerBtn').onclick = () => {
   const sel = $('#srcSelect');
   if (sel.selectedIndex < sel.options.length - 1) {
@@ -434,7 +430,6 @@ function playStream(id, t, s = 1, e = 1, title = '') {
 
 $('#srcSelect').onchange = renderIframe;
 
-// Fullscreen Toggle
 $('#pFs').onclick = () => {
   const iframe = $('#mainIframe');
   if (!iframe) return;
