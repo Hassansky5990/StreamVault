@@ -56,9 +56,9 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 .player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1100px;gap:12px}
 .player{width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
 .player video,.player iframe{width:100%;height:100%;border:0}
-.player-controls{display:flex;gap:12px;width:100%;justify-content:space-between;align-items:center}
-.player-controls button{background:var(--surf);border:1px solid var(--line);padding:8px 16px;border-radius:6px;font-size:14px}
-.player-controls button:hover{background:var(--line)}
+.player-bar{display:flex;gap:12px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.player-bar button, .player-bar select{background:var(--surf);border:1px solid var(--line);padding:8px 16px;border-radius:6px;font-size:14px;color:var(--text)}
+.player-bar button:hover{background:var(--line)}
 select, input[type="text"]{background:var(--surf);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font:inherit}
 .filters{display:flex;gap:10px;flex-wrap:wrap;padding:100px 4vw 0}
 .tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
@@ -101,7 +101,7 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v1.8 · Powered by TMDB & Internet Archive.</footer>
+<footer>StreamVault v1.9 · Powered by TMDB & Internet Archive.</footer>
 
 <!-- Details Modal -->
 <div class="layer" id="md"><div class="panel" id="mp"></div></div>
@@ -111,10 +111,22 @@ nav button{white-space:nowrap}
   <button class="x" id="px" aria-label="Close player">×</button>
   <div class="player-wrap">
     <div class="player" id="pv"></div>
-    <div class="player-controls" id="pctrls" style="display:none">
-      <button id="pPrev">◀ Previous Ep</button>
+    <div class="player-bar" id="pbar">
+      <div>
+        <select id="srcSelect">
+          <option value="vidsrc">Server 1 (VidSrc)</option>
+          <option value="vidsrc2">Server 2 (VidSrc.me)</option>
+          <option value="autoembed">Server 3 (AutoEmbed)</option>
+          <option value="2embed">Server 4 (2Embed)</option>
+          <option value="vidlink">Server 5 (VidLink)</option>
+        </select>
+        <button id="pReload">🔄 Reload</button>
+      </div>
       <span id="pTitle" style="font-size:14px;color:var(--mute)"></span>
-      <button id="pNext">Next Ep ▶</button>
+      <div id="tvBtns" style="display:none">
+        <button id="pPrev">◀ Prev</button>
+        <button id="pNext">Next ▶</button>
+      </div>
     </div>
   </div>
 </div>
@@ -253,39 +265,58 @@ async function loadEps(id,sel,showName=''){
  box.innerHTML=s.episodes.map(e=>`<div class="ep" onclick="playStream('${id}','tv','${sel.value}','${e.episode_number}','${esc(showName)}')">${e.still_path?`<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">`:'<span></span>'}<div><b>${e.episode_number}. ${esc(e.name)} ▶</b><small>${e.runtime?e.runtime+' min':''}</small><p>${esc(e.overview)}</p></div></div>`).join('')}
 
 let curPlaying = null;
+
+function getEmbedUrl(provider, id, t, s, e) {
+  if (provider === 'vidsrc') {
+    return t === 'movie' ? `https://vidsrc.xyz/embed/movie/${id}` : `https://vidsrc.xyz/embed/tv/${id}/${s}/${e}`;
+  } else if (provider === 'vidsrc2') {
+    return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
+  } else if (provider === 'autoembed') {
+    return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
+  } else if (provider === '2embed') {
+    return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
+  } else if (provider === 'vidlink') {
+    return t === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${s}/${e}`;
+  }
+  return `https://vidsrc.xyz/embed/movie/${id}`;
+}
+
+function renderIframe() {
+ if (!curPlaying) return;
+ const {id, t, s, e} = curPlaying;
+ const provider = $('#srcSelect').value;
+ const url = getEmbedUrl(provider, id, t, s, e);
+ $('#pv').innerHTML = `<iframe src="${url}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
+}
+
 function playStream(id,t,s=1,e=1,title=''){
  const sNum=parseInt(s,10),eNum=parseInt(e,10);
  curPlaying = {id,t,s:sNum,e:eNum,title};
  
- // Fast loading embed endpoints with proper fullscreen permissions
- const url = t==='movie' 
-   ? `https://vidsrc.cc/v2/embed/movie/${id}` 
-   : `https://vidsrc.cc/v2/embed/tv/${id}/${sNum}/${eNum}`;
+ renderIframe();
  
- $('#pv').innerHTML=`<iframe src="${url}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
+ $('#pTitle').innerText = t === 'tv' ? `${title} - S${sNum} E${eNum}` : title;
+ $('#tvBtns').style.display = t === 'tv' ? 'inline-flex' : 'none';
  
- const ctrls=$('#pctrls');
  if(t==='tv'){
-   ctrls.style.display='flex';
-   $('#pTitle').innerText=`${title} - S${sNum} E${eNum}`;
    $('#pPrev').onclick=()=>playStream(id,t,sNum,Math.max(1,eNum-1),title);
    $('#pNext').onclick=()=>playStream(id,t,sNum,eNum+1,title);
- } else {
-   ctrls.style.display='none';
  }
  $('#pl').classList.add('open');
 
- // Save to Continue Watching
  let cw=store.get('cw',[]);
  cw=[{id,t,s:sNum,e:eNum,title},...cw.filter(x=>x.id!==id)].slice(0,10);
  store.set('cw',cw);
 }
 
+$('#srcSelect').onchange = renderIframe;
+$('#pReload').onclick = renderIframe;
+
 async function trailer(id,t,d){
  d=d||await api(`/${t}/${id}`,{append_to_response:'videos'});
  const v=(d.videos?.results||[]).filter(v=>v.site==='YouTube').sort((a,b)=>(b.type==='Trailer')-(a.type==='Trailer'))[0];
  if(!v)return alert('No trailer is available for this title.');
- $('#pctrls').style.display='none';
+ $('#tvBtns').style.display='none';
  $('#pv').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&cc_load_policy=1&hl=en&rel=0" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen="true"></iframe>`;
  $('#pl').classList.add('open')}
 
@@ -332,7 +363,7 @@ function free(){
   const d=await fetch('/api/free?page='+page++).then(r=>r.json()).catch(()=>[]);
   d.forEach(f=>{const b=document.createElement('button');b.className='card';
    b.innerHTML=`<img loading="lazy" alt="${esc(f.title)}" src="https://archive.org/services/img/${encodeURIComponent(f.id)}"><span class="t">${esc(f.title)}</span>`;
-   b.onclick=()=>{$('#pctrls').style.display='none';$('#pv').innerHTML=`<iframe src="https://archive.org/embed/${encodeURIComponent(f.id)}" allowfullscreen="true" allow="fullscreen"></iframe>`;$('#pl').classList.add('open')};
+   b.onclick=()=>{$('#tvBtns').style.display='none';$('#pv').innerHTML=`<iframe src="https://archive.org/embed/${encodeURIComponent(f.id)}" allowfullscreen="true" allow="fullscreen"></iframe>`;$('#pl').classList.add('open')};
    $('#fg').append(b)})};
  load();$('#fm').onclick=load}
 
