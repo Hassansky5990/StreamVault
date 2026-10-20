@@ -47,7 +47,7 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 .empty{padding:120px 4vw;color:var(--mute);text-align:center}
 .layer{position:fixed;inset:0;z-index:50;background:#000a;display:none;align-items:center;justify-content:center;padding:3vw}
 .layer.open{display:flex}
-.panel{background:var(--surf);border-radius:14px;max-width:880px;width:100%;max-height:92vh;overflow:auto;position:relative}
+.panel{background:var(--surf);border-radius:14px;max-width:880px;width:100%;max-height:92vh;overflow:auto;position:relative;outline:none}
 .panel .bd{height:min(46vw,380px);background-size:cover;background-position:center}
 .panel .in{padding:22px 26px 28px}
 .panel h2{font:800 30px var(--serif)}
@@ -101,10 +101,10 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v1.9 · Powered by TMDB & Internet Archive.</footer>
+<footer>StreamVault v2.0 · Powered by TMDB & Internet Archive.</footer>
 
 <!-- Details Modal -->
-<div class="layer" id="md"><div class="panel" id="mp"></div></div>
+<div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
 <!-- Player Modal -->
 <div class="layer" id="pl">
@@ -114,11 +114,12 @@ nav button{white-space:nowrap}
     <div class="player-bar" id="pbar">
       <div>
         <select id="srcSelect">
-          <option value="vidsrc">Server 1 (VidSrc)</option>
-          <option value="vidsrc2">Server 2 (VidSrc.me)</option>
-          <option value="autoembed">Server 3 (AutoEmbed)</option>
-          <option value="2embed">Server 4 (2Embed)</option>
-          <option value="vidlink">Server 5 (VidLink)</option>
+          <option value="vidsrcpro">Server 1 (VidSrc Pro)</option>
+          <option value="vidsrccc">Server 2 (VidSrc CC)</option>
+          <option value="vidsrcin">Server 3 (VidSrc In)</option>
+          <option value="autoembed">Server 4 (AutoEmbed)</option>
+          <option value="2embed">Server 5 (2Embed)</option>
+          <option value="vidlink">Server 6 (VidLink)</option>
         </select>
         <button id="pReload">🔄 Reload</button>
       </div>
@@ -213,12 +214,15 @@ async function openInfo(id,t){
  ${t==='tv'?`<div style="margin-top:18px">
    <div class="ep-controls">
      <select id="sn">${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>`<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
-     <input type="text" id="epSearch" placeholder="Filter episodes..." style="flex:1">
+     <input type="text" id="epSearch" placeholder="🔍 Search episodes..." style="flex:1">
    </div>
    <div id="eps"></div>
  </div>`:''}
  </div><h3 class="sub">More like this</h3><div class="track" id="sim"></div>`;
- $('#md').classList.add('open');$('#mp').scrollTop=0;
+ 
+ $('#md').classList.add('open');
+ $('#mp').scrollTop=0;
+ $('#mp').focus(); // Focus modal so Up/Down arrow keys scroll the modal instead of the body
  
  if(t==='movie'){
    $('#mw').onclick=()=>playStream(id,'movie',1,1,name(d));
@@ -267,10 +271,12 @@ async function loadEps(id,sel,showName=''){
 let curPlaying = null;
 
 function getEmbedUrl(provider, id, t, s, e) {
-  if (provider === 'vidsrc') {
-    return t === 'movie' ? `https://vidsrc.xyz/embed/movie/${id}` : `https://vidsrc.xyz/embed/tv/${id}/${s}/${e}`;
-  } else if (provider === 'vidsrc2') {
-    return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
+  if (provider === 'vidsrcpro') {
+    return t === 'movie' ? `https://vidsrc.pro/embed/movie/${id}` : `https://vidsrc.pro/embed/tv/${id}/${s}/${e}`;
+  } else if (provider === 'vidsrccc') {
+    return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
+  } else if (provider === 'vidsrcin') {
+    return t === 'movie' ? `https://vidsrc.in/embed/movie/${id}` : `https://vidsrc.in/embed/tv/${id}/${s}/${e}`;
   } else if (provider === 'autoembed') {
     return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
   } else if (provider === '2embed') {
@@ -278,7 +284,7 @@ function getEmbedUrl(provider, id, t, s, e) {
   } else if (provider === 'vidlink') {
     return t === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${s}/${e}`;
   }
-  return `https://vidsrc.xyz/embed/movie/${id}`;
+  return `https://vidsrc.pro/embed/movie/${id}`;
 }
 
 function renderIframe() {
