@@ -54,6 +54,15 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 .x{position:absolute;top:10px;right:12px;background:#000a;border-radius:50%;width:36px;height:36px;font-size:20px;z-index:2}
 .player{width:100%;max-width:1100px;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
 .player video,.player iframe{width:100%;height:100%;border:0}
+select{background:var(--surf);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font:inherit}
+.filters{display:flex;gap:10px;flex-wrap:wrap;padding:100px 4vw 0}
+.tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
+.rank{font:800 clamp(70px,12vw,120px)/.8 var(--serif);color:transparent;-webkit-text-stroke:2px var(--acc);margin-right:-14px;z-index:1}
+.sub{font:600 18px var(--serif);padding:0 4vw 8px}.panel .track{padding-bottom:24px}
+.ep{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.ep img{width:120px;height:68px;object-fit:cover;border-radius:6px;flex:none}
+.ep p{color:var(--mute);font-size:14px}.ep small{color:var(--mute);margin-left:8px}#sn{margin-bottom:6px}
+footer{padding:30px 4vw 40px;color:var(--mute);font-size:13px;text-align:center}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:640px){
  nav{position:fixed;inset:auto 0 0;z-index:30;background:var(--bg);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
@@ -66,9 +75,10 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 </head>
 <body>
 <header id="hd"><span class="logo">StreamVault</span>
-<nav><button class="on" data-v="home">Home</button><button data-v="list">My List</button><button data-v="lib">Library</button></nav>
+<nav><button class="on" data-v="home">Home</button><button data-v="browse">Browse</button><button data-v="list">My List</button><button data-v="lib">Library</button></nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
+<footer>StreamVault v1.5 · This product uses the TMDB API but is not endorsed or certified by TMDB.</footer>
 <div class="layer" id="md"><div class="panel" id="mp"></div></div>
 <div class="layer" id="pl"><button class="x" id="px" aria-label="Close player">×</button><div class="player" id="pv"></div></div>
 
@@ -96,8 +106,12 @@ function card(i,def){
 async function home(){
  $('#app').innerHTML='';$('#hero').style.display='';
  const wrap=$('#app');
+ const top=document.createElement('section');top.className='row';top.style.order=1;
+ top.innerHTML='<h2>Top 10 movies today</h2><div class="track"></div>';wrap.append(top);
+ api('/trending/movie/day').then(d=>{const t=top.querySelector('.track');d.results.slice(0,10).forEach((i,n)=>{const c=card(i,'movie');if(!c)return;
+  const w=document.createElement('div');w.className='tp';w.innerHTML=`<span class="rank">${n+1}</span>`;w.append(c);t.append(w)})}).catch(()=>top.remove());
  ROWS.forEach(async([title,path,params,def],n)=>{
-  const sec=document.createElement('section');sec.className='row';sec.style.order=n;
+  const sec=document.createElement('section');sec.className='row';sec.style.order=n*2;
   sec.innerHTML=`<h2>${title}</h2><div class="track">${'<div class="card sk"></div>'.repeat(8)}</div>`;wrap.append(sec);
   try{const d=await api(path,params),t=sec.querySelector('.track');t.innerHTML='';
    d.results.forEach(i=>{const c=card(i,def);c&&t.append(c)});
@@ -122,13 +136,23 @@ async function openInfo(id,t){
  <div class="in"><h2>${esc(name(d))}</h2>
  <p class="meta">${year(d)} · ${rt} · ★ ${(d.vote_average||0).toFixed(1)} · ${(d.genres||[]).map(g=>esc(g.name)).join(', ')}</p>
  <p style="margin-bottom:14px">${esc(d.overview)}</p><p class="meta">${cast?'Cast: '+esc(cast):''}</p>
- <button class="btn" id="mt">Watch trailer</button><button class="btn alt" id="ms">${saved?'Remove from My List':'+ My List'}</button></div>`;
- $('#md').classList.add('open');
+ <button class="btn" id="mt">Watch trailer</button><button class="btn alt" id="ms">${saved?'Remove from My List':'+ My List'}</button>
+ ${t==='tv'?`<div style="margin-top:18px"><select id="sn">${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>`<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select><div id="eps"></div></div>`:''}
+ </div><h3 class="sub">More like this</h3><div class="track" id="sim"></div>`;
+ $('#md').classList.add('open');$('#mp').scrollTop=0;
+ if(t==='tv')loadEps(id,$('#sn'));
+ api(`/${t}/${id}/similar`).then(r=>r.results.forEach(i=>{const c=card(i,t);c&&$('#sim').append(c)})).catch(()=>{});
  $('#mx').onclick=()=>$('#md').classList.remove('open');
  $('#mt').onclick=()=>trailer(id,t,d);
  $('#ms').onclick=e=>{let l=store.get('mylist',[]);
   l=saved?l.filter(x=>!(x.id===id&&x.t===t)):[...l,{id,t,poster_path:d.poster_path,title:d.title,name:d.name}];
   store.set('mylist',l);openInfo(id,t)}}
+
+async function loadEps(id,sel){
+ if(!sel||!sel.value)return;sel.onchange=()=>loadEps(id,sel);
+ const box=$('#eps');box.innerHTML='<p class="meta">Loading…</p>';
+ const s=await api(`/tv/${id}/season/${sel.value}`).catch(()=>null);
+ box.innerHTML=s?s.episodes.map(e=>`<div class="ep">${e.still_path?`<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">`:'<span></span>'}<div><b>${e.episode_number}. ${esc(e.name)}</b><small>${e.runtime?e.runtime+' min':''}</small><p>${esc(e.overview)}</p></div></div>`).join(''):'<p class="meta">Episodes unavailable.</p>'}
 
 async function trailer(id,t,d){
  d=d||await api(`/${t}/${id}`,{append_to_response:'videos'});
@@ -161,6 +185,25 @@ function showGrid(items,msg){$('#hero').style.display='none';const a=$('#app');a
  if(!items.length){a.innerHTML=`<p class="empty">${msg}</p>`;return}
  const g=document.createElement('div');g.className='grid';items.forEach(i=>{const c=card(i,i.t);c&&g.append(c)});a.append(g)}
 
+const GEN={movie:[['Action',28],['Adventure',12],['Animation',16],['Comedy',35],['Crime',80],['Documentary',99],['Drama',18],['Family',10751],['Fantasy',14],['Horror',27],['Mystery',9648],['Romance',10749],['Sci-Fi',878],['Thriller',53]],
+tv:[['Action & Adventure',10759],['Anime','anime'],['Animation',16],['Comedy',35],['Crime',80],['Documentary',99],['Drama',18],['Family',10751],['Mystery',9648],['Sci-Fi & Fantasy',10765]]};
+function browse(){
+ $('#hero').style.display='none';
+ $('#app').innerHTML=`<div class="filters"><select id="bt"><option value="movie">Movies</option><option value="tv">TV shows</option></select><select id="bg"></select><select id="bs"><option value="popularity.desc">Most popular</option><option value="vote_average.desc">Top rated</option><option value="new">Newest</option></select></div><div class="grid" id="bgrid" style="padding-top:14px"></div><p style="text-align:center;padding:20px"><button class="btn alt" id="bm">Load more</button></p>`;
+ let page=1;
+ const fill=()=>{$('#bg').innerHTML='<option value="">All genres</option>'+GEN[$('#bt').value].map(([n,v])=>`<option value="${v}">${n}</option>`).join('')};
+ const load=async reset=>{
+  if(reset){page=1;$('#bgrid').innerHTML=''}
+  const t=$('#bt').value,g=$('#bg').value,s=$('#bs').value;
+  const p={page,sort_by:s==='new'?(t==='tv'?'first_air_date.desc':'primary_release_date.desc'):s,'vote_count.gte':s==='vote_average.desc'?300:s==='new'?20:0};
+  if(s==='new')p[t==='tv'?'first_air_date.lte':'primary_release_date.lte']=new Date().toISOString().slice(0,10);
+  if(g==='anime'){p.with_genres=16;p.with_original_language='ja'}else if(g)p.with_genres=g;
+  const d=await api(`/discover/${t}`,p).catch(()=>({results:[]}));
+  d.results.forEach(i=>{const c=card(i,t);c&&$('#bgrid').append(c)});page++};
+ fill();load(true);
+ $('#bt').onchange=()=>{fill();load(true)};$('#bg').onchange=$('#bs').onchange=()=>load(true);$('#bm').onclick=()=>load();
+}
+
 async function library(){
  $('#hero').style.display='none';const a=$('#app');a.innerHTML='<p class="empty">Scanning your library…</p>';
  const items=await fetch('/api/library').then(r=>r.json()).catch(()=>[]);
@@ -174,7 +217,7 @@ async function library(){
 
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));$('#q').value='';
- ({home,lib:library,list:()=>showGrid(store.get('mylist',[]),'Nothing here yet. Open a title and choose “+ My List”.')})[b.dataset.v]()});
+ ({home,browse,lib:library,list:()=>showGrid(store.get('mylist',[]),'Nothing here yet. Open a title and choose “+ My List”.')})[b.dataset.v]()});
 
 let tm;$('#q').oninput=e=>{clearTimeout(tm);const q=e.target.value.trim();
  tm=setTimeout(async()=>{if(!q)return home();
