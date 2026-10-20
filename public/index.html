@@ -72,7 +72,6 @@ nav button{white-space:nowrap}
 .row h2::before{content:"";display:inline-block;width:4px;height:18px;background:var(--acc);border-radius:2px;margin-right:10px;vertical-align:-2px}
 .card img{animation:fade .5s}
 .card:hover{transform:scale(1.06) translateY(-4px);box-shadow:0 14px 32px #000b,0 0 0 2px #f2b13490}
-.prov{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 4px}.prov img{width:46px;height:46px;border-radius:10px;display:block}
 @media(max-width:640px){nav button{padding:8px 8px;font-size:14px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:640px){
@@ -95,7 +94,7 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v1.6 · This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability by JustWatch. Free films from the Internet Archive.</footer>
+<footer>StreamVault v1.6 · This product uses the TMDB API but is not endorsed or certified by TMDB. Free films from the Internet Archive.</footer>
 <div class="layer" id="md"><div class="panel" id="mp"></div></div>
 <div class="layer" id="pl"><button class="x" id="px" aria-label="Close player">×</button><div class="player" id="pv"></div></div>
 
@@ -176,11 +175,6 @@ async function openInfo(id,t){
  if(t==='movie'){
    $('#mw').onclick=()=>playStream(id,'movie');
  }
- api(`/${t}/${id}/watch/providers`).then(w=>{
-  const reg=(navigator.language.split('-')[1]||'US').toUpperCase(),r=w.results[reg]||w.results.US;if(!r)return;
-  const list=[...(r.flatrate||[]),...(r.free||[]),...(r.ads||[])].filter((p,n,a)=>a.findIndex(x=>x.provider_id===p.provider_id)===n);
-  if(!list.length)return;
-  $('#ms').insertAdjacentHTML('afterend',`${(r.free||r.ads)?`<a class="btn" style="display:inline-block;margin-top:14px;text-decoration:none" href="${esc(r.link)}" target="_blank" rel="noopener">Watch free</a>`:''}<h3 class="sub" style="padding:18px 0 8px">Where to watch${w.results[reg]?'':' (US)'}</h3><div class="prov">${list.map(p=>`<a href="${esc(r.link)}" target="_blank" rel="noopener" title="${esc(p.provider_name)}"><img alt="${esc(p.provider_name)}" src="${IMG}w92${p.logo_path}"></a>`).join('')}</div>`)}).catch(()=>{});
  if(t==='tv')loadEps(id,$('#sn'));
  api(`/${t}/${id}/similar`).then(r=>r.results.forEach(i=>{const c=card(i,t);c&&$('#sim').append(c)})).catch(()=>{});
  $('#mx').onclick=()=>$('#md').classList.remove('open');
