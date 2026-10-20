@@ -101,8 +101,12 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v1.7 · Powered by TMDB & Internet Archive.</footer>
+<footer>StreamVault v1.8 · Powered by TMDB & Internet Archive.</footer>
+
+<!-- Details Modal -->
 <div class="layer" id="md"><div class="panel" id="mp"></div></div>
+
+<!-- Player Modal -->
 <div class="layer" id="pl">
   <button class="x" id="px" aria-label="Close player">×</button>
   <div class="player-wrap">
@@ -231,6 +235,16 @@ async function openInfo(id,t){
   store.set('mylist',l);openInfo(id,t);
  }}
 
+// Click outside details modal backdrop to close
+$('#md').onclick = e => {
+  if (e.target === $('#md')) $('#md').classList.remove('open');
+};
+
+// Click outside player modal backdrop to close
+$('#pl').onclick = e => {
+  if (e.target === $('#pl')) closePlayer();
+};
+
 async function loadEps(id,sel,showName=''){
  if(!sel||!sel.value)return;sel.onchange=()=>loadEps(id,sel,showName);
  const box=$('#eps');box.innerHTML='<p class="meta">Loading…</p>';
@@ -242,8 +256,13 @@ let curPlaying = null;
 function playStream(id,t,s=1,e=1,title=''){
  const sNum=parseInt(s,10),eNum=parseInt(e,10);
  curPlaying = {id,t,s:sNum,e:eNum,title};
- const url = t==='movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${sNum}/${eNum}`;
- $('#pv').innerHTML=`<iframe src="${url}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+ 
+ // Fast loading embed endpoints with proper fullscreen permissions
+ const url = t==='movie' 
+   ? `https://vidsrc.cc/v2/embed/movie/${id}` 
+   : `https://vidsrc.cc/v2/embed/tv/${id}/${sNum}/${eNum}`;
+ 
+ $('#pv').innerHTML=`<iframe src="${url}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
  
  const ctrls=$('#pctrls');
  if(t==='tv'){
@@ -267,7 +286,7 @@ async function trailer(id,t,d){
  const v=(d.videos?.results||[]).filter(v=>v.site==='YouTube').sort((a,b)=>(b.type==='Trailer')-(a.type==='Trailer'))[0];
  if(!v)return alert('No trailer is available for this title.');
  $('#pctrls').style.display='none';
- $('#pv').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&cc_load_policy=1&hl=en&rel=0" allow="autoplay;fullscreen;encrypted-media" allowfullscreen></iframe>`;
+ $('#pv').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&cc_load_policy=1&hl=en&rel=0" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen="true"></iframe>`;
  $('#pl').classList.add('open')}
 
 function closePlayer(){$('#pl').classList.remove('open');$('#pv').innerHTML=''}
@@ -313,7 +332,7 @@ function free(){
   const d=await fetch('/api/free?page='+page++).then(r=>r.json()).catch(()=>[]);
   d.forEach(f=>{const b=document.createElement('button');b.className='card';
    b.innerHTML=`<img loading="lazy" alt="${esc(f.title)}" src="https://archive.org/services/img/${encodeURIComponent(f.id)}"><span class="t">${esc(f.title)}</span>`;
-   b.onclick=()=>{$('#pctrls').style.display='none';$('#pv').innerHTML=`<iframe src="https://archive.org/embed/${encodeURIComponent(f.id)}" allowfullscreen allow="fullscreen"></iframe>`;$('#pl').classList.add('open')};
+   b.onclick=()=>{$('#pctrls').style.display='none';$('#pv').innerHTML=`<iframe src="https://archive.org/embed/${encodeURIComponent(f.id)}" allowfullscreen="true" allow="fullscreen"></iframe>`;$('#pl').classList.add('open')};
    $('#fg').append(b)})};
  load();$('#fm').onclick=load}
 
