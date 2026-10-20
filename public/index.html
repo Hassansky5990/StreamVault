@@ -52,14 +52,16 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 .panel .in{padding:22px 26px 28px}
 .panel h2{font:800 30px var(--serif)}
 .meta{color:var(--mute);margin:6px 0 12px}
-.x{position:absolute;top:10px;right:12px;background:#000a;border-radius:50%;width:36px;height:36px;font-size:20px;z-index:2;color:var(--text)}
-.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1100px;gap:12px}
-.player{width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
-.player video,.player iframe{width:100%;height:100%;border:0}
-.player-bar{display:flex;gap:12px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap}
-.player-bar button, .player-bar select{background:var(--surf);border:1px solid var(--line);padding:8px 16px;border-radius:6px;font-size:14px;color:var(--text)}
-.player-bar button:hover{background:var(--line)}
-select, input[type="text"]{background:var(--surf);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font:inherit}
+.x{position:absolute;top:10px;right:12px;background:#000a;border-radius:50%;width:36px;height:36px;font-size:20px;z-index:2;color:var(--text);display:flex;align-items:center;justify-content:center}
+.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1100px;gap:12px;position:relative}
+.player{width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;position:relative}
+.player video,.player iframe{width:100%;height:100%;border:0;display:block}
+.player-bar{display:flex;gap:12px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surf);padding:10px 14px;border-radius:10px;border:1px solid var(--line)}
+.player-group{display:flex;gap:8px;align-items:center}
+.icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:7px 12px;border-radius:6px;font-size:13px;color:var(--text);transition:background 0.2s}
+.icon-btn:hover{background:var(--line);color:var(--acc)}
+.icon-btn svg{width:16px;height:16px;fill:currentColor}
+select, input[type="text"]{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 12px;font:inherit;font-size:13px}
 .filters{display:flex;gap:10px;flex-wrap:wrap;padding:100px 4vw 0}
 .tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
 .rank{font:800 clamp(70px,12vw,120px)/.8 var(--serif);color:transparent;-webkit-text-stroke:2px var(--acc);margin-right:-14px;z-index:1}
@@ -101,7 +103,7 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v2.0 · Powered by TMDB & Internet Archive.</footer>
+<footer>StreamVault v2.1 · Powered by TMDB & Internet Archive.</footer>
 
 <!-- Details Modal -->
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
@@ -112,7 +114,8 @@ nav button{white-space:nowrap}
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     <div class="player-bar" id="pbar">
-      <div>
+      <div class="player-group">
+        <!-- Server Select -->
         <select id="srcSelect">
           <option value="vidsrcpro">Server 1 (VidSrc Pro)</option>
           <option value="vidsrccc">Server 2 (VidSrc CC)</option>
@@ -121,12 +124,36 @@ nav button{white-space:nowrap}
           <option value="2embed">Server 5 (2Embed)</option>
           <option value="vidlink">Server 6 (VidLink)</option>
         </select>
-        <button id="pReload">🔄 Reload</button>
+        
+        <!-- Reload Button with SVG -->
+        <button class="icon-btn" id="pReload" title="Reload Video">
+          <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          Reload
+        </button>
+
+        <!-- Speed Select -->
+        <select id="speedSelect" title="Playback Speed">
+          <option value="0.5">0.5x Speed</option>
+          <option value="0.75">0.75x Speed</option>
+          <option value="1" selected>1.0x Normal</option>
+          <option value="1.25">1.25x Speed</option>
+          <option value="1.5">1.5x Speed</option>
+          <option value="2">2.0x Speed</option>
+        </select>
       </div>
+
       <span id="pTitle" style="font-size:14px;color:var(--mute)"></span>
-      <div id="tvBtns" style="display:none">
-        <button id="pPrev">◀ Prev</button>
-        <button id="pNext">Next ▶</button>
+
+      <!-- TV Episode Buttons -->
+      <div class="player-group" id="tvBtns" style="display:none">
+        <button class="icon-btn" id="pPrev">
+          <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          Prev
+        </button>
+        <button class="icon-btn" id="pNext">
+          Next
+          <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </button>
       </div>
     </div>
   </div>
@@ -222,7 +249,7 @@ async function openInfo(id,t){
  
  $('#md').classList.add('open');
  $('#mp').scrollTop=0;
- $('#mp').focus(); // Focus modal so Up/Down arrow keys scroll the modal instead of the body
+ $('#mp').focus();
  
  if(t==='movie'){
    $('#mw').onclick=()=>playStream(id,'movie',1,1,name(d));
@@ -292,7 +319,22 @@ function renderIframe() {
  const {id, t, s, e} = curPlaying;
  const provider = $('#srcSelect').value;
  const url = getEmbedUrl(provider, id, t, s, e);
- $('#pv').innerHTML = `<iframe src="${url}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
+ 
+ // Fullscreen-compatible iframe permissions
+ $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
+}
+
+function setPlaybackSpeed() {
+  const speed = parseFloat($('#speedSelect').value);
+  const iframe = $('#mainIframe');
+  const video = $('#pv video');
+  if (video) {
+    video.playbackRate = speed;
+  } else if (iframe && iframe.contentWindow) {
+    try {
+      iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'setPlaybackRate', args: [speed] }), '*');
+    } catch(err) {}
+  }
 }
 
 function playStream(id,t,s=1,e=1,title=''){
@@ -317,13 +359,14 @@ function playStream(id,t,s=1,e=1,title=''){
 
 $('#srcSelect').onchange = renderIframe;
 $('#pReload').onclick = renderIframe;
+$('#speedSelect').onchange = setPlaybackSpeed;
 
 async function trailer(id,t,d){
  d=d||await api(`/${t}/${id}`,{append_to_response:'videos'});
  const v=(d.videos?.results||[]).filter(v=>v.site==='YouTube').sort((a,b)=>(b.type==='Trailer')-(a.type==='Trailer'))[0];
  if(!v)return alert('No trailer is available for this title.');
  $('#tvBtns').style.display='none';
- $('#pv').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&cc_load_policy=1&hl=en&rel=0" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen="true"></iframe>`;
+ $('#pv').innerHTML=`<iframe id="mainIframe" src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&cc_load_policy=1&hl=en&rel=0" allow="fullscreen; autoplay; picture-in-picture; encrypted-media" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
  $('#pl').classList.add('open')}
 
 function closePlayer(){$('#pl').classList.remove('open');$('#pv').innerHTML=''}
@@ -369,7 +412,7 @@ function free(){
   const d=await fetch('/api/free?page='+page++).then(r=>r.json()).catch(()=>[]);
   d.forEach(f=>{const b=document.createElement('button');b.className='card';
    b.innerHTML=`<img loading="lazy" alt="${esc(f.title)}" src="https://archive.org/services/img/${encodeURIComponent(f.id)}"><span class="t">${esc(f.title)}</span>`;
-   b.onclick=()=>{$('#tvBtns').style.display='none';$('#pv').innerHTML=`<iframe src="https://archive.org/embed/${encodeURIComponent(f.id)}" allowfullscreen="true" allow="fullscreen"></iframe>`;$('#pl').classList.add('open')};
+   b.onclick=()=>{$('#tvBtns').style.display='none';$('#pv').innerHTML=`<iframe id="mainIframe" src="https://archive.org/embed/${encodeURIComponent(f.id)}" allowfullscreen="true" allow="fullscreen"></iframe>`;$('#pl').classList.add('open')};
    $('#fg').append(b)})};
  load();$('#fm').onclick=load}
 
