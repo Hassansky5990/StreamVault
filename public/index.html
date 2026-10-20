@@ -73,7 +73,6 @@ main{padding-bottom:80px;margin-top:-6vh;position:relative;z-index:3}
 .x{position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:38px;height:38px;font-size:18px;z-index:5;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background .2s}
 .x:hover{background:rgba(255,255,255,0.2)}
 
-/* Guaranteed No-Overflow Player */
 .player-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:1050px;max-height:94vh;gap:10px;margin:auto}
 .player{width:100%;aspect-ratio:16/9;max-height:58vh;background:#000;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(0,0,0,0.6);border:1px solid var(--line)}
 .player video,.player iframe{width:100%;height:100%;border:0;display:block}
@@ -506,7 +505,7 @@ function browse() {
   $('#hero').style.display = 'none';
   $('#app').innerHTML = `<div class="filters"><select id="bt"><option value="movie">Movies</option><option value="tv">TV shows</option></select><select id="bg"></select><select id="bs"><option value="popularity.desc">Most popular</option><option value="vote_average.desc">Top rated</option><option value="new">Newest</option></select></div><div class="grid" id="bgrid" style="padding-top:16px"></div><p style="text-align:center;padding:30px"><button class="btn alt" id="bm">Load more</button></p>`;
   let page = 1;
-  const fill = () => { $('#bg').innerHTML = '<option value="">All genres</option>' + GEN[$('#bt'].value].map(([n, v]) => `<option value="${v}">${n}</option>`).join(''); };
+  const fill = () => { $('#bg').innerHTML = '<option value="">All genres</option>' + GEN[$('#bt').value].map(([n, v]) => `<option value="${v}">${n}</option>`).join(''); };
   const load = async reset => {
     if (reset) { page = 1; $('#bgrid').innerHTML = ''; }
     const t = $('#bt').value, g = $('#bg').value, s = $('#bs').value;
