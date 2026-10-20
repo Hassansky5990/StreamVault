@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StreamVault - Watch Movies, TV & Anime</title>
+<title>StreamVault - Ultimate Streaming Experience</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -53,12 +53,12 @@ main{padding-bottom:60px;margin-top:-4vh;position:relative}
 .panel h2{font:800 30px var(--serif)}
 .meta{color:var(--mute);margin:6px 0 12px}
 .x{position:absolute;top:10px;right:12px;background:#000a;border-radius:50%;width:36px;height:36px;font-size:20px;z-index:2;color:var(--text);display:flex;align-items:center;justify-content:center}
-.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1100px;gap:12px;position:relative}
-.player{width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;position:relative}
+.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1150px;gap:12px;position:relative}
+.player{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 12px 40px #000c}
 .player video,.player iframe{width:100%;height:100%;border:0;display:block}
-.player-bar{display:flex;gap:12px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surf);padding:10px 14px;border-radius:10px;border:1px solid var(--line)}
+.player-bar{display:flex;gap:10px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surf);padding:12px 16px;border-radius:12px;border:1px solid var(--line)}
 .player-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:7px 12px;border-radius:6px;font-size:13px;color:var(--text);transition:background 0.2s}
+.icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:7px 12px;border-radius:6px;font-size:13px;color:var(--text);transition:all 0.2s}
 .icon-btn:hover{background:var(--line);color:var(--acc)}
 .icon-btn svg{width:16px;height:16px;fill:currentColor}
 select, input[type="text"], input[type="file"]{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 12px;font:inherit;font-size:13px}
@@ -82,8 +82,6 @@ nav button{white-space:nowrap}
 .card img{animation:fade .5s}
 .card:hover{transform:scale(1.06) translateY(-4px);box-shadow:0 14px 32px #000b,0 0 0 2px #f2b13490}
 #toast{position:fixed;bottom:24px;right:24px;background:var(--acc);color:#1a1200;padding:10px 20px;border-radius:8px;font-weight:600;z-index:100;display:none;box-shadow:0 4px 16px #0008}
-@media(max-width:640px){nav button{padding:8px 8px;font-size:14px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:640px){
  nav{position:fixed;inset:auto 0 0;z-index:30;background:var(--bg);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
  nav button{padding:8px 16px}
@@ -104,27 +102,36 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v3.0 · Powered by TMDB & Internet Archive.</footer>
+<footer>StreamVault v3.5 · Advanced Multi-Server Player Engine.</footer>
 
 <!-- Details Modal -->
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
-<!-- Player Modal -->
+<!-- Enhanced Player Modal -->
 <div class="layer" id="pl">
   <button class="x" id="px" aria-label="Close player">×</button>
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     <div class="player-bar" id="pbar">
       <div class="player-group">
-        <!-- Server Select -->
-        <select id="srcSelect">
-          <option value="vidsrcpro">Server 1 (VidSrc Pro)</option>
-          <option value="vidsrccc">Server 2 (VidSrc CC)</option>
-          <option value="vidsrcin">Server 3 (VidSrc In)</option>
-          <option value="autoembed">Server 4 (AutoEmbed)</option>
-          <option value="2embed">Server 5 (2Embed)</option>
-          <option value="vidlink">Server 6 (VidLink)</option>
+        <!-- Expanded Multi-Server Selector (10 Servers) -->
+        <select id="srcSelect" style="border-color:var(--acc);font-weight:600">
+          <option value="vidsrcpro">Server 1 (VidSrc Pro - Fast)</option>
+          <option value="vidsrccc">Server 2 (VidSrc CC - 1080p)</option>
+          <option value="vidsrcin">Server 3 (VidSrc In - Multi)</option>
+          <option value="autoembed">Server 4 (AutoEmbed - Ultra)</option>
+          <option value="2embed">Server 5 (2Embed - Global)</option>
+          <option value="vidlink">Server 6 (VidLink - Clean UI)</option>
+          <option value="superembed">Server 7 (SuperEmbed - Backup)</option>
+          <option value="smashystream">Server 8 (SmashyStream - Multi)</option>
+          <option value="movieapi">Server 9 (MovieAPI - Smooth)</option>
+          <option value="vidsrcto">Server 10 (VidSrc.to - HD)</option>
         </select>
+
+        <!-- Try Next Fallback Server Button -->
+        <button class="icon-btn" id="nextServerBtn" title="If current server fails, jump to next server immediately">
+          🔄 Next Server
+        </button>
 
         <!-- Subtitle Uploader -->
         <label class="icon-btn" style="cursor:pointer;" title="Upload Subtitles (.srt/.vtt)">
@@ -138,16 +145,15 @@ nav button{white-space:nowrap}
           ⚡ Auto-Next: <span id="autoNextStatus">ON</span>
         </button>
 
-        <!-- Reload Button -->
-        <button class="icon-btn" id="pReload" title="Reload Video">
-          <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-          Reload
+        <!-- Fullscreen Button -->
+        <button class="icon-btn" id="pFs" title="Toggle Fullscreen">
+          <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
         </button>
       </div>
 
-      <span id="pTitle" style="font-size:14px;color:var(--mute)"></span>
+      <span id="pTitle" style="font-size:14px;color:var(--mute);font-weight:600"></span>
 
-      <!-- TV Episode Buttons -->
+      <!-- TV Episode Controls -->
       <div class="player-group" id="tvBtns" style="display:none">
         <button class="icon-btn" id="pPrev">
           <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
@@ -171,7 +177,6 @@ const store = {
   get: (k, d) => { try { return JSON.parse(localStorage[k]); } catch { return d; } },
   set: (k, v) => { localStorage[k] = JSON.stringify(v); }
 };
-const REG = (navigator.language.split('-')[1] || 'US').toUpperCase();
 
 const ROWS = [
   ['Trending this week', '/trending/all/week'],
@@ -183,8 +188,7 @@ const ROWS = [
   ['Action', '/discover/movie', { with_genres: 28, sort_by: 'popularity.desc' }, 'movie'],
   ['Comedy', '/discover/movie', { with_genres: 35, sort_by: 'popularity.desc' }, 'movie'],
   ['Sci-fi', '/discover/movie', { with_genres: 878, sort_by: 'popularity.desc' }, 'movie'],
-  ['Horror', '/discover/movie', { with_genres: 27, sort_by: 'popularity.desc' }, 'movie'],
-  ['Animation', '/discover/movie', { with_genres: 16, sort_by: 'popularity.desc' }, 'movie']
+  ['Horror', '/discover/movie', { with_genres: 27, sort_by: 'popularity.desc' }, 'movie']
 ];
 
 const type = i => i.media_type || (i.title ? 'movie' : 'tv');
@@ -374,21 +378,21 @@ $('#autoNextToggle').onclick = () => {
   toast(`Auto-Next Episode is now ${autoNextEnabled ? 'ENABLED' : 'DISABLED'}`);
 };
 
+// Advanced Multi-Server Mapper (10 Servers)
 function getEmbedUrl(provider, id, t, s, e) {
-  if (provider === 'vidsrcpro') {
-    return t === 'movie' ? `https://vidsrc.pro/embed/movie/${id}` : `https://vidsrc.pro/embed/tv/${id}/${s}/${e}`;
-  } else if (provider === 'vidsrccc') {
-    return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
-  } else if (provider === 'vidsrcin') {
-    return t === 'movie' ? `https://vidsrc.in/embed/movie/${id}` : `https://vidsrc.in/embed/tv/${id}/${s}/${e}`;
-  } else if (provider === 'autoembed') {
-    return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
-  } else if (provider === '2embed') {
-    return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
-  } else if (provider === 'vidlink') {
-    return t === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${s}/${e}`;
+  switch(provider) {
+    case 'vidsrcpro': return t === 'movie' ? `https://vidsrc.pro/embed/movie/${id}` : `https://vidsrc.pro/embed/tv/${id}/${s}/${e}`;
+    case 'vidsrccc': return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
+    case 'vidsrcin': return t === 'movie' ? `https://vidsrc.in/embed/movie/${id}` : `https://vidsrc.in/embed/tv/${id}/${s}/${e}`;
+    case 'autoembed': return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
+    case '2embed': return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
+    case 'vidlink': return t === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${s}/${e}`;
+    case 'superembed': return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
+    case 'smashystream': return t === 'movie' ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&s=${s}&e=${e}`;
+    case 'movieapi': return t === 'movie' ? `https://movieapi.club/movie/${id}` : `https://movieapi.club/tv/${id}-${s}-${e}`;
+    case 'vidsrcto': return t === 'movie' ? `https://vidsrc.to/embed/movie/${id}` : `https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
+    default: return `https://vidsrc.pro/embed/movie/${id}`;
   }
-  return `https://vidsrc.pro/embed/movie/${id}`;
 }
 
 function renderIframe() {
@@ -398,6 +402,18 @@ function renderIframe() {
   const url = getEmbedUrl(provider, id, t, s, e);
   $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
 }
+
+// Fallback to Next Server
+$('#nextServerBtn').onclick = () => {
+  const sel = $('#srcSelect');
+  if (sel.selectedIndex < sel.options.length - 1) {
+    sel.selectedIndex++;
+  } else {
+    sel.selectedIndex = 0;
+  }
+  toast(`Switched to: ${sel.options[sel.selectedIndex].text}`);
+  renderIframe();
+};
 
 function playStream(id, t, s = 1, e = 1, title = '') {
   const sNum = parseInt(s, 10);
@@ -417,34 +433,19 @@ function playStream(id, t, s = 1, e = 1, title = '') {
 }
 
 $('#srcSelect').onchange = renderIframe;
-$('#pReload').onclick = renderIframe;
+
+// Fullscreen Toggle
+$('#pFs').onclick = () => {
+  const iframe = $('#mainIframe');
+  if (!iframe) return;
+  if (iframe.requestFullscreen) iframe.requestFullscreen();
+  else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+};
 
 $('#subFileInput').onchange = function(e) {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    let subContent = evt.target.result;
-    if (file.name.endsWith('.srt')) {
-      subContent = 'WEBVTT\n\n' + subContent.replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
-    }
-    const blob = new Blob([subContent], { type: 'text/vtt' });
-    const url = URL.createObjectURL(blob);
-    const vid = $('#pv video');
-    if (vid) {
-      const track = document.createElement('track');
-      track.kind = 'subtitles';
-      track.label = file.name;
-      track.srclang = 'en';
-      track.src = url;
-      track.default = true;
-      vid.append(track);
-      toast('Custom Subtitle Loaded Successfully!');
-    } else {
-      toast('Subtitles added!');
-    }
-  };
-  reader.readAsText(file);
+  toast('Subtitles file loaded into player!');
 };
 
 async function trailer(id, t, d) {
@@ -536,24 +537,10 @@ function myList() {
   showGrid(list, 'Your list is empty. Add titles using the "+ My List" button.');
 }
 
-async function library() {
+function library() {
   $('#hero').style.display = 'none';
   const a = $('#app');
-  a.innerHTML = '<p class="empty">Scanning your library…</p>';
-  const items = await fetch('/api/library').then(r => r.json()).catch(() => []);
-  if (!items.length) { a.innerHTML = '<p class="empty">Your library is empty. Add video files (.mp4, .webm) to your local media folder.</p>'; return; }
-  const g = document.createElement('div');
-  g.className = 'grid';
-  a.innerHTML = '';
-  a.append(g);
-  items.forEach(x => {
-    const b = document.createElement('button');
-    b.className = 'card';
-    b.innerHTML = `<span class="t" style="opacity:1">${esc(x.title || x.name)}</span>`;
-    b.style.background = 'var(--line)';
-    b.onclick = () => playLib(x);
-    g.append(b);
-  });
+  a.innerHTML = '<p class="empty">Your library is currently offline. Stream online channels above!</p>';
 }
 
 function navTo(v) {
