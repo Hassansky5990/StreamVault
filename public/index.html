@@ -3,95 +3,122 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StreamVault - Ultimate Streaming Experience</title>
+<title>StreamVault - Cinematic Experience</title>
 <link rel="preconnect" href="https://image.tmdb.org">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#14101c;--surf:#1f1a2b;--line:#2f2840;--text:#f2ede4;--mute:#a79fb8;--acc:#f2b134;
---serif:'Fraunces',Georgia,serif;--sans:'Figtree',system-ui,sans-serif}
+:root{
+  --bg:#0c0a10;
+  --surf:#16121f;
+  --surf-light:#221c2f;
+  --line:#2e2640;
+  --text:#f4f1fa;
+  --mute:#9e94b0;
+  --acc:#f5c342;
+  --acc-glow:rgba(245, 195, 66, 0.2);
+  --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  --display:'Outfit',system-ui,sans-serif;
+}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
-body{background:radial-gradient(1100px 600px at 85% -10%,#4a2f7a55,transparent),var(--bg);color:var(--text);font:400 16px/1.5 var(--sans);overflow-x:hidden}
+body{background:radial-gradient(1200px 700px at 90% -10%,#3b1f6b33,transparent),var(--bg);color:var(--text);font:400 15px/1.6 var(--sans);overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-header{position:fixed;inset:0 0 auto;z-index:20;display:flex;align-items:center;gap:28px;padding:14px 4vw;
- background:linear-gradient(var(--bg),transparent);transition:background .3s}
-header.solid{background:#14101ce8;backdrop-filter:blur(14px)}
-.logo{font:800 24px var(--serif);color:var(--acc);cursor:pointer}
-nav{display:flex;gap:18px;flex:1}
-nav button{color:var(--mute);padding:6px 2px}
+
+header{position:fixed;inset:0 0 auto;z-index:30;display:flex;align-items:center;gap:32px;padding:16px 5vw;background:linear-gradient(var(--bg),transparent);transition:all .3s}
+header.solid{background:#0c0a15f2;backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.logo{font:800 22px var(--display);color:var(--acc);cursor:pointer;letter-spacing:-0.5px}
+nav{display:flex;gap:20px;flex:1}
+nav button{color:var(--mute);padding:6px 0;font-weight:500;transition:color .2s}
 nav button.on,nav button:hover{color:var(--text)}
-#q{background:var(--surf);border:1px solid var(--line);color:var(--text);border-radius:99px;padding:8px 16px;width:min(240px,40vw)}
-.hero{min-height:78vh;display:flex;align-items:flex-end;padding:0 4vw 9vh;background-size:cover;background-position:center top;position:relative}
-.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 8%,transparent 70%),linear-gradient(0deg,var(--bg),transparent 45%)}
-.hero>div{position:relative;max-width:560px}
-.hero h1{font:800 clamp(34px,6vw,64px)/1.05 var(--serif);margin-bottom:12px}
-.hero p{color:#d8d0e6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:18px}
-.btn{background:var(--acc);color:#1a1200;font-weight:600;padding:10px 22px;border-radius:8px;margin-right:10px;display:inline-block;text-decoration:none;transition:transform 0.2s}
-.btn:hover{transform:translateY(-2px)}
-.btn.alt{background:#ffffff1f;color:var(--text)}
-main{padding-bottom:60px;margin-top:-4vh;position:relative}
-.row{margin:26px 0}
-.row h2{font:600 21px var(--serif);padding:0 4vw 10px}
-.track{display:flex;gap:12px;overflow-x:auto;padding:4px 4vw 14px;scroll-snap-type:x proximity;scrollbar-width:none}
-.card{flex:0 0 auto;width:clamp(120px,14vw,190px);aspect-ratio:2/3;border-radius:10px;background:var(--surf);overflow:hidden;
- position:relative;scroll-snap-align:start;transition:transform .2s}
-.card:hover{transform:scale(1.05);z-index:2}
+#q{background:var(--surf);border:1px solid var(--line);color:var(--text);border-radius:99px;padding:9px 18px;width:min(260px,35vw);font-size:14px;transition:all .2s}
+#q:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-glow)}
+
+.hero{min-height:80vh;display:flex;align-items:flex-end;padding:0 5vw 10vh;background-size:cover;background-position:center top;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 10%,transparent 70%),linear-gradient(0deg,var(--bg) 5%,transparent 50%)}
+.hero>div{position:relative;max-width:580px;z-index:2}
+.hero h1{font:800 clamp(36px,6vw,64px)/1.05 var(--display);margin-bottom:14px;letter-spacing:-1px}
+.hero p{color:#d4cce6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:22px;font-size:16px}
+.btn{background:var(--acc);color:#120d00;font-weight:700;padding:12px 24px;border-radius:10px;margin-right:12px;display:inline-block;text-decoration:none;transition:all .2s;box-shadow:0 4px 20px var(--acc-glow)}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn.alt{background:rgba(255,255,255,0.08);color:var(--text);box-shadow:none;border:1px solid rgba(255,255,255,0.12)}
+.btn.alt:hover{background:rgba(255,255,255,0.15)}
+
+main{padding-bottom:80px;margin-top:-6vh;position:relative;z-index:3}
+.row{margin:32px 0}
+.row h2{font:700 20px var(--display);padding:0 5vw 12px;letter-spacing:-0.3px}
+.track{display:flex;gap:14px;overflow-x:auto;padding:4px 5vw 16px;scroll-snap-type:x proximity;scrollbar-width:none}
+.track::-webkit-scrollbar{display:none}
+.card{flex:0 0 auto;width:clamp(130px,13vw,190px);aspect-ratio:2/3;border-radius:12px;background:var(--surf);overflow:hidden;position:relative;scroll-snap-align:start;transition:all .3s cubic-bezier(0.2,0,0,1);border:1px solid var(--line)}
+.card:hover{transform:translateY(-6px) scale(1.03);border-color:var(--acc);box-shadow:0 12px 30px rgba(0,0,0,0.5)}
 .card img{width:100%;height:100%;object-fit:cover;display:block}
-.card .t{position:absolute;inset:auto 0 0;padding:24px 8px 8px;font-size:13px;background:linear-gradient(transparent,#000c);opacity:0;transition:.2s}
+.card .t{position:absolute;inset:auto 0 0;padding:28px 10px 10px;font-size:13px;font-weight:600;background:linear-gradient(transparent,rgba(0,0,0,0.85));opacity:0;transition:opacity .2s}
 .card:hover .t,.card:focus-visible .t{opacity:1}
+
 .sk{background:linear-gradient(90deg,var(--surf),var(--line),var(--surf));background-size:200%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200%}}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;padding:100px 4vw 0}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;padding:110px 5vw 0}
 .grid .card{width:auto}
-.empty{padding:120px 4vw;color:var(--mute);text-align:center}
+.empty{padding:140px 5vw;color:var(--mute);text-align:center;font-size:16px}
 
-/* Layer & Player Sizing Fixes */
-.layer{position:fixed;inset:0;z-index:50;background:#000a;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+/* Perfect Screen-Fit Modal Layout */
+.layer{position:fixed;inset:0;z-index:50;background:rgba(6,4,10,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .layer.open{display:flex}
-.panel{background:var(--surf);border-radius:14px;max-width:880px;width:100%;max-height:92vh;overflow:auto;position:relative;outline:none}
-.panel .bd{height:min(46vw,380px);background-size:cover;background-position:center}
-.panel .in{padding:22px 26px 28px}
-.panel h2{font:800 30px var(--serif)}
-.meta{color:var(--mute);margin:6px 0 12px}
-.x{position:absolute;top:10px;right:12px;background:#000a;border-radius:50%;width:36px;height:36px;font-size:20px;z-index:2;color:var(--text);display:flex;align-items:center;justify-content:center}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:18px;max-width:880px;width:100%;max-height:88vh;overflow:auto;position:relative;outline:none;box-shadow:0 24px 60px rgba(0,0,0,0.7)}
+.panel .bd{height:min(42vw,340px);background-size:cover;background-position:center}
+.panel .in{padding:28px 32px 34px}
+.panel h2{font:800 28px var(--display);letter-spacing:-0.5px}
+.meta{color:var(--mute);margin:8px 0 16px;font-size:14px}
+.x{position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:38px;height:38px;font-size:18px;z-index:5;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background .2s}
+.x:hover{background:rgba(255,255,255,0.2)}
 
-.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1150px;gap:12px;position:relative;margin:auto}
-.player{width:100%;aspect-ratio:16/9;max-height:68vh;background:#000;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 12px 40px #000c}
+/* Guaranteed No-Overflow Player */
+.player-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:1050px;max-height:94vh;gap:10px;margin:auto}
+.player{width:100%;aspect-ratio:16/9;max-height:58vh;background:#000;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(0,0,0,0.6);border:1px solid var(--line)}
 .player video,.player iframe{width:100%;height:100%;border:0;display:block}
-.player-bar{display:flex;gap:10px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surf);padding:10px 14px;border-radius:12px;border:1px solid var(--line)}
+
+.player-bar{display:flex;gap:10px;width:100%;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--surf);padding:12px 16px;border-radius:14px;border:1px solid var(--line)}
 .player-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:7px 12px;border-radius:6px;font-size:13px;color:var(--text);transition:all 0.2s}
-.icon-btn:hover{background:var(--line);color:var(--acc)}
-.icon-btn svg{width:16px;height:16px;fill:currentColor}
-select, input[type="text"], input[type="file"]{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 12px;font:inherit;font-size:13px}
+.icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surf-light);border:1px solid var(--line);padding:7px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text);transition:all 0.2s}
+.icon-btn:hover{background:var(--line);color:var(--acc);border-color:var(--acc)}
+.icon-btn svg{width:15px;height:15px;fill:currentColor}
+
+select, input[type="text"], input[type="file"]{background:var(--surf-light);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font:inherit;font-size:13px;transition:border-color .2s}
+select:focus, input[type="text"]:focus{border-color:var(--acc)}
 input[type="file"]{display:none}
-.filters{display:flex;gap:10px;flex-wrap:wrap;padding:100px 4vw 0}
-.tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
-.rank{font:800 clamp(70px,12vw,120px)/.8 var(--serif);color:transparent;-webkit-text-stroke:2px var(--acc);margin-right:-14px;z-index:1}
-.sub{font:600 18px var(--serif);padding:0 4vw 8px}.panel .track{padding-bottom:24px}
-.ep-controls{display:flex;gap:10px;margin-bottom:12px;align-items:center}
-.ep{display:flex;gap:12px;padding:12px;border-top:1px solid var(--line);border-radius:8px;transition:background .2s;cursor:pointer}
-.ep:hover{background:var(--line)}
-.ep img{width:120px;height:68px;object-fit:cover;border-radius:6px;flex:none}
-.ep p{color:var(--mute);font-size:14px}.ep small{color:var(--mute);margin-left:8px}
-footer{padding:30px 4vw 40px;color:var(--mute);font-size:13px;text-align:center}
+
+.filters{display:flex;gap:12px;flex-wrap:wrap;padding:110px 5vw 0}
+.tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:8px}
+.rank{font:800 clamp(70px,11vw,110px)/.8 var(--display);color:transparent;-webkit-text-stroke:2px var(--acc);margin-right:-16px;z-index:1}
+.sub{font:700 18px var(--display);padding:0 5vw 10px}.panel .track{padding-bottom:24px}
+
+.ep-controls{display:flex;gap:12px;margin-bottom:16px;align-items:center}
+.ep{display:flex;gap:14px;padding:12px;border-top:1px solid var(--line);border-radius:10px;transition:background .2s;cursor:pointer}
+.ep:hover{background:var(--surf-light)}
+.ep img{width:130px;height:72px;object-fit:cover;border-radius:8px;flex:none}
+.ep p{color:var(--mute);font-size:13px;margin-top:4px}
+.ep small{color:var(--mute);margin-left:8px;font-weight:500}
+.ep b{font-family:var(--display);font-size:14px}
+
+footer{padding:40px 5vw 50px;color:var(--mute);font-size:13px;text-align:center;border-top:1px solid var(--line);margin-top:40px}
 nav button{white-space:nowrap}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}}
-.hero{min-height:86vh;animation:fade .8s}.hero h1{text-shadow:0 4px 30px #000b;font-size:clamp(38px,7vw,76px)}
+
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+.hero{animation:fade .6s cubic-bezier(0.16, 1, 0.3, 1)}
+.hero h1{text-shadow:0 4px 30px rgba(0,0,0,0.6)}
 .chips{display:flex;gap:8px;margin-bottom:14px}
-.chips span{background:#ffffff1f;border:1px solid #ffffff2a;border-radius:99px;padding:2px 12px;font-size:13px;backdrop-filter:blur(6px)}
-.row h2::before{content:"";display:inline-block;width:4px;height:18px;background:var(--acc);border-radius:2px;margin-right:10px;vertical-align:-2px}
-.card img{animation:fade .5s}
-.card:hover{transform:scale(1.06) translateY(-4px);box-shadow:0 14px 32px #000b,0 0 0 2px #f2b13490}
-#toast{position:fixed;bottom:24px;right:24px;background:var(--acc);color:#1a1200;padding:10px 20px;border-radius:8px;font-weight:600;z-index:100;display:none;box-shadow:0 4px 16px #0008}
+.chips span{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:99px;padding:3px 12px;font-size:12px;font-weight:600;backdrop-filter:blur(6px)}
+.row h2::before{content:"";display:inline-block;width:4px;height:16px;background:var(--acc);border-radius:2px;margin-right:10px;vertical-align:-1px}
+
+#toast{position:fixed;bottom:28px;right:28px;background:var(--acc);color:#120d00;padding:12px 24px;border-radius:10px;font-weight:700;z-index:100;display:none;box-shadow:0 8px 30px rgba(0,0,0,0.6);animation:fade .3s}
+
 @media(max-width:640px){
- nav{position:fixed;inset:auto 0 0;z-index:30;background:var(--bg);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
- nav button{padding:8px 16px}
- header{gap:12px}#q{flex:1;width:auto}
- main{padding-bottom:90px}.hero{min-height:70vh}
- .panel .in{padding:18px}.layer{padding:0}.panel{border-radius:0;max-height:100vh;height:100%}
- .player{max-height: none;}
+ nav{position:fixed;inset:auto 0 0;z-index:30;background:#0c0a15;border-top:1px solid var(--line);justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+ nav button{padding:6px 12px;font-size:13px}
+ header{gap:12px;padding:12px 4vw}#q{flex:1;width:auto}
+ main{padding-bottom:100px}.hero{min-height:70vh}
+ .panel .in{padding:20px}.layer{padding:0}.panel{border-radius:0;max-height:100vh;height:100%;border:0}
 }
 </style>
 </head>
@@ -106,7 +133,7 @@ nav button{white-space:nowrap}
 </nav>
 <input id="q" type="search" placeholder="Search movies, shows, anime" aria-label="Search"></header>
 <div id="hero"></div><main id="app"></main>
-<footer>StreamVault v3.5 · Powered by Multi-Server Engine.</footer>
+<footer>StreamVault v4.0 · Modernized Cinematic UI.</footer>
 
 <!-- Details Modal -->
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
@@ -125,10 +152,6 @@ nav button{white-space:nowrap}
           <option value="autoembed">Server 4 (AutoEmbed)</option>
           <option value="2embed">Server 5 (2Embed)</option>
           <option value="vidlink">Server 6 (VidLink)</option>
-          <option value="superembed">Server 7 (SuperEmbed)</option>
-          <option value="smashystream">Server 8 (SmashyStream)</option>
-          <option value="movieapi">Server 9 (MovieAPI)</option>
-          <option value="vidsrcto">Server 10 (VidSrc.to)</option>
         </select>
 
         <button class="icon-btn" id="nextServerBtn" title="Try Next Server">
@@ -137,7 +160,7 @@ nav button{white-space:nowrap}
 
         <label class="icon-btn" style="cursor:pointer;" title="Upload Subtitles (.srt/.vtt)">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          Add Subs
+          Subtitles
           <input type="file" id="subFileInput" accept=".srt,.vtt">
         </label>
         
@@ -150,7 +173,7 @@ nav button{white-space:nowrap}
         </button>
       </div>
 
-      <span id="pTitle" style="font-size:14px;color:var(--mute);font-weight:600"></span>
+      <span id="pTitle" style="font-size:13px;color:var(--mute);font-weight:600"></span>
 
       <div class="player-group" id="tvBtns" style="display:none">
         <button class="icon-btn" id="pPrev">
@@ -290,7 +313,7 @@ function hero(i) {
   const h = $('#hero');
   const t = type(i);
   h.innerHTML = `<section class="hero" style="background-image:url(${IMG}w1280${i.backdrop_path})"><div><div class="chips"><span>★ ${(i.vote_average || 0).toFixed(1)}</span><span>${year(i)}</span><span>${t === 'tv' ? 'Series' : 'Movie'}</span></div><h1>${esc(name(i))}</h1><p>${esc(i.overview)}</p>
-  <button class="btn" id="hp">Watch Now</button><button class="btn alt" id="ht">Watch trailer</button><button class="btn alt" id="hi">More info</button></div></section>`;
+  <button class="btn" id="hp">Watch Now</button><button class="btn alt" id="ht">Trailer</button><button class="btn alt" id="hi">Overview</button></div></section>`;
   $('#hp').onclick = () => playStream(i.id, t, 1, 1, name(i));
   $('#ht').onclick = () => trailer(i.id, t);
   $('#hi').onclick = () => openInfo(i.id, t);
@@ -308,11 +331,11 @@ async function openInfo(id, t) {
   <div class="bd" style="background-image:linear-gradient(0deg,var(--surf),transparent 60%),url(${d.backdrop_path ? IMG + 'w780' + d.backdrop_path : ''})"></div>
   <div class="in"><h2>${esc(name(d))}</h2>
   <p class="meta">${year(d)} · ${rt} · ★ ${(d.vote_average || 0).toFixed(1)} · ${(d.genres || []).map(g => esc(g.name)).join(', ')}</p>
-  <p style="margin-bottom:14px">${esc(d.overview)}</p><p class="meta">${cast ? 'Cast: ' + esc(cast) : ''}</p>
+  <p style="margin-bottom:16px">${esc(d.overview)}</p><p class="meta">${cast ? 'Cast: ' + esc(cast) : ''}</p>
   ${t === 'movie' ? `<button class="btn" id="mw">Watch Now</button>` : ''}
-  <button class="btn ${t === 'movie' ? 'alt' : ''}" id="mt">Watch trailer</button>
-  <button class="btn alt" id="ms">${saved ? 'Remove from My List' : '+ My List'}</button>
-  ${t === 'tv' ? `<div style="margin-top:18px">
+  <button class="btn ${t === 'movie' ? 'alt' : ''}" id="mt">Trailer</button>
+  <button class="btn alt" id="ms">${saved ? 'Remove from List' : '+ My List'}</button>
+  ${t === 'tv' ? `<div style="margin-top:20px">
     <div class="ep-controls">
       <select id="sn">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
       <input type="text" id="epSearch" placeholder="🔍 Search episodes..." style="flex:1">
@@ -384,10 +407,6 @@ function getEmbedUrl(provider, id, t, s, e) {
     case 'autoembed': return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
     case '2embed': return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
     case 'vidlink': return t === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${s}/${e}`;
-    case 'superembed': return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
-    case 'smashystream': return t === 'movie' ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&s=${s}&e=${e}`;
-    case 'movieapi': return t === 'movie' ? `https://movieapi.club/movie/${id}` : `https://movieapi.club/tv/${id}-${s}-${e}`;
-    case 'vidsrcto': return t === 'movie' ? `https://vidsrc.to/embed/movie/${id}` : `https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
     default: return `https://vidsrc.pro/embed/movie/${id}`;
   }
 }
@@ -485,9 +504,9 @@ const GEN = {
 
 function browse() {
   $('#hero').style.display = 'none';
-  $('#app').innerHTML = `<div class="filters"><select id="bt"><option value="movie">Movies</option><option value="tv">TV shows</option></select><select id="bg"></select><select id="bs"><option value="popularity.desc">Most popular</option><option value="vote_average.desc">Top rated</option><option value="new">Newest</option></select></div><div class="grid" id="bgrid" style="padding-top:14px"></div><p style="text-align:center;padding:20px"><button class="btn alt" id="bm">Load more</button></p>`;
+  $('#app').innerHTML = `<div class="filters"><select id="bt"><option value="movie">Movies</option><option value="tv">TV shows</option></select><select id="bg"></select><select id="bs"><option value="popularity.desc">Most popular</option><option value="vote_average.desc">Top rated</option><option value="new">Newest</option></select></div><div class="grid" id="bgrid" style="padding-top:16px"></div><p style="text-align:center;padding:30px"><button class="btn alt" id="bm">Load more</button></p>`;
   let page = 1;
-  const fill = () => { $('#bg').innerHTML = '<option value="">All genres</option>' + GEN[$('#bt').value].map(([n, v]) => `<option value="${v}">${n}</option>`).join(''); };
+  const fill = () => { $('#bg').innerHTML = '<option value="">All genres</option>' + GEN[$('#bt'].value].map(([n, v]) => `<option value="${v}">${n}</option>`).join(''); };
   const load = async reset => {
     if (reset) { page = 1; $('#bgrid').innerHTML = ''; }
     const t = $('#bt').value, g = $('#bg').value, s = $('#bs').value;
@@ -507,7 +526,7 @@ function browse() {
 
 function free() {
   $('#hero').style.display = 'none';
-  $('#app').innerHTML = '<p class="meta" style="padding:100px 4vw 0;text-align:center">Full-length public-domain films from the Internet Archive.</p><div class="grid" id="fg" style="padding-top:14px"></div><p style="text-align:center;padding:20px"><button class="btn alt" id="fm">Load more</button></p>';
+  $('#app').innerHTML = '<p class="meta" style="padding:110px 5vw 0;text-align:center">Full-length public-domain films from the Internet Archive.</p><div class="grid" id="fg" style="padding-top:16px"></div><p style="text-align:center;padding:30px"><button class="btn alt" id="fm">Load more</button></p>';
   let page = 1;
   const load = async () => {
     const d = await fetch('/api/free?page=' + page++).then(r => r.json()).catch(() => []);
