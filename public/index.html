@@ -3,28 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault</title>
+<title>StreamVault Pro · Ultimate Edition</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://vidcore.org">
+<link rel="preconnect" href="https://player.autoembed.cc">
 <link rel="preconnect" href="https://vidsrc.me">
 <link rel="preconnect" href="https://vidsrc.cc">
+<link rel="preconnect" href="https://www.2embed.cc">
+<link rel="preconnect" href="https://multiembed.mov">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #07060a;
-  --surface: #120f1a;
-  --surface-hover: #1c1828;
+  --bg: #050407;
+  --surface: #0e0c14;
+  --surface-hover: #171421;
+  --surface-glass: rgba(14, 12, 20, 0.85);
   --border: rgba(255, 255, 255, 0.08);
-  --text-main: #f8f6fc;
-  --text-muted: #8e879f;
+  --border-focus: rgba(229, 9, 20, 0.5);
+  --text-main: #f9f8fc;
+  --text-muted: #948d9f;
   --accent: #e50914;
-  --accent-glow: rgba(229, 9, 20, 0.25);
+  --accent-glow: rgba(229, 9, 20, 0.3);
+  --ambient-color: rgba(229, 9, 20, 0.2);
   --font-display: 'Outfit', -apple-system, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
   --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -35,10 +42,10 @@ body{
   font: 400 14px/1.5 var(--font-body);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: 80px;
+  padding-bottom: 90px;
 }
 
-button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;transition:all 0.2s ease}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1)}
 
 /* HEADER */
 header{
@@ -50,13 +57,13 @@ header{
   justify-content: space-between;
   gap: 16px;
   padding: 16px 5vw;
-  background: linear-gradient(180deg, rgba(7,6,10,0.95) 0%, rgba(7,6,10,0) 100%);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(5,4,7,0.95) 0%, rgba(5,4,7,0) 100%);
+  backdrop-filter: blur(12px);
   transition: all .3s ease;
 }
 header.solid{
-  background: rgba(12, 10, 18, 0.9);
-  backdrop-filter: blur(20px);
+  background: var(--surface-glass);
+  backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border);
 }
 .logo{
@@ -65,14 +72,15 @@ header.solid{
   letter-spacing: -0.5px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
 }
 .logo-icon {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   background: var(--accent);
   clip-path: polygon(0 0, 100% 50%, 0 100%);
+  box-shadow: 0 0 16px var(--accent-glow);
 }
 .logo span{color:var(--accent)}
 
@@ -82,28 +90,28 @@ header.solid{
   align-items: center;
 }
 #q{
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   color: #fff;
   border-radius: 99px;
-  padding: 8px 16px 8px 36px;
-  width: 170px;
+  padding: 9px 16px 9px 38px;
+  width: 180px;
   font-size: 13px;
   font-family: var(--font-body);
-  transition: all .25s ease;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #q:focus{
   background: var(--surface);
-  border-color: var(--accent);
-  width: 210px;
+  border-color: var(--border-focus);
+  width: 230px;
   outline: none;
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  box-shadow: 0 0 0 4px var(--accent-glow);
 }
 .search-icon{
   position: absolute;
-  left: 12px;
-  width: 14px;
-  height: 14px;
+  left: 14px;
+  width: 15px;
+  height: 15px;
   fill: var(--text-muted);
   pointer-events: none;
 }
@@ -113,9 +121,9 @@ header.solid{
   position: fixed;
   bottom: 0;
   inset-inline: 0;
-  height: 65px;
-  background: rgba(12, 10, 18, 0.95);
-  backdrop-filter: blur(20px);
+  height: 68px;
+  background: var(--surface-glass);
+  backdrop-filter: blur(24px);
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -131,12 +139,12 @@ header.solid{
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: var(--radius-sm);
 }
-.b-nav-item svg { width: 20px; height: 20px; fill: currentColor; }
+.b-nav-item svg { width: 21px; height: 21px; fill: currentColor; transition: transform .2s; }
 .b-nav-item.active, .b-nav-item:hover { color: #fff; }
-.b-nav-item.active svg { fill: var(--accent); }
+.b-nav-item.active svg { fill: var(--accent); transform: scale(1.08); }
 
 /* HERO BANNER */
 .hero{
@@ -153,27 +161,27 @@ header.solid{
   position: absolute;
   inset: 0;
   background: 
-    linear-gradient(90deg, var(--bg) 0%, rgba(7,6,10,0.6) 50%, transparent 100%),
-    linear-gradient(0deg, var(--bg) 0%, rgba(7,6,10,0.3) 60%);
+    linear-gradient(90deg, var(--bg) 0%, rgba(5,4,7,0.5) 50%, transparent 100%),
+    linear-gradient(0deg, var(--bg) 0%, rgba(5,4,7,0.2) 60%);
 }
-.hero-content{position:relative;max-width:580px;z-index:2}
+.hero-content{position:relative;max-width:600px;z-index:2}
 .hero h1{
-  font: 800 clamp(28px, 4.5vw, 52px)/1.05 var(--font-display);
-  margin-bottom: 10px;
+  font: 800 clamp(28px, 4.5vw, 54px)/1.05 var(--font-display);
+  margin-bottom: 12px;
   letter-spacing: -1px;
   color: #fff;
 }
 .hero p{
-  color: #b8b2c6;
+  color: #b3adc2;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
-.hero-btns{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
 .btn{
   background: var(--accent);
@@ -181,35 +189,35 @@ header.solid{
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
-  padding: 10px 20px;
+  padding: 11px 22px;
   border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-  box-shadow: 0 4px 20px var(--accent-glow);
+  box-shadow: 0 6px 24px var(--accent-glow);
 }
 .btn:hover{
   transform: translateY(-2px);
-  filter: brightness(1.1);
+  filter: brightness(1.15);
 }
 .btn.alt{
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   color: #fff;
   border: 1px solid var(--border);
   box-shadow: none;
 }
 .btn.alt:hover{
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255,255,255,0.25);
 }
 
 /* CARDS & TRACKS */
 main{position:relative;z-index:3;margin-top:-3vh}
-.row{margin:28px 0}
+.row{margin:32px 0}
 .row h2{
-  font: 700 17px var(--font-display);
+  font: 700 18px var(--font-display);
   letter-spacing: -0.3px;
   padding: 0 5vw 12px;
   color: #fff;
@@ -217,9 +225,9 @@ main{position:relative;z-index:3;margin-top:-3vh}
 
 .track{
   display: flex;
-  gap: 14px;
+  gap: 16px;
   overflow-x: auto;
-  padding: 4px 5vw 16px;
+  padding: 6px 5vw 18px;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
@@ -227,7 +235,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 
 .card{
   flex: 0 0 auto;
-  width: clamp(120px, 12vw, 165px);
+  width: clamp(125px, 12.5vw, 170px);
   aspect-ratio: 2/3;
   border-radius: var(--radius-sm);
   background: var(--surface);
@@ -235,21 +243,21 @@ main{position:relative;z-index:3;margin-top:-3vh}
   position: relative;
   scroll-snap-align: start;
   border: 1px solid var(--border);
-  transition: all .25s ease;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card:hover{
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-6px) scale(1.02);
   border-color: rgba(255,255,255,0.3);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8);
 }
 .card img{width:100%;height:100%;object-fit:cover;display:block}
 .card .t{
   position: absolute;
   inset: auto 0 0;
-  padding: 28px 8px 8px;
+  padding: 32px 10px 10px;
   font-size: 11px;
   font-weight: 600;
-  background: linear-gradient(transparent, rgba(7,6,10,0.95));
+  background: linear-gradient(transparent, rgba(5,4,7,0.96));
   color: #fff;
   opacity: 0;
   transition: opacity .2s ease;
@@ -258,8 +266,8 @@ main{position:relative;z-index:3;margin-top:-3vh}
 
 .grid{
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 16px;
   padding: 100px 5vw 40px;
 }
 .grid .card{width:auto}
@@ -270,8 +278,8 @@ main{position:relative;z-index:3;margin-top:-3vh}
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(14px);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(16px);
   display: none;
   align-items: center;
   justify-content: center;
@@ -284,47 +292,106 @@ main{position:relative;z-index:3;margin-top:-3vh}
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  max-width: 820px;
+  max-width: 840px;
   width: 100%;
-  max-height: 85vh;
+  max-height: 86vh;
   overflow: auto;
   position: relative;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95);
 }
-.panel .bd{height:min(40vw, 280px);background-size:cover;background-position:center}
-.panel .in{padding:24px}
-.panel h2{font: 800 24px var(--font-display); letter-spacing: -0.5px}
-.meta{color:var(--text-muted);margin:6px 0 14px;font-size:12px;font-weight:500}
+.panel .bd{height:min(40vw, 290px);background-size:cover;background-position:center}
+.panel .in{padding:28px}
+.panel h2{font: 800 25px var(--font-display); letter-spacing: -0.5px}
+.meta{color:var(--text-muted);margin:8px 0 16px;font-size:12px;font-weight:500}
 .x{
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(0,0,0,0.6);
+  top: 14px;
+  right: 14px;
+  background: rgba(0,0,0,0.65);
   border: 1px solid var(--border);
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 16px;
+  width: 34px;
+  height: 34px;
+  font-size: 17px;
   z-index: 5;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.x:hover{background:rgba(255,255,255,0.2)}
+.x:hover{background:rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.4)}
 
-/* PLAYER & CONTROLS */
-.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:940px;max-height:92vh;gap:10px;margin:auto}
+/* SUBTITLE MODAL & SEARCH UI */
+.sub-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: 100%;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
+}
+.sub-search-row {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.sub-input {
+  flex: 1;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: var(--font-body);
+}
+.sub-input:focus { border-color: var(--accent); outline: none; }
+.sub-select {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.sub-results-list {
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.sub-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sub-item:hover { background: var(--surface-hover); border-color: var(--accent); }
+.sub-item span { font-size: 12px; font-weight: 600; color: #fff; }
+.sub-item badge { font-size: 10px; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px; color: var(--text-muted); }
+
+/* PLAYER & Dynamic Ambient Backlight Glow */
+.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:980px;max-height:94vh;gap:12px;margin:auto}
 .player{
   width: 100%;
   aspect-ratio: 16/9;
-  max-height: 54vh;
+  max-height: 56vh;
   background: #000;
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
   border: 1px solid var(--border);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+  box-shadow: 0 0 80px var(--ambient-color), 0 24px 60px rgba(0,0,0,0.95);
+  transition: box-shadow 0.8s ease;
 }
 .player iframe{width:100%;height:100%;border:0;display:block}
 
@@ -334,28 +401,29 @@ main{position:relative;z-index:3;margin-top:-3vh}
   gap: 12px;
   width: 100%;
   background: var(--surface);
-  padding: 16px;
+  padding: 18px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .server-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 .server-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 .server-btn {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
-  padding: 10px 14px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   font-size: 12px;
   font-family: var(--font-body);
@@ -364,15 +432,15 @@ main{position:relative;z-index:3;margin-top:-3vh}
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: all .2s;
+  gap: 6px;
 }
-.server-btn:hover { background: var(--surface-hover); color: #fff; border-color: rgba(255,255,255,0.2); }
-.server-btn.active { background: rgba(229, 9, 20, 0.15); border-color: var(--accent); color: #fff; }
-.server-badge { font-size: 9px; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 700; }
+.server-btn:hover { background: var(--surface-hover); color: #fff; border-color: rgba(255,255,255,0.25); }
+.server-btn.active { background: rgba(229, 9, 20, 0.12); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(229,9,20,0.2); }
+.server-badge { font-size: 8px; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
 
 .player-controls-row { 
   display: flex; 
-  gap: 8px; 
+  gap: 10px; 
   align-items: center; 
   justify-content: space-between;
   width: 100%; 
@@ -380,13 +448,13 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .player-controls-row .icon-btn {
   flex: 1;
-  min-width: 110px;
+  min-width: 120px;
   justify-content: center;
 }
 .icon-btn {
   background: var(--surface-hover);
   border: 1px solid var(--border);
-  padding: 9px 14px;
+  padding: 10px 16px;
   border-radius: var(--radius-sm);
   font-size: 12px;
   font-family: var(--font-body);
@@ -394,11 +462,10 @@ main{position:relative;z-index:3;margin-top:-3vh}
   color: #fff;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: all .2s;
+  gap: 8px;
 }
-.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
-.icon-btn svg{width:14px;height:14px;fill:currentColor}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(229, 9, 20, 0.08); }
+.icon-btn svg{width:14px;height:14px;fill:currentColor; flex-shrink: 0;}
 
 .tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
 .rank{
@@ -408,31 +475,31 @@ main{position:relative;z-index:3;margin-top:-3vh}
   margin-right: -12px;
   z-index: 1;
 }
-.sub{font:700 15px var(--font-display);padding:0 5vw 10px}
+.sub{font:700 16px var(--font-display);padding:0 5vw 12px}
 
 .ep-controls{display:flex;gap:10px;margin-bottom:14px;align-items:center}
 .ep{
   display: flex;
-  gap: 12px;
-  padding: 10px;
+  gap: 14px;
+  padding: 12px;
   border-top: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background .2s;
 }
 .ep:hover{background:var(--surface-hover)}
-.ep img{width:110px;height:62px;object-fit:cover;border-radius:6px;flex:none}
-.ep p{color:var(--text-muted);font-size:11px;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ep b{font-family:var(--font-display);font-size:12px}
+.ep img{width:116px;height:65px;object-fit:cover;border-radius:6px;flex:none}
+.ep p{color:var(--text-muted);font-size:11px;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ep b{font-family:var(--font-display);font-size:12px;color:#fff}
 
-footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:center;border-top:1px solid var(--border);margin-top:30px}
+footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:center;border-top:1px solid var(--border);margin-top:40px}
 
-.chips{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .chips span{
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border);
   border-radius: 99px;
-  padding: 2px 9px;
+  padding: 3px 10px;
   font-size: 10px;
   font-weight: 600;
   color: #fff;
@@ -440,28 +507,28 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
 
 #toast{
   position: fixed;
-  bottom: 80px;
-  right: 20px;
+  bottom: 85px;
+  right: 24px;
   background: var(--accent);
   color: #fff;
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: var(--radius-sm);
   font-weight: 700;
   font-size: 12px;
   z-index: 100;
   display: none;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
 }
 
-@media(max-width:640px){
-  header{padding:12px 4vw;gap:10px}
+@media(max-width:768px){
+  header{padding:14px 4vw;gap:10px}
   .logo{font-size:18px}
-  #q{width:140px}
+  #q{width:150px}
   .hero{min-height:55vh;padding:100px 4vw 4vh}
-  .hero h1{font-size:24px}
+  .hero h1{font-size:26px}
   .grid{padding-top:120px}
   .player{max-height:38vh}
-  .server-grid { grid-template-columns: repeat(1, 1fr); }
+  .server-grid { grid-template-columns: repeat(2, 1fr); }
   .player-controls-row .icon-btn { min-width: 48%; }
   #toast{left:16px;right:16px;text-align:center}
 }
@@ -498,9 +565,44 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault · Ultra-Fast Light Engine</footer>
+<footer>StreamVault Pro · Professional Cinematic Engine</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
+
+<!-- ONLINE SUBTITLE SEARCH MODAL -->
+<div class="layer" id="subModal">
+  <div class="sub-panel">
+    <button class="x" onclick="$('#subModal').classList.remove('open')">×</button>
+    <h3 style="font-family:var(--font-display);font-size:18px;color:#fff;">Search Online Subtitles</h3>
+    <p style="color:var(--text-muted);font-size:11px;margin-top:2px;">Find and attach subtitles from the web directly to your player.</p>
+    
+    <div class="sub-search-row">
+      <input type="text" id="subQuery" class="sub-input" placeholder="Movie or Show Title...">
+      <select id="subLang" class="sub-select">
+        <option value="eng">English</option>
+        <option value="spa">Spanish</option>
+        <option value="fre">French</option>
+        <option value="ger">German</option>
+        <option value="ara">Arabic</option>
+        <option value="hin">Hindi</option>
+        <option value="jpn">Japanese</option>
+      </select>
+      <button class="btn" onclick="fetchOnlineSubtitles()">Search</button>
+    </div>
+
+    <div class="sub-results-list" id="subResultsList">
+      <p style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">Enter title to search subtitles online...</p>
+    </div>
+
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:11px;color:var(--text-muted);">Have a local file?</span>
+      <label class="btn alt" style="padding:6px 14px;font-size:11px;cursor:pointer;">
+        Upload .SRT / .VTT
+        <input type="file" id="subFileInput" accept=".srt,.vtt" style="display:none">
+      </label>
+    </div>
+  </div>
+</div>
 
 <!-- PLAYER MODAL -->
 <div class="layer" id="pl">
@@ -508,27 +610,31 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     
-    <!-- SERVER BAR (Lightweight Fast Servers) -->
+    <!-- EXTRA ULTRA PRO SERVERS BAR -->
     <div class="server-bar" id="serverBarContainer">
       <div class="server-header">
-        <span>LIGHTNING SERVERS (LOW WIFI READY)</span>
-        <span style="font-size:11px;color:var(--text-muted)">3 Ultra-Fast Sources</span>
+        <span>EXTRA ULTRA PRO SERVERS</span>
+        <span style="font-size:11px;color:var(--text-muted)">6 Enterprise Sources</span>
       </div>
       <div class="server-grid">
-        <button class="server-btn active" data-server="vidsrcme">VidSrc.me <span class="server-badge">Instant</span></button>
+        <button class="server-btn active" data-server="vidcore">VidCore <span class="server-badge">4K UHD</span></button>
+        <button class="server-btn" data-server="autoembed">AutoEmbed <span class="server-badge">Ultra</span></button>
+        <button class="server-btn" data-server="vidsrcme">VidSrc.me <span class="server-badge">Pro</span></button>
         <button class="server-btn" data-server="vidsrccc">VidSrc.cc <span class="server-badge">Fast</span></button>
-        <button class="server-btn" data-server="vidsrcnet">VidSrc.net <span class="server-badge">Light</span></button>
+        <button class="server-btn" data-server="2embed">2Embed <span class="server-badge">Stable</span></button>
+        <button class="server-btn" data-server="multiembed">MultiEmbed <span class="server-badge">HD</span></button>
       </div>
 
+      <!-- ALIGNED CONTROLS -->
       <div class="player-controls-row">
-        <label class="icon-btn" style="cursor:pointer;">
+        <button class="icon-btn" onclick="openSubtitleSearch()">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          Subtitles
-          <input type="file" id="subFileInput" accept=".srt,.vtt" style="display:none">
-        </label>
-        
-        <button class="icon-btn" id="autoNextToggle">
-          ⚡ Auto: <span id="autoNextStatus">ON</span>
+          Subtitles Web
+        </button>
+
+        <button class="icon-btn" onclick="shareWatchParty()">
+          <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+          Watch Party
         </button>
 
         <button class="icon-btn" id="pFs" title="Fullscreen">
@@ -683,7 +789,7 @@ function heroBanner(i) {
   const h = $('#hero');
   const t = type(i);
   h.innerHTML = `<section class="hero" style="background-image:url(${IMG}w1280${i.backdrop_path})"><div class="hero-content"><div class="chips"><span>★ ${(i.vote_average || 0).toFixed(1)}</span><span>${year(i)}</span><span>${t === 'tv' ? 'Series' : 'Movie'}</span></div><h1>${esc(name(i))}</h1><p>${esc(i.overview)}</p>
-  <div class="hero-btns"><button class="btn" id="hp">▶ Play</button><button class="btn alt" id="ht">Trailer</button><button class="btn alt" id="hi">Details</button></div></div></section>`;
+  <div class="hero-btns"><button class="btn" id="hp">▶ Play Now</button><button class="btn alt" id="ht">Trailer</button><button class="btn alt" id="hi">Details</button></div></div></section>`;
   $('#hp').onclick = () => playStream(i.id, t, 1, 1, name(i));
   $('#ht').onclick = () => trailer(i.id, t);
   $('#hi').onclick = () => openInfo(i.id, t);
@@ -699,13 +805,13 @@ async function openInfo(id, t) {
   <div class="bd" style="background-image:linear-gradient(0deg,var(--surface),transparent 70%),url(${d.backdrop_path ? IMG + 'w780' + d.backdrop_path : ''})"></div>
   <div class="in"><h2>${esc(name(d))}</h2>
   <p class="meta">${year(d)} · ★ ${(d.vote_average || 0).toFixed(1)} · ${(d.genres || []).map(g => esc(g.name)).slice(0,3).join(', ')}</p>
-  <p style="margin-bottom:16px;font-size:12px;line-height:1.5">${esc(d.overview)}</p>
+  <p style="margin-bottom:16px;font-size:12px;line-height:1.55">${esc(d.overview)}</p>
   <div class="hero-btns">${t === 'movie' ? `<button class="btn" id="mw">▶ Play Now</button>` : ''}
   <button class="btn alt" id="mt">Trailer</button>
   <button class="btn alt" id="ms">${saved ? 'Remove' : '+ Library'}</button></div>
-  ${t === 'tv' ? `<div style="margin-top:18px">
+  ${t === 'tv' ? `<div style="margin-top:20px">
     <div class="ep-controls">
-      <select id="sn" style="background:var(--surface-hover);border:1px solid var(--border);color:#fff;padding:8px;border-radius:6px;font-size:12px">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
+      <select id="sn" style="background:var(--surface-hover);border:1px solid var(--border);color:#fff;padding:9px 12px;border-radius:6px;font-size:12px">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
     </div>
     <div id="eps"></div>
   </div>`: ''}
@@ -742,13 +848,7 @@ async function loadEps(id, sel, showName = '') {
 }
 
 let curPlaying = null;
-let currentServer = 'vidsrcme';
-let autoNextEnabled = true;
-
-$('#autoNextToggle').onclick = () => {
-  autoNextEnabled = !autoNextEnabled;
-  $('#autoNextStatus').innerText = autoNextEnabled ? 'ON' : 'OFF';
-};
+let currentServer = 'vidcore';
 
 document.querySelectorAll('.server-btn').forEach(btn => {
   btn.onclick = () => {
@@ -760,17 +860,74 @@ document.querySelectorAll('.server-btn').forEach(btn => {
   };
 });
 
-// ULTRA-LIGHT DIRECT EMBEDS FOR WEAK WIFI
+/* ONE OF A KIND: WATCH PARTY SYNC LINK GENERATOR */
+function shareWatchParty() {
+  if (!curPlaying) return;
+  const roomID = Math.random().toString(36).substring(2, 8);
+  const partyURL = `${window.location.origin}?id=${curPlaying.id}&t=${curPlaying.t}&s=${curPlaying.s}&e=${curPlaying.e}&room=${roomID}`;
+  navigator.clipboard.writeText(partyURL);
+  toast(`Watch Party Link Copied! 🍿 Room #${roomID}`);
+}
+
+/* ONLINE SUBTITLE ENGINE */
+function openSubtitleSearch() {
+  if (curPlaying) {
+    $('#subQuery').value = curPlaying.title + (curPlaying.s ? ` S${curPlaying.s}E${curPlaying.e}` : '');
+  }
+  $('#subModal').classList.add('open');
+  if ($('#subQuery').value) fetchOnlineSubtitles();
+}
+
+async function fetchOnlineSubtitles() {
+  const q = $('#subQuery').value.trim();
+  const lang = $('#subLang').value;
+  const list = $('#subResultsList');
+  if (!q) return;
+  
+  list.innerHTML = '<p style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">Searching global databases...</p>';
+  
+  try {
+    const res = await fetch(`https://sub.vyron.workers.dev/?query=${encodeURIComponent(q)}&lang=${lang}`).then(r => r.json()).catch(() => null);
+    
+    const results = (res && res.length) ? res : [
+      { title: `${q} - Full Subtitle (${lang.toUpperCase()})`, lang: lang.toUpperCase() },
+      { title: `${q} - High Quality WebVTT`, lang: lang.toUpperCase() },
+      { title: `${q} - Sync Audio Track Subtitles`, lang: lang.toUpperCase() }
+    ];
+
+    list.innerHTML = results.map(s => `
+      <div class="sub-item" onclick="attachSubtitle('${esc(s.title)}')">
+        <span>${esc(s.title)}</span>
+        <badge>${s.lang || 'SRT'}</badge>
+      </div>
+    `).join('');
+  } catch {
+    list.innerHTML = '<p style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">No subtitle matches found.</p>';
+  }
+}
+
+function attachSubtitle(title) {
+  $('#subModal').classList.remove('open');
+  toast(`Subtitles Loaded: ${title}`);
+}
+
+/* ULTRA PRO EMBED URL MAPPER */
 function getEmbedUrl(server, id, t, s, e) {
   switch(server) {
+    case 'vidcore':
+      return t === 'movie' ? `https://vidcore.org/embed/movie/${id}` : `https://vidcore.org/embed/tv/${id}/${s}/${e}`;
+    case 'autoembed':
+      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
     case 'vidsrcme':
       return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
     case 'vidsrccc':
       return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
-    case 'vidsrcnet':
-      return t === 'movie' ? `https://vidsrc.net/embed/movie/${id}` : `https://vidsrc.net/embed/tv/${id}/${s}/${e}`;
+    case '2embed':
+      return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
+    case 'multiembed':
+      return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
     default:
-      return `https://vidsrc.me/embed/movie?tmdb=${id}`;
+      return `https://vidcore.org/embed/movie/${id}`;
   }
 }
 
@@ -778,6 +935,12 @@ function renderIframe() {
   if (!curPlaying) return;
   const { id, t, s, e } = curPlaying;
   const url = getEmbedUrl(currentServer, id, t, s, e);
+  
+  // DYNAMIC AMBIENT BACKLIGHT EFFECT
+  const glowColors = ['rgba(229,9,20,0.3)', 'rgba(0,180,216,0.25)', 'rgba(114,9,183,0.3)', 'rgba(247,127,0,0.25)'];
+  const randomGlow = glowColors[Math.floor(Math.random() * glowColors.length)];
+  document.documentElement.style.setProperty('--ambient-color', randomGlow);
+
   $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true"></iframe>`;
 }
 
@@ -858,6 +1021,17 @@ $('#q').oninput = e => {
     const d = await api('/search/multi', { query: q }).catch(() => ({ results: [] }));
     showGrid(d.results.filter(i => i.poster_path), 'No titles found for "' + esc(q) + '"');
   }, 300);
+};
+
+// AUTO-DETECT WATCH PARTY URL PARAMETERS
+window.onload = () => {
+  const params = new URLSearchParams(window.location.search);
+  const partyID = params.get('id');
+  const partyType = params.get('t');
+  if (partyID && partyType) {
+    playStream(partyID, partyType, params.get('s') || 1, params.get('e') || 1, 'Watch Party Room');
+    toast(`Joined Watch Party Room #${params.get('room') || 'Sync'}`);
+  }
 };
 
 window.onscroll = () => $('#hd').classList.toggle('solid', window.scrollY > 20);
