@@ -441,9 +441,9 @@ footer{padding:40px 5vw;color:var(--text-muted);font-size:12px;text-align:center
     <div class="player-bar" id="pbar">
       <div class="player-row">
         <select id="srcSelect">
-          <option value="vidsrcru">Server 1 (VidSrc Embed RU - Main)</option>
-          <option value="apiplayer">Server 2 (APIPlayer)</option>
-          <option value="vidsrcme">Server 3 (VidSrc.me Mirror)</option>
+          <option value="vidfast">Server 1 (VidFast - Main)</option>
+          <option value="multiembed">Server 2 (Multiembed)</option>
+          <option value="autoembed">Server 3 (AutoEmbed)</option>
           <option value="2embed">Server 4 (2Embed)</option>
         </select>
         <button class="icon-btn" id="nextServerBtn" style="flex:0 0 auto">🔄 Cycle Server</button>
@@ -666,19 +666,19 @@ $('#autoNextToggle').onclick = () => {
   $('#autoNextStatus').innerText = autoNextEnabled ? 'ON' : 'OFF';
 };
 
-// CLEAN SERVERS ROUTER (ALL DEAD OR BLOCKED ENDPOINTS REMOVED)
+// RELIABLE OPEN EMBED ROUTER
 function getEmbedUrl(provider, id, t, s, e) {
   switch(provider) {
-    case 'vidsrcru':
-      return t === 'movie' ? `https://vidsrc-embed.ru/embed/movie/${id}` : `https://vidsrc-embed.ru/embed/tv/${id}/${s}/${e}`;
-    case 'apiplayer':
-      return t === 'movie' ? `https://apiplayer.co/embed/movie/${id}` : `https://apiplayer.co/embed/tv/${id}/${s}/${e}`;
-    case 'vidsrcme':
-      return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
+    case 'vidfast':
+      return t === 'movie' ? `https://vidfast.pro/movie/${id}` : `https://vidfast.pro/tv/${id}/${s}/${e}`;
+    case 'multiembed':
+      return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
+    case 'autoembed':
+      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
     case '2embed':
       return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
     default:
-      return `https://vidsrc-embed.ru/embed/movie/${id}`;
+      return `https://vidfast.pro/movie/${id}`;
   }
 }
 
