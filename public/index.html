@@ -38,7 +38,7 @@ body{
 
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;transition:all 0.2s ease}
 
-/* TOP HEADER */
+/* HEADER */
 header{
   position: fixed;
   inset: 0 0 auto;
@@ -63,11 +63,11 @@ header.solid{
   letter-spacing: -0.5px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .logo-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   background: var(--accent);
   clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
@@ -84,7 +84,7 @@ header.solid{
   color: #fff;
   border-radius: 99px;
   padding: 8px 16px 8px 36px;
-  width: 180px;
+  width: 170px;
   font-size: 13px;
   font-family: var(--font-body);
   transition: all .25s ease;
@@ -92,7 +92,7 @@ header.solid{
 #q:focus{
   background: var(--surface);
   border-color: var(--accent);
-  width: 220px;
+  width: 210px;
   outline: none;
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
@@ -105,7 +105,7 @@ header.solid{
   pointer-events: none;
 }
 
-/* BOTTOM MOBILE NAVIGATION BAR (CineLite Style) */
+/* NAVIGATION (Inspired Layout) */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -202,7 +202,7 @@ header.solid{
   border-color: rgba(255,255,255,0.2);
 }
 
-/* ROWS & CARDS */
+/* CARDS & TRACKS */
 main{position:relative;z-index:3;margin-top:-3vh}
 .row{margin:28px 0}
 .row h2{
@@ -262,7 +262,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .grid .card{width:auto}
 .empty{padding:100px 5vw;color:var(--text-muted);text-align:center;font-size:14px}
 
-/* MODALS & AGENT PICKER (CineLite Watch Modal Style) */
+/* MODALS */
 .layer{
   position: fixed;
   inset: 0;
@@ -310,7 +310,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .x:hover{background:rgba(255,255,255,0.2)}
 
-/* PLAYER & AGENTS SELECTOR */
+/* PLAYER & STREAM SERVERS DRAWER */
 .player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:940px;max-height:92vh;gap:10px;margin:auto}
 .player{
   width: 100%;
@@ -325,8 +325,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .player iframe{width:100%;height:100%;border:0;display:block}
 
-/* CineLite Agent Source Picker Bar */
-.agent-bar {
+.server-bar {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -336,20 +335,21 @@ main{position:relative;z-index:3;margin-top:-3vh}
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
 }
-.agent-header {
+.server-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: #fff;
+  letter-spacing: 0.5px;
 }
-.agent-grid {
+.server-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 8px;
 }
-.agent-btn {
+.server-btn {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   padding: 10px 14px;
@@ -363,9 +363,9 @@ main{position:relative;z-index:3;margin-top:-3vh}
   justify-content: space-between;
   transition: all .2s;
 }
-.agent-btn:hover { background: var(--surface-hover); color: #fff; border-color: rgba(255,255,255,0.2); }
-.agent-btn.active { background: rgba(229, 9, 20, 0.15); border-color: var(--accent); color: #fff; }
-.agent-badge { font-size: 9px; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 700; }
+.server-btn:hover { background: var(--surface-hover); color: #fff; border-color: rgba(255,255,255,0.2); }
+.server-btn.active { background: rgba(229, 9, 20, 0.15); border-color: var(--accent); color: #fff; }
+.server-badge { font-size: 9px; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 700; }
 
 .player-controls-row { display: flex; gap: 8px; align-items: center; width: 100%; flex-wrap: wrap; margin-top: 4px; }
 .icon-btn {
@@ -437,7 +437,6 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   box-shadow: 0 6px 20px rgba(0,0,0,0.5);
 }
 
-/* MOBILE ADAPTATION */
 @media(max-width:640px){
   header{padding:12px 4vw;gap:10px}
   .logo{font-size:18px}
@@ -446,7 +445,7 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   .hero h1{font-size:24px}
   .grid{padding-top:120px}
   .player{max-height:38vh}
-  .agent-grid { grid-template-columns: repeat(2, 1fr); }
+  .server-grid { grid-template-columns: repeat(2, 1fr); }
   #toast{left:16px;right:16px;text-align:center}
 }
 </style>
@@ -463,7 +462,6 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
 <div id="hero"></div>
 <main id="app"></main>
 
-<!-- CineLite Style Bottom Navigation Bar -->
 <nav class="bottom-nav">
   <button class="b-nav-item active" data-tab="home" onclick="switchTab('home')">
     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -483,7 +481,7 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault · Engine v2.5</footer>
+<footer>StreamVault · Premier Interface</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
@@ -491,16 +489,16 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   <button class="x" id="px" aria-label="Close player">×</button>
   <div class="player-wrap">
     <div class="player" id="pv"></div>
-    <div class="agent-bar">
-      <div class="agent-header">
-        <span>⚡ STREAM AGENTS (SOURCES)</span>
-        <span id="agentCount" style="font-size:11px;color:var(--text-muted)">4 Active Agents</span>
+    <div class="server-bar">
+      <div class="server-header">
+        <span>SELECT STREAM SERVER</span>
+        <span style="font-size:11px;color:var(--text-muted)">4 Active Sources</span>
       </div>
-      <div class="agent-grid" id="agentGrid">
-        <button class="agent-btn active" data-agent="vidfast">Phoenix <span class="agent-badge">Fast</span></button>
-        <button class="agent-btn" data-agent="multiembed">Chamber</button>
-        <button class="agent-btn" data-agent="autoembed">Viper</button>
-        <button class="agent-btn" data-agent="2embed">Reyna</button>
+      <div class="server-grid">
+        <button class="server-btn active" data-server="vidfast">VidFast <span class="server-badge">Main</span></button>
+        <button class="server-btn" data-server="2embed">2Embed <span class="server-badge">Fast</span></button>
+        <button class="server-btn" data-server="vidlink">VidLink</button>
+        <button class="server-btn" data-server="smashy">SmashyStream</button>
       </div>
 
       <div class="player-controls-row">
@@ -542,7 +540,7 @@ const store = {
 const ROWS = [
   ['Trending Now', '/trending/all/week'],
   ['Popular Movies', '/movie/popular', {}, 'movie'],
-  ['Anime & Animation', '/discover/tv', { with_genres: 16, sort_by: 'popularity.desc' }, 'tv'],
+  ['Anime Spotlight', '/discover/tv', { with_genres: 16, sort_by: 'popularity.desc' }, 'tv'],
   ['Popular TV Shows', '/tv/popular', {}, 'tv'],
   ['Top Rated Cinema', '/movie/top_rated', {}, 'movie']
 ];
@@ -724,7 +722,7 @@ async function loadEps(id, sel, showName = '') {
 }
 
 let curPlaying = null;
-let currentAgent = 'vidfast';
+let currentServer = 'vidfast';
 let autoNextEnabled = true;
 
 $('#autoNextToggle').onclick = () => {
@@ -732,26 +730,27 @@ $('#autoNextToggle').onclick = () => {
   $('#autoNextStatus').innerText = autoNextEnabled ? 'ON' : 'OFF';
 };
 
-document.querySelectorAll('.agent-btn').forEach(btn => {
+document.querySelectorAll('.server-btn').forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll('.agent-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    currentAgent = btn.dataset.agent;
+    currentServer = btn.dataset.server;
     renderIframe();
-    toast(`Switched Agent to ${btn.innerText.split(' ')[0]}`);
+    toast(`Server changed to ${btn.innerText.split(' ')[0]}`);
   };
 });
 
-function getEmbedUrl(agent, id, t, s, e) {
-  switch(agent) {
+// REAL VERIFIED SERVER ENDPOINTS
+function getEmbedUrl(server, id, t, s, e) {
+  switch(server) {
     case 'vidfast':
       return t === 'movie' ? `https://vidfast.pro/movie/${id}` : `https://vidfast.pro/tv/${id}/${s}/${e}`;
-    case 'multiembed':
-      return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
-    case 'autoembed':
-      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
     case '2embed':
       return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
+    case 'vidlink':
+      return t === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${s}/${e}`;
+    case 'smashy':
+      return t === 'movie' ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`;
     default:
       return `https://vidfast.pro/movie/${id}`;
   }
@@ -760,7 +759,7 @@ function getEmbedUrl(agent, id, t, s, e) {
 function renderIframe() {
   if (!curPlaying) return;
   const { id, t, s, e } = curPlaying;
-  const url = getEmbedUrl(currentAgent, id, t, s, e);
+  const url = getEmbedUrl(currentServer, id, t, s, e);
   $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" referrerpolicy="no-referrer" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
 }
 
