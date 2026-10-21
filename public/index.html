@@ -441,12 +441,10 @@ footer{padding:40px 5vw;color:var(--text-muted);font-size:12px;text-align:center
     <div class="player-bar" id="pbar">
       <div class="player-row">
         <select id="srcSelect">
-          <option value="vidrift">Server 1 (VidRift - Fastest)</option>
-          <option value="vidsrcxyz">Server 2 (VidSrc.xyz)</option>
-          <option value="autoembed">Server 3 (AutoEmbed)</option>
-          <option value="vidsrcpro">Server 4 (VidSrc Pro)</option>
-          <option value="2embed">Server 5 (2Embed)</option>
-          <option value="smashy">Server 6 (SmashyStream)</option>
+          <option value="vidrift">Server 1 (VidRift)</option>
+          <option value="lumen">Server 2 (Lumen / Vidsrc CC)</option>
+          <option value="apiplayer">Server 3 (APIPlayer)</option>
+          <option value="2embed">Server 4 (2Embed)</option>
         </select>
         <button class="icon-btn" id="nextServerBtn" style="flex:0 0 auto">🔄 Cycle Server</button>
       </div>
@@ -668,21 +666,17 @@ $('#autoNextToggle').onclick = () => {
   $('#autoNextStatus').innerText = autoNextEnabled ? 'ON' : 'OFF';
 };
 
-// CORRECTED 2026 EMBED URL ROUTER
+// EMBED ROUTER WITH APIPLAYER ADDED
 function getEmbedUrl(provider, id, t, s, e) {
   switch(provider) {
     case 'vidrift':
       return t === 'movie' ? `https://embed.vidrift.net/embed/movie/${id}` : `https://embed.vidrift.net/embed/tv/${id}/${s}/${e}`;
-    case 'vidsrcxyz':
-      return t === 'movie' ? `https://vidsrc.xyz/embed/movie/${id}` : `https://vidsrc.xyz/embed/tv/${id}/${s}/${e}`;
-    case 'autoembed':
-      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
-    case 'vidsrcpro':
-      return t === 'movie' ? `https://vidsrc.pro/embed/movie/${id}` : `https://vidsrc.pro/embed/tv/${id}/${s}/${e}`;
+    case 'lumen':
+      return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
+    case 'apiplayer':
+      return t === 'movie' ? `https://apiplayer.co/embed/movie/${id}` : `https://apiplayer.co/embed/tv/${id}/${s}/${e}`;
     case '2embed':
       return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
-    case 'smashy':
-      return t === 'movie' ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&s=${s}&e=${e}`;
     default:
       return `https://embed.vidrift.net/embed/movie/${id}`;
   }
