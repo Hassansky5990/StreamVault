@@ -6,6 +6,10 @@
 <title>StreamVault</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://vidfast.pro">
+<link rel="preconnect" href="https://www.2embed.cc">
+<link rel="preconnect" href="https://vidlink.pro">
+<link rel="preconnect" href="https://embed.smashystream.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -64,6 +68,7 @@ header.solid{
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
 }
 .logo-icon {
   width: 22px;
@@ -105,7 +110,7 @@ header.solid{
   pointer-events: none;
 }
 
-/* NAVIGATION (Inspired Layout) */
+/* NAVIGATION */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -310,7 +315,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .x:hover{background:rgba(255,255,255,0.2)}
 
-/* PLAYER & STREAM SERVERS DRAWER */
+/* PLAYER & PERFECTLY ALIGNED CONTROLS */
 .player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:940px;max-height:92vh;gap:10px;margin:auto}
 .player{
   width: 100%;
@@ -328,10 +333,10 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .server-bar {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
   background: var(--surface);
-  padding: 14px 18px;
+  padding: 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
 }
@@ -367,22 +372,36 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .server-btn.active { background: rgba(229, 9, 20, 0.15); border-color: var(--accent); color: #fff; }
 .server-badge { font-size: 9px; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 700; }
 
-.player-controls-row { display: flex; gap: 8px; align-items: center; width: 100%; flex-wrap: wrap; margin-top: 4px; }
+/* RE-ALIGNED CONTROLS ROW */
+.player-controls-row { 
+  display: flex; 
+  gap: 8px; 
+  align-items: center; 
+  justify-content: space-between;
+  width: 100%; 
+  flex-wrap: wrap; 
+}
+.player-controls-row .icon-btn {
+  flex: 1;
+  min-width: 110px;
+  justify-content: center;
+}
 .icon-btn {
   background: var(--surface-hover);
   border: 1px solid var(--border);
-  padding: 8px 12px;
+  padding: 9px 14px;
   border-radius: var(--radius-sm);
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--font-body);
   font-weight: 600;
   color: #fff;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  transition: all .2s;
 }
 .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
-.icon-btn svg{width:13px;height:13px;fill:currentColor}
+.icon-btn svg{width:14px;height:14px;fill:currentColor}
 
 .tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
 .rank{
@@ -446,6 +465,7 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   .grid{padding-top:120px}
   .player{max-height:38vh}
   .server-grid { grid-template-columns: repeat(2, 1fr); }
+  .player-controls-row .icon-btn { min-width: 48%; }
   #toast{left:16px;right:16px;text-align:center}
 }
 </style>
@@ -481,15 +501,18 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault · Premier Interface</footer>
+<footer>StreamVault · Optimized Engine</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
+<!-- PLAYER MODAL -->
 <div class="layer" id="pl">
   <button class="x" id="px" aria-label="Close player">×</button>
   <div class="player-wrap">
     <div class="player" id="pv"></div>
-    <div class="server-bar">
+    
+    <!-- SERVER BAR (Hidden for Trailers) -->
+    <div class="server-bar" id="serverBarContainer">
       <div class="server-header">
         <span>SELECT STREAM SERVER</span>
         <span style="font-size:11px;color:var(--text-muted)">4 Active Sources</span>
@@ -501,25 +524,27 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
         <button class="server-btn" data-server="smashy">SmashyStream</button>
       </div>
 
+      <!-- PERFECTLY ALIGNED CONTROLS -->
       <div class="player-controls-row">
         <label class="icon-btn" style="cursor:pointer;">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           Subtitles
-          <input type="file" id="subFileInput" accept=".srt,.vtt">
+          <input type="file" id="subFileInput" accept=".srt,.vtt" style="display:none">
         </label>
         
         <button class="icon-btn" id="autoNextToggle">
-          ⚡ Auto-Next: <span id="autoNextStatus">ON</span>
+          ⚡ Auto: <span id="autoNextStatus">ON</span>
         </button>
 
-        <button class="icon-btn" id="pFs" style="margin-left:auto" title="Toggle Fullscreen">
+        <button class="icon-btn" id="pFs" title="Fullscreen">
           <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          Fullscreen
         </button>
       </div>
 
       <span id="pTitle" style="font-size:11px;color:var(--text-muted);font-weight:600;text-align:center"></span>
 
-      <div class="player-controls-row" id="tvBtns" style="display:none;justify-content:center">
+      <div class="player-controls-row" id="tvBtns" style="display:none">
         <button class="icon-btn" id="pPrev">◀ Prev Episode</button>
         <button class="icon-btn" id="pNext">Next Episode ▶</button>
       </div>
@@ -555,7 +580,7 @@ function toast(msg) {
   const t = $('#toast');
   t.innerText = msg;
   t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2500);
+  setTimeout(() => t.style.display = 'none', 2000);
 }
 
 function card(i, def) {
@@ -736,11 +761,10 @@ document.querySelectorAll('.server-btn').forEach(btn => {
     btn.classList.add('active');
     currentServer = btn.dataset.server;
     renderIframe();
-    toast(`Server changed to ${btn.innerText.split(' ')[0]}`);
+    toast(`Server: ${btn.innerText.split(' ')[0]}`);
   };
 });
 
-// REAL VERIFIED SERVER ENDPOINTS
 function getEmbedUrl(server, id, t, s, e) {
   switch(server) {
     case 'vidfast':
@@ -760,14 +784,19 @@ function renderIframe() {
   if (!curPlaying) return;
   const { id, t, s, e } = curPlaying;
   const url = getEmbedUrl(currentServer, id, t, s, e);
-  $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" referrerpolicy="no-referrer" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
+  // Optimized iframe with low bandwidth priority hints
+  $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true"></iframe>`;
 }
 
 function playStream(id, t, s = 1, e = 1, title = '') {
   const sNum = parseInt(s, 10);
   const eNum = parseInt(e, 10);
   curPlaying = { id, t, s: sNum, e: eNum, title };
+  
+  // SHOW SERVER BAR FOR MOVIES/SHOWS
+  $('#serverBarContainer').style.display = 'flex';
   renderIframe();
+  
   $('#pTitle').innerText = t === 'tv' ? `${title} · S${sNum} E${eNum}` : title;
   $('#tvBtns').style.display = t === 'tv' ? 'flex' : 'none';
   if (t === 'tv') {
@@ -790,8 +819,11 @@ async function trailer(id, t, d) {
   d = d || await api(`/${t}/${id}`, { append_to_response: 'videos' });
   const v = (d.videos?.results || []).filter(v => v.site === 'YouTube').sort((a, b) => (b.type === 'Trailer') - (a.type === 'Trailer'))[0];
   if (!v) return alert('No trailer available.');
+  
+  // HIDE SERVER BAR FOR TRAILERS
+  $('#serverBarContainer').style.display = 'none';
   $('#tvBtns').style.display = 'none';
-  $('#pv').innerHTML = `<iframe id="mainIframe" src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1" allow="fullscreen; autoplay" allowfullscreen="true"></iframe>`;
+  $('#pv').innerHTML = `<iframe id="mainIframe" src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1" loading="lazy" allow="fullscreen; autoplay" allowfullscreen="true"></iframe>`;
   $('#pl').classList.add('open');
 }
 
