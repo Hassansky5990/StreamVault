@@ -6,10 +6,9 @@
 <title>StreamVault</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://vidfast.pro">
 <link rel="preconnect" href="https://www.2embed.cc">
-<link rel="preconnect" href="https://vidlink.pro">
-<link rel="preconnect" href="https://embed.smashystream.com">
+<link rel="preconnect" href="https://multiembed.mov">
+<link rel="preconnect" href="https://player.autoembed.cc">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -315,7 +314,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .x:hover{background:rgba(255,255,255,0.2)}
 
-/* PLAYER & PERFECTLY ALIGNED CONTROLS */
+/* PLAYER & CONTROLS */
 .player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:940px;max-height:92vh;gap:10px;margin:auto}
 .player{
   width: 100%;
@@ -351,7 +350,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .server-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 8px;
 }
 .server-btn {
@@ -372,7 +371,6 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .server-btn.active { background: rgba(229, 9, 20, 0.15); border-color: var(--accent); color: #fff; }
 .server-badge { font-size: 9px; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 700; }
 
-/* RE-ALIGNED CONTROLS ROW */
 .player-controls-row { 
   display: flex; 
   gap: 8px; 
@@ -464,7 +462,7 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   .hero h1{font-size:24px}
   .grid{padding-top:120px}
   .player{max-height:38vh}
-  .server-grid { grid-template-columns: repeat(2, 1fr); }
+  .server-grid { grid-template-columns: repeat(1, 1fr); }
   .player-controls-row .icon-btn { min-width: 48%; }
   #toast{left:16px;right:16px;text-align:center}
 }
@@ -501,7 +499,7 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault · Optimized Engine</footer>
+<footer>StreamVault · High Performance Engine</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
@@ -511,20 +509,18 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     
-    <!-- SERVER BAR (Hidden for Trailers) -->
+    <!-- SERVER BAR -->
     <div class="server-bar" id="serverBarContainer">
       <div class="server-header">
         <span>SELECT STREAM SERVER</span>
-        <span style="font-size:11px;color:var(--text-muted)">4 Active Sources</span>
+        <span style="font-size:11px;color:var(--text-muted)">3 Stable Sources</span>
       </div>
       <div class="server-grid">
-        <button class="server-btn active" data-server="vidfast">VidFast <span class="server-badge">Main</span></button>
-        <button class="server-btn" data-server="2embed">2Embed <span class="server-badge">Fast</span></button>
-        <button class="server-btn" data-server="vidlink">VidLink</button>
-        <button class="server-btn" data-server="smashy">SmashyStream</button>
+        <button class="server-btn active" data-server="2embed">2Embed <span class="server-badge">Fast</span></button>
+        <button class="server-btn" data-server="multiembed">Multiembed <span class="server-badge">Stable</span></button>
+        <button class="server-btn" data-server="autoembed">AutoEmbed</button>
       </div>
 
-      <!-- PERFECTLY ALIGNED CONTROLS -->
       <div class="player-controls-row">
         <label class="icon-btn" style="cursor:pointer;">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
@@ -747,7 +743,7 @@ async function loadEps(id, sel, showName = '') {
 }
 
 let curPlaying = null;
-let currentServer = 'vidfast';
+let currentServer = '2embed';
 let autoNextEnabled = true;
 
 $('#autoNextToggle').onclick = () => {
@@ -767,16 +763,14 @@ document.querySelectorAll('.server-btn').forEach(btn => {
 
 function getEmbedUrl(server, id, t, s, e) {
   switch(server) {
-    case 'vidfast':
-      return t === 'movie' ? `https://vidfast.pro/movie/${id}` : `https://vidfast.pro/tv/${id}/${s}/${e}`;
     case '2embed':
       return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
-    case 'vidlink':
-      return t === 'movie' ? `https://vidlink.pro/movie/${id}` : `https://vidlink.pro/tv/${id}/${s}/${e}`;
-    case 'smashy':
-      return t === 'movie' ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`;
+    case 'multiembed':
+      return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
+    case 'autoembed':
+      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
     default:
-      return `https://vidfast.pro/movie/${id}`;
+      return `https://www.2embed.cc/embed/${id}`;
   }
 }
 
@@ -784,7 +778,6 @@ function renderIframe() {
   if (!curPlaying) return;
   const { id, t, s, e } = curPlaying;
   const url = getEmbedUrl(currentServer, id, t, s, e);
-  // Optimized iframe with low bandwidth priority hints
   $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true"></iframe>`;
 }
 
@@ -793,7 +786,6 @@ function playStream(id, t, s = 1, e = 1, title = '') {
   const eNum = parseInt(e, 10);
   curPlaying = { id, t, s: sNum, e: eNum, title };
   
-  // SHOW SERVER BAR FOR MOVIES/SHOWS
   $('#serverBarContainer').style.display = 'flex';
   renderIframe();
   
@@ -820,7 +812,6 @@ async function trailer(id, t, d) {
   const v = (d.videos?.results || []).filter(v => v.site === 'YouTube').sort((a, b) => (b.type === 'Trailer') - (a.type === 'Trailer'))[0];
   if (!v) return alert('No trailer available.');
   
-  // HIDE SERVER BAR FOR TRAILERS
   $('#serverBarContainer').style.display = 'none';
   $('#tvBtns').style.display = 'none';
   $('#pv').innerHTML = `<iframe id="mainIframe" src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1" loading="lazy" allow="fullscreen; autoplay" allowfullscreen="true"></iframe>`;
