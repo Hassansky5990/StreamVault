@@ -3,113 +3,148 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault - Ultimate Player</title>
+<title>StreamVault - Premium Cinema</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0c0a10;
-  --surf:#16121f;
-  --surf-light:#221c2f;
-  --line:#2e2640;
-  --text:#f4f1fa;
-  --mute:#9e94b0;
+  --bg:#08060b;
+  --surf:#130f1c;
+  --surf-light:#1d182b;
+  --line:#2d2442;
+  --text:#f5f2fc;
+  --mute:#9a8fb0;
   --acc:#f5c342;
-  --acc-glow:rgba(245, 195, 66, 0.2);
-  --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  --acc-glow:rgba(245, 195, 66, 0.25);
+  --sans:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
   --display:'Outfit',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:radial-gradient(1200px 700px at 90% -10%,#3b1f6b33,transparent),var(--bg);color:var(--text);font:400 15px/1.6 var(--sans);overflow-x:hidden}
+body{background:radial-gradient(1200px 700px at 85% -10%,#431e7833,transparent),var(--bg);color:var(--text);font:400 15px/1.5 var(--sans);overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
-header{position:fixed;inset:0 0 auto;z-index:30;display:flex;align-items:center;gap:12px;padding:12px 4vw;background:linear-gradient(var(--bg),transparent);transition:all .3s;flex-wrap:wrap}
-header.solid{background:#0c0a15f2;backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-.logo{font:800 20px var(--display);color:var(--acc);cursor:pointer;letter-spacing:-0.5px;white-space:nowrap}
-#q{background:var(--surf);border:1px solid var(--line);color:var(--text);border-radius:99px;padding:7px 14px;flex:1;min-width:140px;font-size:13px;transition:all .2s}
-#q:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-glow)}
-nav{display:flex;gap:14px;width:100%;overflow-x:auto;scrollbar-width:none;padding-top:4px;border-top:1px solid rgba(255,255,255,0.05)}
-nav::-webkit-scrollbar{display:none}
-nav button{color:var(--mute);padding:4px 0;font-weight:500;font-size:13px;white-space:nowrap}
+/* HEADER & NAVIGATION */
+header{position:fixed;inset:0 0 auto;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 5vw;background:linear-gradient(var(--bg),transparent);transition:all .3s}
+header.solid{background:#08060be6;backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+.logo{font:800 24px var(--display);color:var(--acc);cursor:pointer;letter-spacing:-0.5px;white-space:nowrap}
+nav{display:flex;gap:18px;align-items:center}
+nav button{color:var(--mute);padding:6px 2px;font-weight:600;font-size:14px;transition:color .2s;white-space:nowrap}
 nav button.on,nav button:hover{color:var(--text)}
+.search-wrap{position:relative;display:flex;align-items:center}
+#q{background:var(--surf);border:1px solid var(--line);color:var(--text);border-radius:99px;padding:8px 18px;width:240px;font-size:13px;transition:all .2s}
+#q:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-glow);outline:none}
 
-.hero{min-height:65vh;display:flex;align-items:flex-end;padding:100px 4vw 4vh;background-size:cover;background-position:center top;position:relative}
-.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 10%,transparent 70%),linear-gradient(0deg,var(--bg) 5%,transparent 50%)}
-.hero>div{position:relative;max-width:580px;z-index:2;width:100%}
-.hero h1{font:800 clamp(26px,6vw,52px)/1.1 var(--display);margin-bottom:10px;letter-spacing:-0.5px}
-.hero p{color:#d4cce6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:16px;font-size:13px}
-.hero-btns{display:flex;gap:8px;flex-wrap:nowrap;width:100%;overflow-x:auto}
-.btn{background:var(--acc);color:#120d00;font-weight:700;padding:8px 16px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:13px;white-space:nowrap;flex:1;text-align:center}
-.btn.alt{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid rgba(255,255,255,0.12)}
+/* HERO BANNER */
+.hero{min-height:78vh;display:flex;align-items:flex-end;padding:120px 5vw 8vh;background-size:cover;background-position:center top;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 12%,transparent 75%),linear-gradient(0deg,var(--bg) 8%,transparent 50%)}
+.hero>div{position:relative;max-width:620px;z-index:2;width:100%}
+.hero h1{font:800 clamp(32px,5vw,60px)/1.05 var(--display);margin-bottom:12px;letter-spacing:-0.5px;text-shadow:0 4px 20px rgba(0,0,0,0.8)}
+.hero p{color:#d6cee6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:20px;font-size:14px;line-height:1.6}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{background:var(--acc);color:#120d00;font-weight:700;padding:10px 22px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:14px;transition:all .2s;box-shadow:0 4px 20px var(--acc-glow)}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn.alt{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid rgba(255,255,255,0.12);box-shadow:none}
+.btn.alt:hover{background:rgba(255,255,255,0.16)}
 
-main{padding-bottom:80px;position:relative;z-index:3}
-.row{margin:24px 0}
-.row h2{font:700 17px var(--display);padding:0 4vw 8px}
-.track{display:flex;gap:10px;overflow-x:auto;padding:4px 4vw 14px;scroll-snap-type:x proximity;scrollbar-width:none}
+/* CONTENT ROWS & CARDS */
+main{padding-bottom:90px;position:relative;z-index:3;margin-top:-4vh}
+.row{margin:28px 0}
+.row h2{font:700 18px var(--display);padding:0 5vw 12px;letter-spacing:-0.3px}
+.row h2::before{content:"";display:inline-block;width:4px;height:16px;background:var(--acc);border-radius:2px;margin-right:10px;vertical-align:-1px}
+.track{display:flex;gap:14px;overflow-x:auto;padding:4px 5vw 16px;scroll-snap-type:x proximity;scrollbar-width:none}
 .track::-webkit-scrollbar{display:none}
-.card{flex:0 0 auto;width:clamp(110px,28vw,170px);aspect-ratio:2/3;border-radius:10px;background:var(--surf);overflow:hidden;position:relative;scroll-snap-align:start;border:1px solid var(--line)}
+.card{flex:0 0 auto;width:clamp(125px,13vw,185px);aspect-ratio:2/3;border-radius:12px;background:var(--surf);overflow:hidden;position:relative;scroll-snap-align:start;border:1px solid var(--line);transition:all .3s cubic-bezier(0.16, 1, 0.3, 1)}
+.card:hover{transform:translateY(-6px) scale(1.03);border-color:var(--acc);box-shadow:0 12px 30px rgba(0,0,0,0.6)}
 .card img{width:100%;height:100%;object-fit:cover;display:block}
-.card .t{position:absolute;inset:auto 0 0;padding:20px 6px 6px;font-size:11px;font-weight:600;background:linear-gradient(transparent,rgba(0,0,0,0.9));opacity:1}
+.card .t{position:absolute;inset:auto 0 0;padding:28px 8px 8px;font-size:12px;font-weight:600;background:linear-gradient(transparent,rgba(0,0,0,0.92));opacity:0;transition:opacity .2s}
+.card:hover .t{opacity:1}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;padding:120px 4vw 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;padding:120px 5vw 0}
 .grid .card{width:auto}
-.empty{padding:100px 4vw;color:var(--mute);text-align:center;font-size:14px}
+.empty{padding:120px 5vw;color:var(--mute);text-align:center;font-size:15px}
 
-.layer{position:fixed;inset:0;z-index:50;background:rgba(6,4,10,0.95);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:10px;overflow-y:auto}
+/* MODAL OVERLAYS */
+.layer{position:fixed;inset:0;z-index:50;background:rgba(4,3,7,0.92);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .layer.open{display:flex}
-.panel{background:var(--surf);border:1px solid var(--line);border-radius:14px;max-width:850px;width:100%;max-height:92vh;overflow:auto;position:relative}
-.panel .bd{height:min(45vw,280px);background-size:cover;background-position:center}
-.panel .in{padding:16px 18px 24px}
-.panel h2{font:800 22px var(--display)}
-.meta{color:var(--mute);margin:4px 0 12px;font-size:12px}
-.x{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:32px;height:32px;font-size:16px;z-index:5;color:var(--text);display:flex;align-items:center;justify-content:center}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:16px;max-width:880px;width:100%;max-height:88vh;overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,0.8)}
+.panel .bd{height:min(42vw,320px);background-size:cover;background-position:center}
+.panel .in{padding:24px 28px 32px}
+.panel h2{font:800 26px var(--display)}
+.meta{color:var(--mute);margin:6px 0 14px;font-size:13px}
+.x{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.12);border-radius:50%;width:36px;height:36px;font-size:18px;z-index:5;color:var(--text);display:flex;align-items:center;justify-content:center}
+.x:hover{background:rgba(255,255,255,0.2)}
 
-.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:980px;gap:6px;margin:auto}
-.player{width:100%;aspect-ratio:16/9;max-height:48vh;background:#000;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--line)}
-.player video,.player iframe{width:100%;height:100%;border:0;display:block}
+/* SCREEN-FIT VIDEO PLAYER CONTAINER */
+.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1020px;max-height:94vh;gap:8px;margin:auto}
+.player{width:100%;aspect-ratio:16/9;max-height:58vh;background:#000;border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,0.8)}
+.player iframe{width:100%;height:100%;border:0;display:block}
 
-.player-bar{display:flex;flex-direction:column;gap:6px;width:100%;background:var(--surf);padding:8px 10px;border-radius:10px;border:1px solid var(--line)}
-.player-row{display:flex;gap:6px;width:100%;align-items:center}
-.icon-btn, select{background:var(--surf-light);border:1px solid var(--line);padding:6px 8px;border-radius:6px;font-size:11px;font-weight:500;color:var(--text);flex:1;text-align:center;justify-content:center;display:inline-flex;align-items:center;gap:4px;max-width:100%}
-.icon-btn svg{width:13px;height:13px;fill:currentColor}
+.player-bar{display:flex;flex-direction:column;gap:8px;width:100%;background:var(--surf);padding:10px 14px;border-radius:12px;border:1px solid var(--line)}
+.player-row{display:flex;gap:8px;width:100%;align-items:center;flex-wrap:wrap}
+.icon-btn, select{background:var(--surf-light);border:1px solid var(--line);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;color:var(--text);display:inline-flex;align-items:center;gap:6px;transition:all 0.2s}
+.icon-btn:hover, select:focus{background:var(--line);border-color:var(--acc);color:var(--acc)}
+.icon-btn svg{width:14px;height:14px;fill:currentColor}
+select{flex:1;outline:none}
+input[type="file"]{display:none}
 
-.tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:4px}
-.rank{font:800 clamp(50px,9vw,80px)/.8 var(--display);color:transparent;-webkit-text-stroke:2px var(--acc);margin-right:-10px;z-index:1}
-.sub{font:700 15px var(--display);padding:0 4vw 6px}
+.tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
+.rank{font:800 clamp(60px,10vw,100px)/.8 var(--display);color:transparent;-webkit-text-stroke:2px var(--acc);margin-right:-14px;z-index:1}
+.sub{font:700 17px var(--display);padding:0 5vw 8px}
 
-.ep-controls{display:flex;gap:8px;margin-bottom:12px;align-items:center}
-.ep{display:flex;gap:10px;padding:8px;border-top:1px solid var(--line);border-radius:6px;cursor:pointer}
-.ep img{width:95px;height:54px;object-fit:cover;border-radius:4px;flex:none}
-.ep p{color:var(--mute);font-size:11px;margin-top:2px}
-.ep b{font-family:var(--display);font-size:12px}
+.ep-controls{display:flex;gap:10px;margin-bottom:14px;align-items:center}
+.ep{display:flex;gap:12px;padding:10px;border-top:1px solid var(--line);border-radius:8px;cursor:pointer;transition:background .2s}
+.ep:hover{background:var(--surf-light)}
+.ep img{width:110px;height:62px;object-fit:cover;border-radius:6px;flex:none}
+.ep p{color:var(--mute);font-size:12px;margin-top:2px}
+.ep b{font-family:var(--display);font-size:13px}
 
-footer{padding:24px 4vw;color:var(--mute);font-size:11px;text-align:center;border-top:1px solid var(--line);margin-top:20px}
+footer{padding:30px 5vw;color:var(--mute);font-size:12px;text-align:center;border-top:1px solid var(--line);margin-top:30px}
 
-.chips{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.chips span{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:99px;padding:2px 8px;font-size:10px;font-weight:600}
-.row h2::before{content:"";display:inline-block;width:3px;height:12px;background:var(--acc);border-radius:2px;margin-right:6px;vertical-align:0px}
+.chips{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.chips span{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;backdrop-filter:blur(6px)}
 
-#toast{position:fixed;bottom:16px;right:16px;left:16px;max-width:280px;margin:auto;background:var(--acc);color:#120d00;padding:8px 14px;border-radius:6px;font-weight:700;z-index:100;display:none;box-shadow:0 8px 30px rgba(0,0,0,0.6);text-align:center;font-size:12px}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--acc);color:#120d00;padding:10px 20px;border-radius:8px;font-weight:700;z-index:100;display:none;box-shadow:0 8px 30px rgba(0,0,0,0.6);font-size:13px}
+
+/* MOBILE RESPONSIVE TWEAKS */
+@media(max-width:640px){
+ header{padding:10px 4vw;gap:10px;flex-wrap:wrap}
+ .logo{font-size:20px}
+ #q{order:3;width:100%;min-width:100%;margin-top:2px}
+ nav{order:2;gap:12px;overflow-x:auto;width:auto}
+ nav button{font-size:13px}
+ .hero{min-height:55vh;padding:110px 4vw 4vh}
+ .hero h1{font-size:28px}
+ .grid{padding-top:140px}
+ .player{max-height:42vh}
+ .player-bar{padding:8px}
+ .icon-btn, select{font-size:11px;padding:6px 8px;flex:1;justify-content:center}
+ .layer{padding:8px}
+ #toast{left:20px;right:20px;max-width:none;text-align:center}
+}
 </style>
 </head>
 <body>
 <header id="hd">
   <span class="logo" onclick="navTo('home')">StreamVault</span>
-  <input id="q" type="search" placeholder="Search movies, shows..." aria-label="Search">
   <nav>
     <button class="on" data-v="home">Home</button>
     <button data-v="browse">Browse</button>
     <button data-v="free">Free</button>
     <button data-v="list">My List</button>
   </nav>
+  <div class="search-wrap">
+    <input id="q" type="search" placeholder="Search movies, TV shows..." aria-label="Search">
+  </div>
 </header>
 
 <div id="hero"></div>
 <main id="app"></main>
 
-<footer>StreamVault v7.0 · Multi-Mirror Streamer.</footer>
+<footer>StreamVault v9.0 · High Performance Cinema Platform.</footer>
 
+<!-- Details Modal -->
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
 <!-- Player Modal -->
@@ -118,22 +153,24 @@ footer{padding:24px 4vw;color:var(--mute);font-size:11px;text-align:center;borde
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     <div class="player-bar" id="pbar">
+      <!-- Controls Row 1 -->
       <div class="player-row">
-        <select id="srcSelect" style="border-color:var(--acc);font-weight:600">
-          <option value="vidsrcme">Server 1 (VidSrc ME - Main)</option>
-          <option value="vidsrcpro">Server 2 (VidSrc Pro)</option>
-          <option value="vidsrccc">Server 3 (VidSrc CC)</option>
-          <option value="autoembed">Server 4 (AutoEmbed)</option>
+        <select id="srcSelect" style="border-color:var(--acc);font-weight:700">
+          <option value="vidsrcpro">Server 1 (VidSrc Pro)</option>
+          <option value="autoembed">Server 2 (AutoEmbed)</option>
+          <option value="vidrift">Server 3 (VidRift)</option>
+          <option value="lumen">Server 4 (Lumen Engine)</option>
           <option value="2embed">Server 5 (2Embed)</option>
-          <option value="smashy">Server 6 (SmashyStream)</option>
+          <option value="vidsrccc">Server 6 (VidSrc CC)</option>
         </select>
-        <button class="icon-btn" id="nextServerBtn" style="flex:0 0 auto">🔄 Next</button>
+        <button class="icon-btn" id="nextServerBtn" style="flex:0 0 auto">🔄 Try Next</button>
       </div>
 
+      <!-- Controls Row 2 -->
       <div class="player-row">
         <label class="icon-btn" style="cursor:pointer;">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          Subs
+          Add Subs
           <input type="file" id="subFileInput" accept=".srt,.vtt">
         </label>
         
@@ -146,11 +183,12 @@ footer{padding:24px 4vw;color:var(--mute);font-size:11px;text-align:center;borde
         </button>
       </div>
 
+      <!-- Episode Navigation -->
       <span id="pTitle" style="font-size:11px;color:var(--mute);font-weight:600;text-align:center;margin-top:2px"></span>
 
-      <div class="player-row" id="tvBtns" style="display:none;margin-top:2px">
-        <button class="icon-btn" id="pPrev">◀ Prev</button>
-        <button class="icon-btn" id="pNext">Next ▶</button>
+      <div class="player-row" id="tvBtns" style="display:none;justify-content:center;margin-top:2px">
+        <button class="icon-btn" id="pPrev">◀ Previous Episode</button>
+        <button class="icon-btn" id="pNext">Next Episode ▶</button>
       </div>
     </div>
   </div>
@@ -205,7 +243,7 @@ async function home() {
   const top = document.createElement('section');
   top.className = 'row';
   top.style.order = 1;
-  top.innerHTML = '<h2>Top 10 movies today</h2><div class="track"></div>';
+  top.innerHTML = '<h2>Top 10 Today</h2><div class="track"></div>';
   wrap.append(top);
   
   api('/trending/movie/day').then(d => {
@@ -225,7 +263,7 @@ async function home() {
     const sec = document.createElement('section');
     sec.className = 'row';
     sec.style.order = n * 2;
-    sec.innerHTML = `<h2>${title}</h2><div class="track">${'<div class="card"></div>'.repeat(5)}</div>`;
+    sec.innerHTML = `<h2>${title}</h2><div class="track">${'<div class="card"></div>'.repeat(6)}</div>`;
     wrap.append(sec);
     try {
       const d = await api(path, params);
@@ -241,6 +279,23 @@ async function home() {
       sec.remove();
     }
   });
+
+  const cw = store.get('cw', []);
+  if (cw.length) {
+    const s = document.createElement('section');
+    s.className = 'row';
+    s.style.order = -1;
+    s.innerHTML = '<h2>Continue Watching</h2><div class="track"></div>';
+    cw.forEach(x => {
+      const b = document.createElement('button');
+      b.className = 'card';
+      b.innerHTML = `<span class="t" style="opacity:1">${esc(x.title)} ${x.s ? `S${x.s} E${x.e}` : ''}</span>`;
+      b.style.background = 'var(--line)';
+      b.onclick = () => playStream(x.id, x.t, x.s || 1, x.e || 1, x.title);
+      s.querySelector('.track').append(b);
+    });
+    wrap.append(s);
+  }
 }
 
 let hTimer;
@@ -258,7 +313,7 @@ function hero(i) {
   if (!i) return;
   const h = $('#hero');
   const t = type(i);
-  h.innerHTML = `<section class="hero" style="background-image:url(${IMG}w780${i.backdrop_path})"><div><div class="chips"><span>★ ${(i.vote_average || 0).toFixed(1)}</span><span>${year(i)}</span><span>${t === 'tv' ? 'Series' : 'Movie'}</span></div><h1>${esc(name(i))}</h1><p>${esc(i.overview)}</p>
+  h.innerHTML = `<section class="hero" style="background-image:url(${IMG}w1280${i.backdrop_path})"><div><div class="chips"><span>★ ${(i.vote_average || 0).toFixed(1)}</span><span>${year(i)}</span><span>${t === 'tv' ? 'Series' : 'Movie'}</span></div><h1>${esc(name(i))}</h1><p>${esc(i.overview)}</p>
   <div class="hero-btns"><button class="btn" id="hp">Watch Now</button><button class="btn alt" id="ht">Trailer</button><button class="btn alt" id="hi">Overview</button></div></div></section>`;
   $('#hp').onclick = () => playStream(i.id, t, 1, 1, name(i));
   $('#ht').onclick = () => trailer(i.id, t);
@@ -274,19 +329,19 @@ async function openInfo(id, t) {
   $('#mp').innerHTML = `<button class="x" id="mx" aria-label="Close">×</button>
   <div class="bd" style="background-image:linear-gradient(0deg,var(--surf),transparent 60%),url(${d.backdrop_path ? IMG + 'w780' + d.backdrop_path : ''})"></div>
   <div class="in"><h2>${esc(name(d))}</h2>
-  <p class="meta">${year(d)} · ★ ${(d.vote_average || 0).toFixed(1)} · ${(d.genres || []).map(g => esc(g.name)).slice(0,2).join(', ')}</p>
-  <p style="margin-bottom:12px;font-size:12px">${esc(d.overview)}</p>
+  <p class="meta">${year(d)} · ★ ${(d.vote_average || 0).toFixed(1)} · ${(d.genres || []).map(g => esc(g.name)).slice(0,3).join(', ')}</p>
+  <p style="margin-bottom:14px;font-size:13px">${esc(d.overview)}</p>
   <div class="hero-btns">${t === 'movie' ? `<button class="btn" id="mw">Watch Now</button>` : ''}
   <button class="btn alt" id="mt">Trailer</button>
-  <button class="btn alt" id="ms">${saved ? 'Remove' : '+ List'}</button></div>
-  ${t === 'tv' ? `<div style="margin-top:14px">
+  <button class="btn alt" id="ms">${saved ? 'Remove' : '+ My List'}</button></div>
+  ${t === 'tv' ? `<div style="margin-top:16px">
     <div class="ep-controls">
       <select id="sn">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
-      <input type="text" id="epSearch" placeholder="🔍 Search..." style="flex:1">
+      <input type="text" id="epSearch" placeholder="🔍 Search episode..." style="flex:1">
     </div>
     <div id="eps"></div>
   </div>`: ''}
-  </div><h3 class="sub">More like this</h3><div class="track" id="sim"></div>`;
+  </div><h3 class="sub">More Like This</h3><div class="track" id="sim"></div>`;
 
   $('#md').classList.add('open');
   $('#mp').scrollTop = 0;
@@ -302,8 +357,8 @@ async function openInfo(id, t) {
   $('#mt').onclick = () => trailer(id, t, d);
   $('#ms').onclick = () => {
     let l = store.get('mylist', []);
-    if (saved) { l = l.filter(x => !(x.id === id && x.t === t)); toast('Removed'); }
-    else { l = [...l, { id, t, poster_path: d.poster_path, title: d.title || d.name, name: d.name }]; toast('Saved'); }
+    if (saved) { l = l.filter(x => !(x.id === id && x.t === t)); toast('Removed from list'); }
+    else { l = [...l, { id, t, poster_path: d.poster_path, title: d.title || d.name, name: d.name }]; toast('Added to list'); }
     store.set('mylist', l);
     openInfo(id, t);
   };
@@ -316,7 +371,7 @@ async function loadEps(id, sel, showName = '') {
   if (!sel || !sel.value) return;
   sel.onchange = () => loadEps(id, sel, showName);
   const box = $('#eps');
-  box.innerHTML = '<p class="meta">Loading…</p>';
+  box.innerHTML = '<p class="meta">Loading episodes…</p>';
   const s = await api(`/tv/${id}/season/${sel.value}`).catch(() => null);
   if (!s || !s.episodes) { box.innerHTML = '<p class="meta">Episodes unavailable.</p>'; return; }
   box.innerHTML = s.episodes.map(e => `<div class="ep" onclick="playStream('${id}','tv','${sel.value}','${e.episode_number}','${esc(showName)}')">${e.still_path ? `<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">` : '<span></span>'}<div><b>${e.episode_number}. ${esc(e.name)} ▶</b><p>${esc(e.overview)}</p></div></div>`).join('');
@@ -330,23 +385,16 @@ $('#autoNextToggle').onclick = () => {
   $('#autoNextStatus').innerText = autoNextEnabled ? 'ON' : 'OFF';
 };
 
-// DIRECT WORKING EMBED URL MAPPER
+// EMBED ROUTER WITH UNBLOCKER ATTRIBUTES
 function getEmbedUrl(provider, id, t, s, e) {
   switch(provider) {
-    case 'vidsrcme': 
-      return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
-    case 'vidsrcpro': 
-      return t === 'movie' ? `https://vidsrc.pro/embed/movie/${id}` : `https://vidsrc.pro/embed/tv/${id}/${s}/${e}`;
-    case 'vidsrccc': 
-      return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
-    case 'autoembed': 
-      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
-    case '2embed': 
-      return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
-    case 'smashy': 
-      return t === 'movie' ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&s=${s}&e=${e}`;
-    default: 
-      return `https://vidsrc.me/embed/movie?tmdb=${id}`;
+    case 'vidsrcpro': return t === 'movie' ? `https://vidsrc.pro/embed/movie/${id}` : `https://vidsrc.pro/embed/tv/${id}/${s}/${e}`;
+    case 'autoembed': return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
+    case 'vidrift': return t === 'movie' ? `https://vidrift.net/embed/movie/${id}` : `https://vidrift.net/embed/tv/${id}/${s}/${e}`;
+    case 'lumen': return t === 'movie' ? `https://embed.lumen.to/movie/${id}` : `https://embed.lumen.to/tv/${id}/${s}/${e}`;
+    case '2embed': return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
+    case 'vidsrccc': return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
+    default: return `https://vidsrc.pro/embed/movie/${id}`;
   }
 }
 
@@ -356,14 +404,14 @@ function renderIframe() {
   const provider = $('#srcSelect').value;
   const url = getEmbedUrl(provider, id, t, s, e);
   
-  /* Render clean iframe without referrer restrictions */
+  /* Bypass Referrer policies */
   $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" referrerpolicy="no-referrer" allow="fullscreen; autoplay; picture-in-picture; encrypted-media; gyroscope; accelerometer" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>`;
 }
 
 $('#nextServerBtn').onclick = () => {
   const sel = $('#srcSelect');
   sel.selectedIndex = (sel.selectedIndex + 1) % sel.options.length;
-  toast(`Switched: ${sel.options[sel.selectedIndex].text}`);
+  toast(`Switched server to: ${sel.options[sel.selectedIndex].text}`);
   renderIframe();
 };
 
@@ -379,6 +427,9 @@ function playStream(id, t, s = 1, e = 1, title = '') {
     $('#pNext').onclick = () => playStream(id, t, sNum, eNum + 1, title);
   }
   $('#pl').classList.add('open');
+  let cw = store.get('cw', []);
+  cw = [{ id, t, s: sNum, e: eNum, title }, ...cw.filter(x => x.id !== id)].slice(0, 10);
+  store.set('cw', cw);
 }
 
 $('#srcSelect').onchange = renderIframe;
@@ -415,9 +466,15 @@ function showGrid(items, msg) {
   a.append(g);
 }
 
+function myList() {
+  const list = store.get('mylist', []);
+  showGrid(list, 'Your watchlist is empty. Add titles using "+ My List".');
+}
+
 function navTo(v) {
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   if (v === 'home') home();
+  else if (v === 'list') myList();
 }
 
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => navTo(b.dataset.v));
@@ -429,9 +486,11 @@ $('#q').oninput = e => {
   if (!q) { navTo('home'); return; }
   qTimer = setTimeout(async () => {
     const d = await api('/search/multi', { query: q }).catch(() => ({ results: [] }));
-    showGrid(d.results.filter(i => i.poster_path), 'No results for "' + esc(q) + '"');
+    showGrid(d.results.filter(i => i.poster_path), 'No results found for "' + esc(q) + '"');
   }, 300);
 };
+
+window.onscroll = () => $('#hd').classList.toggle('solid', window.scrollY > 20);
 
 home();
 </script>
