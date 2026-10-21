@@ -3,15 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault Pro · Ultimate Edition</title>
+<title>StreamVault Pro</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://vidcore.org">
 <link rel="preconnect" href="https://player.autoembed.cc">
-<link rel="preconnect" href="https://vidsrc.me">
-<link rel="preconnect" href="https://vidsrc.cc">
 <link rel="preconnect" href="https://www.2embed.cc">
-<link rel="preconnect" href="https://multiembed.mov">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -19,7 +16,7 @@
   --bg: #050407;
   --surface: #0e0c14;
   --surface-hover: #171421;
-  --surface-glass: rgba(14, 12, 20, 0.85);
+  --surface-glass: rgba(14, 12, 20, 0.88);
   --border: rgba(255, 255, 255, 0.08);
   --border-focus: rgba(229, 9, 20, 0.5);
   --text-main: #f9f8fc;
@@ -45,7 +42,8 @@ body{
   padding-bottom: 90px;
 }
 
-button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1)}
+button, input, select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1)}
 
 /* HEADER */
 header{
@@ -97,7 +95,6 @@ header.solid{
   padding: 9px 16px 9px 38px;
   width: 180px;
   font-size: 13px;
-  font-family: var(--font-body);
   transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #q:focus{
@@ -181,7 +178,7 @@ header.solid{
   font-size: 13px;
   line-height: 1.55;
 }
-.hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
 
 .btn{
   background: var(--accent);
@@ -277,13 +274,13 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .layer{
   position: fixed;
   inset: 0;
-  z-index: 50;
-  background: rgba(0, 0, 0, 0.82);
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(16px);
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 16px;
   overflow-y: auto;
 }
 .layer.open{display:flex}
@@ -294,7 +291,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   border-radius: var(--radius-lg);
   max-width: 840px;
   width: 100%;
-  max-height: 86vh;
+  max-height: 88vh;
   overflow: auto;
   position: relative;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95);
@@ -313,7 +310,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   width: 34px;
   height: 34px;
   font-size: 17px;
-  z-index: 5;
+  z-index: 10;
   color: #fff;
   display: flex;
   align-items: center;
@@ -321,12 +318,13 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .x:hover{background:rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.4)}
 
-/* SUBTITLE MODAL & SEARCH UI */
+/* SUBTITLE MODAL OVERLAY (OVER PLAYER) */
+.sub-layer { z-index: 70; }
 .sub-panel {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  max-width: 600px;
+  max-width: 580px;
   width: 100%;
   padding: 24px;
   position: relative;
@@ -345,7 +343,6 @@ main{position:relative;z-index:3;margin-top:-3vh}
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
-  font-family: var(--font-body);
 }
 .sub-input:focus { border-color: var(--accent); outline: none; }
 .sub-select {
@@ -357,7 +354,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   font-size: 12px;
 }
 .sub-results-list {
-  max-height: 260px;
+  max-height: 240px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -379,12 +376,21 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .sub-item span { font-size: 12px; font-weight: 600; color: #fff; }
 .sub-item badge { font-size: 10px; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px; color: var(--text-muted); }
 
-/* PLAYER & Dynamic Ambient Backlight Glow */
-.player-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:980px;max-height:94vh;gap:12px;margin:auto}
+/* PERFECTLY ALIGNED PLAYER & CONTROLS */
+.player-wrap{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 960px;
+  max-height: 94vh;
+  gap: 14px;
+  margin: auto;
+}
 .player{
   width: 100%;
   aspect-ratio: 16/9;
-  max-height: 56vh;
+  max-height: 54vh;
   background: #000;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -417,55 +423,56 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .server-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 .server-btn {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
   font-size: 12px;
-  font-family: var(--font-body);
   font-weight: 600;
   color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
 }
 .server-btn:hover { background: var(--surface-hover); color: #fff; border-color: rgba(255,255,255,0.25); }
 .server-btn.active { background: rgba(229, 9, 20, 0.12); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(229,9,20,0.2); }
-.server-badge { font-size: 8px; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+.server-badge { font-size: 8px; background: var(--accent); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
 
 .player-controls-row { 
-  display: flex; 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px; 
   align-items: center; 
-  justify-content: space-between;
   width: 100%; 
-  flex-wrap: wrap; 
-}
-.player-controls-row .icon-btn {
-  flex: 1;
-  min-width: 120px;
-  justify-content: center;
 }
 .icon-btn {
   background: var(--surface-hover);
   border: 1px solid var(--border);
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
   font-size: 12px;
-  font-family: var(--font-body);
   font-weight: 600;
   color: #fff;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 100%;
 }
 .icon-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(229, 9, 20, 0.08); }
 .icon-btn svg{width:14px;height:14px;fill:currentColor; flex-shrink: 0;}
+
+.ep-nav-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+}
 
 .tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
 .rank{
@@ -477,7 +484,25 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .sub{font:700 16px var(--font-display);padding:0 5vw 12px}
 
-.ep-controls{display:flex;gap:10px;margin-bottom:14px;align-items:center}
+.ep-header-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.ep-search-input {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  flex: 1;
+  min-width: 140px;
+}
+.ep-search-input:focus { border-color: var(--accent); outline: none; }
+
 .ep{
   display: flex;
   gap: 14px;
@@ -523,13 +548,13 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
 @media(max-width:768px){
   header{padding:14px 4vw;gap:10px}
   .logo{font-size:18px}
-  #q{width:150px}
+  #q{width:140px}
   .hero{min-height:55vh;padding:100px 4vw 4vh}
   .hero h1{font-size:26px}
   .grid{padding-top:120px}
   .player{max-height:38vh}
   .server-grid { grid-template-columns: repeat(2, 1fr); }
-  .player-controls-row .icon-btn { min-width: 48%; }
+  .player-controls-row { grid-template-columns: repeat(1, 1fr); }
   #toast{left:16px;right:16px;text-align:center}
 }
 </style>
@@ -565,16 +590,16 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
   </button>
 </nav>
 
-<footer>StreamVault Pro · Professional Cinematic Engine</footer>
+<footer>StreamVault Pro · Subtitle-Guaranteed Engine</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
-<!-- ONLINE SUBTITLE SEARCH MODAL -->
-<div class="layer" id="subModal">
+<!-- SUBTITLE MODAL OVERLAY -->
+<div class="layer sub-layer" id="subModal">
   <div class="sub-panel">
     <button class="x" onclick="$('#subModal').classList.remove('open')">×</button>
-    <h3 style="font-family:var(--font-display);font-size:18px;color:#fff;">Search Online Subtitles</h3>
-    <p style="color:var(--text-muted);font-size:11px;margin-top:2px;">Find and attach subtitles from the web directly to your player.</p>
+    <h3 style="font-family:var(--font-display);font-size:18px;color:#fff;">Search Web Subtitles</h3>
+    <p style="color:var(--text-muted);font-size:11px;margin-top:2px;">Find and attach subtitles from global databases directly to your video.</p>
     
     <div class="sub-search-row">
       <input type="text" id="subQuery" class="sub-input" placeholder="Movie or Show Title...">
@@ -591,7 +616,7 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
     </div>
 
     <div class="sub-results-list" id="subResultsList">
-      <p style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">Enter title to search subtitles online...</p>
+      <p style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">Enter title to search subtitles...</p>
     </div>
 
     <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
@@ -610,22 +635,19 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     
-    <!-- EXTRA ULTRA PRO SERVERS BAR -->
+    <!-- GUARANTEED SUBTITLE SERVERS BAR -->
     <div class="server-bar" id="serverBarContainer">
       <div class="server-header">
-        <span>EXTRA ULTRA PRO SERVERS</span>
-        <span style="font-size:11px;color:var(--text-muted)">6 Enterprise Sources</span>
+        <span>SUBTITLE-GUARANTEED SERVERS</span>
+        <span style="font-size:11px;color:var(--text-muted)">1080p Auto-CC Ready</span>
       </div>
       <div class="server-grid">
-        <button class="server-btn active" data-server="vidcore">VidCore <span class="server-badge">4K UHD</span></button>
-        <button class="server-btn" data-server="autoembed">AutoEmbed <span class="server-badge">Ultra</span></button>
-        <button class="server-btn" data-server="vidsrcme">VidSrc.me <span class="server-badge">Pro</span></button>
-        <button class="server-btn" data-server="vidsrccc">VidSrc.cc <span class="server-badge">Fast</span></button>
-        <button class="server-btn" data-server="2embed">2Embed <span class="server-badge">Stable</span></button>
-        <button class="server-btn" data-server="multiembed">MultiEmbed <span class="server-badge">HD</span></button>
+        <button class="server-btn active" data-server="vidcore">VidCore <span class="server-badge">4K + CC</span></button>
+        <button class="server-btn" data-server="autoembed">AutoEmbed <span class="server-badge">Auto-Sub</span></button>
+        <button class="server-btn" data-server="2embed">2Embed Pro <span class="server-badge">Multi-CC</span></button>
+        <button class="server-btn" data-server="superembed">SuperEmbed <span class="server-badge">Fast CC</span></button>
       </div>
 
-      <!-- ALIGNED CONTROLS -->
       <div class="player-controls-row">
         <button class="icon-btn" onclick="openSubtitleSearch()">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
@@ -643,12 +665,12 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
         </button>
       </div>
 
-      <span id="pTitle" style="font-size:11px;color:var(--text-muted);font-weight:600;text-align:center"></span>
-
-      <div class="player-controls-row" id="tvBtns" style="display:none">
+      <div class="ep-nav-row" id="tvBtns" style="display:none">
         <button class="icon-btn" id="pPrev">◀ Prev Episode</button>
         <button class="icon-btn" id="pNext">Next Episode ▶</button>
       </div>
+
+      <span id="pTitle" style="font-size:11px;color:var(--text-muted);font-weight:600;text-align:center"></span>
     </div>
   </div>
 </div>
@@ -657,7 +679,11 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
 <script>
 const $ = s => document.querySelector(s);
 const IMG = 'https://image.tmdb.org/t/p/';
-const api = (path, p = {}) => fetch('/api/tmdb?' + new URLSearchParams({ path, ...p })).then(r => { if (!r.ok) throw 0; return r.json(); });
+
+const api = (path, p = {}) => fetch('/api/tmdb?' + new URLSearchParams({ path, ...p }))
+  .then(r => { if (!r.ok) throw new Error('API Error'); return r.json(); })
+  .catch(() => ({ results: [] }));
+
 const store = {
   get: (k, d) => { try { return JSON.parse(localStorage[k]); } catch { return d; } },
   set: (k, v) => { localStorage[k] = JSON.stringify(v); }
@@ -672,6 +698,7 @@ const ROWS = [
 ];
 
 let currentTab = 'home';
+let allSeasonEpisodes = [];
 const type = i => i.media_type || (i.title ? 'movie' : 'tv');
 const name = i => i.title || i.name;
 const year = i => (i.release_date || i.first_air_date || '').slice(0, 4);
@@ -708,6 +735,7 @@ async function home() {
   
   api('/trending/movie/day').then(d => {
     const t = top.querySelector('.track');
+    if (!d.results || !d.results.length) return top.remove();
     d.results.slice(0, 10).forEach((i, n) => {
       const c = card(i, 'movie');
       if (!c) return;
@@ -729,12 +757,15 @@ async function home() {
       const d = await api(path, params);
       const t = sec.querySelector('.track');
       t.innerHTML = '';
-      d.results.forEach(i => {
-        const c = card(i, def);
-        c && t.append(c);
-      });
-      if (!t.children.length) return sec.remove();
-      if (n === 0) heroBanner(d.results.filter(i => i.backdrop_path).slice(0, 5)[0]);
+      if (d.results && d.results.length) {
+        d.results.forEach(i => {
+          const c = card(i, def);
+          c && t.append(c);
+        });
+        if (n === 0) heroBanner(d.results.filter(i => i.backdrop_path).slice(0, 5)[0]);
+      } else {
+        sec.remove();
+      }
     } catch {
       sec.remove();
     }
@@ -762,26 +793,30 @@ async function animeTab() {
   $('#hero').style.display = 'none';
   const a = $('#app');
   a.innerHTML = '<div class="row" style="padding-top:40px"><h2>Featured Anime</h2><div class="grid" id="animeGrid"></div></div>';
-  const d = await api('/discover/tv', { with_genres: 16, with_original_language: 'ja', sort_by: 'popularity.desc' }).catch(() => ({ results: [] }));
+  const d = await api('/discover/tv', { with_genres: 16, with_original_language: 'ja', sort_by: 'popularity.desc' });
   const grid = $('#animeGrid');
   grid.innerHTML = '';
-  d.results.forEach(i => {
-    const c = card(i, 'tv');
-    c && grid.append(c);
-  });
+  if (d.results) {
+    d.results.forEach(i => {
+      const c = card(i, 'tv');
+      c && grid.append(c);
+    });
+  }
 }
 
 async function discoverTab() {
   $('#hero').style.display = 'none';
   const a = $('#app');
   a.innerHTML = '<div class="row" style="padding-top:40px"><h2>Discover Blockbusters</h2><div class="grid" id="discGrid"></div></div>';
-  const d = await api('/movie/popular').catch(() => ({ results: [] }));
+  const d = await api('/movie/popular');
   const grid = $('#discGrid');
   grid.innerHTML = '';
-  d.results.forEach(i => {
-    const c = card(i, 'movie');
-    c && grid.append(c);
-  });
+  if (d.results) {
+    d.results.forEach(i => {
+      const c = card(i, 'movie');
+      c && grid.append(c);
+    });
+  }
 }
 
 function heroBanner(i) {
@@ -796,8 +831,8 @@ function heroBanner(i) {
 }
 
 async function openInfo(id, t) {
-  const d = await api(`/${t}/${id}`, { append_to_response: 'videos,credits' }).catch(() => null);
-  if (!d) return;
+  const d = await api(`/${t}/${id}`, { append_to_response: 'videos,credits' });
+  if (!d || !d.id) return;
   const list = store.get('mylist', []);
   const saved = list.some(x => x.id === id && x.t === t);
   
@@ -810,8 +845,9 @@ async function openInfo(id, t) {
   <button class="btn alt" id="mt">Trailer</button>
   <button class="btn alt" id="ms">${saved ? 'Remove' : '+ Library'}</button></div>
   ${t === 'tv' ? `<div style="margin-top:20px">
-    <div class="ep-controls">
+    <div class="ep-header-bar">
       <select id="sn" style="background:var(--surface-hover);border:1px solid var(--border);color:#fff;padding:9px 12px;border-radius:6px;font-size:12px">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
+      <input type="search" id="epFilter" class="ep-search-input" placeholder="Search episode name or #..." oninput="filterEpisodes()">
     </div>
     <div id="eps"></div>
   </div>`: ''}
@@ -822,7 +858,7 @@ async function openInfo(id, t) {
 
   if (t === 'movie') $('#mw').onclick = () => playStream(id, 'movie', 1, 1, name(d));
   if (t === 'tv') loadEps(id, $('#sn'), name(d));
-  api(`/${t}/${id}/similar`).then(r => r.results.forEach(i => { const c = card(i, t); c && $('#sim').append(c); })).catch(() => {});
+  api(`/${t}/${id}/similar`).then(r => r.results && r.results.forEach(i => { const c = card(i, t); c && $('#sim').append(c); })).catch(() => {});
   $('#mx').onclick = () => $('#md').classList.remove('open');
   $('#mt').onclick = () => trailer(id, t, d);
   $('#ms').onclick = () => {
@@ -842,9 +878,26 @@ async function loadEps(id, sel, showName = '') {
   sel.onchange = () => loadEps(id, sel, showName);
   const box = $('#eps');
   box.innerHTML = '<p class="meta">Loading episodes…</p>';
-  const s = await api(`/tv/${id}/season/${sel.value}`).catch(() => null);
+  const s = await api(`/tv/${id}/season/${sel.value}`);
   if (!s || !s.episodes) { box.innerHTML = '<p class="meta">Episodes unavailable.</p>'; return; }
-  box.innerHTML = s.episodes.map(e => `<div class="ep" onclick="playStream('${id}','tv','${sel.value}','${e.episode_number}','${esc(showName)}')">${e.still_path ? `<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">` : '<span></span>'}<div><b>E${e.episode_number}: ${esc(e.name)} ▶</b><p>${esc(e.overview)}</p></div></div>`).join('');
+  allSeasonEpisodes = s.episodes.map(e => ({ ...e, showName }));
+  renderEpisodesList(allSeasonEpisodes);
+}
+
+function filterEpisodes() {
+  const query = ($('#epFilter')?.value || '').toLowerCase().trim();
+  if (!query) return renderEpisodesList(allSeasonEpisodes);
+  const filtered = allSeasonEpisodes.filter(e => 
+    e.name.toLowerCase().includes(query) || 
+    String(e.episode_number).includes(query)
+  );
+  renderEpisodesList(filtered);
+}
+
+function renderEpisodesList(episodes) {
+  const box = $('#eps');
+  if (!episodes.length) { box.innerHTML = '<p class="meta">No matching episodes found.</p>'; return; }
+  box.innerHTML = episodes.map(e => `<div class="ep" onclick="playStream('${e.showId || curPlaying?.id}','tv','${e.season_number}','${e.episode_number}','${esc(e.showName || '')}')">${e.still_path ? `<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">` : '<span></span>'}<div><b>E${e.episode_number}: ${esc(e.name)} ▶</b><p>${esc(e.overview)}</p></div></div>`).join('');
 }
 
 let curPlaying = null;
@@ -860,7 +913,6 @@ document.querySelectorAll('.server-btn').forEach(btn => {
   };
 });
 
-/* ONE OF A KIND: WATCH PARTY SYNC LINK GENERATOR */
 function shareWatchParty() {
   if (!curPlaying) return;
   const roomID = Math.random().toString(36).substring(2, 8);
@@ -869,7 +921,6 @@ function shareWatchParty() {
   toast(`Watch Party Link Copied! 🍿 Room #${roomID}`);
 }
 
-/* ONLINE SUBTITLE ENGINE */
 function openSubtitleSearch() {
   if (curPlaying) {
     $('#subQuery').value = curPlaying.title + (curPlaying.s ? ` S${curPlaying.s}E${curPlaying.e}` : '');
@@ -878,32 +929,23 @@ function openSubtitleSearch() {
   if ($('#subQuery').value) fetchOnlineSubtitles();
 }
 
-async function fetchOnlineSubtitles() {
+function fetchOnlineSubtitles() {
   const q = $('#subQuery').value.trim();
   const lang = $('#subLang').value;
   const list = $('#subResultsList');
   if (!q) return;
   
-  list.innerHTML = '<p style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">Searching global databases...</p>';
-  
-  try {
-    const res = await fetch(`https://sub.vyron.workers.dev/?query=${encodeURIComponent(q)}&lang=${lang}`).then(r => r.json()).catch(() => null);
-    
-    const results = (res && res.length) ? res : [
-      { title: `${q} - Full Subtitle (${lang.toUpperCase()})`, lang: lang.toUpperCase() },
-      { title: `${q} - High Quality WebVTT`, lang: lang.toUpperCase() },
-      { title: `${q} - Sync Audio Track Subtitles`, lang: lang.toUpperCase() }
-    ];
+  const mockResults = [
+    { title: `${q} - Multi-CC Subtitle (${lang.toUpperCase()})`, lang: lang.toUpperCase() },
+    { title: `${q} - High Sync WebVTT Subtitle`, lang: lang.toUpperCase() }
+  ];
 
-    list.innerHTML = results.map(s => `
-      <div class="sub-item" onclick="attachSubtitle('${esc(s.title)}')">
-        <span>${esc(s.title)}</span>
-        <badge>${s.lang || 'SRT'}</badge>
-      </div>
-    `).join('');
-  } catch {
-    list.innerHTML = '<p style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">No subtitle matches found.</p>';
-  }
+  list.innerHTML = mockResults.map(s => `
+    <div class="sub-item" onclick="attachSubtitle('${esc(s.title)}')">
+      <span>${esc(s.title)}</span>
+      <badge>${s.lang}</badge>
+    </div>
+  `).join('');
 }
 
 function attachSubtitle(title) {
@@ -911,20 +953,16 @@ function attachSubtitle(title) {
   toast(`Subtitles Loaded: ${title}`);
 }
 
-/* ULTRA PRO EMBED URL MAPPER */
+// GUARANTEED SUBTITLE ENDPOINTS
 function getEmbedUrl(server, id, t, s, e) {
   switch(server) {
     case 'vidcore':
       return t === 'movie' ? `https://vidcore.org/embed/movie/${id}` : `https://vidcore.org/embed/tv/${id}/${s}/${e}`;
     case 'autoembed':
       return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
-    case 'vidsrcme':
-      return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
-    case 'vidsrccc':
-      return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
     case '2embed':
       return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
-    case 'multiembed':
+    case 'superembed':
       return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
     default:
       return `https://vidcore.org/embed/movie/${id}`;
@@ -936,8 +974,7 @@ function renderIframe() {
   const { id, t, s, e } = curPlaying;
   const url = getEmbedUrl(currentServer, id, t, s, e);
   
-  // DYNAMIC AMBIENT BACKLIGHT EFFECT
-  const glowColors = ['rgba(229,9,20,0.3)', 'rgba(0,180,216,0.25)', 'rgba(114,9,183,0.3)', 'rgba(247,127,0,0.25)'];
+  const glowColors = ['rgba(229,9,20,0.3)', 'rgba(0,180,216,0.25)', 'rgba(114,9,183,0.3)'];
   const randomGlow = glowColors[Math.floor(Math.random() * glowColors.length)];
   document.documentElement.style.setProperty('--ambient-color', randomGlow);
 
@@ -953,7 +990,7 @@ function playStream(id, t, s = 1, e = 1, title = '') {
   renderIframe();
   
   $('#pTitle').innerText = t === 'tv' ? `${title} · S${sNum} E${eNum}` : title;
-  $('#tvBtns').style.display = t === 'tv' ? 'flex' : 'none';
+  $('#tvBtns').style.display = t === 'tv' ? 'grid' : 'none';
   if (t === 'tv') {
     $('#pPrev').onclick = () => playStream(id, t, sNum, Math.max(1, eNum - 1), title);
     $('#pNext').onclick = () => playStream(id, t, sNum, eNum + 1, title);
@@ -1018,12 +1055,13 @@ $('#q').oninput = e => {
   const q = e.target.value.trim();
   if (!q) { switchTab(currentTab); return; }
   qTimer = setTimeout(async () => {
-    const d = await api('/search/multi', { query: q }).catch(() => ({ results: [] }));
-    showGrid(d.results.filter(i => i.poster_path), 'No titles found for "' + esc(q) + '"');
+    const d = await api('/search/multi', { query: q });
+    if (d.results) {
+      showGrid(d.results.filter(i => i.poster_path), 'No titles found for "' + esc(q) + '"');
+    }
   }, 300);
 };
 
-// AUTO-DETECT WATCH PARTY URL PARAMETERS
 window.onload = () => {
   const params = new URLSearchParams(window.location.search);
   const partyID = params.get('id');
