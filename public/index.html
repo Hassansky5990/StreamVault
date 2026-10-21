@@ -442,8 +442,8 @@ footer{padding:40px 5vw;color:var(--text-muted);font-size:12px;text-align:center
       <div class="player-row">
         <select id="srcSelect">
           <option value="vidrift">Server 1 (VidRift)</option>
-          <option value="lumen">Server 2 (Lumen / Vidsrc CC)</option>
-          <option value="apiplayer">Server 3 (APIPlayer)</option>
+          <option value="apiplayer">Server 2 (APIPlayer)</option>
+          <option value="vidsrcnet">Server 3 (VidSrc.me Mirror)</option>
           <option value="2embed">Server 4 (2Embed)</option>
         </select>
         <button class="icon-btn" id="nextServerBtn" style="flex:0 0 auto">🔄 Cycle Server</button>
@@ -666,15 +666,15 @@ $('#autoNextToggle').onclick = () => {
   $('#autoNextStatus').innerText = autoNextEnabled ? 'ON' : 'OFF';
 };
 
-// EMBED ROUTER WITH APIPLAYER ADDED
+// CLEAN SERVERS ROUTER (BLOCKED DOMAINS PURGED)
 function getEmbedUrl(provider, id, t, s, e) {
   switch(provider) {
     case 'vidrift':
       return t === 'movie' ? `https://embed.vidrift.net/embed/movie/${id}` : `https://embed.vidrift.net/embed/tv/${id}/${s}/${e}`;
-    case 'lumen':
-      return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
     case 'apiplayer':
       return t === 'movie' ? `https://apiplayer.co/embed/movie/${id}` : `https://apiplayer.co/embed/tv/${id}/${s}/${e}`;
+    case 'vidsrcnet':
+      return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
     case '2embed':
       return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
     default:
