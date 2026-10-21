@@ -6,9 +6,8 @@
 <title>StreamVault</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://www.2embed.cc">
-<link rel="preconnect" href="https://multiembed.mov">
-<link rel="preconnect" href="https://player.autoembed.cc">
+<link rel="preconnect" href="https://vidsrc.me">
+<link rel="preconnect" href="https://vidsrc.cc">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -499,7 +498,7 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault · High Performance Engine</footer>
+<footer>StreamVault · Ultra-Fast Light Engine</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
@@ -509,16 +508,16 @@ footer{padding:30px 5vw 90px;color:var(--text-muted);font-size:11px;text-align:c
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     
-    <!-- SERVER BAR -->
+    <!-- SERVER BAR (Lightweight Fast Servers) -->
     <div class="server-bar" id="serverBarContainer">
       <div class="server-header">
-        <span>SELECT STREAM SERVER</span>
-        <span style="font-size:11px;color:var(--text-muted)">3 Stable Sources</span>
+        <span>LIGHTNING SERVERS (LOW WIFI READY)</span>
+        <span style="font-size:11px;color:var(--text-muted)">3 Ultra-Fast Sources</span>
       </div>
       <div class="server-grid">
-        <button class="server-btn active" data-server="2embed">2Embed <span class="server-badge">Fast</span></button>
-        <button class="server-btn" data-server="multiembed">Multiembed <span class="server-badge">Stable</span></button>
-        <button class="server-btn" data-server="autoembed">AutoEmbed</button>
+        <button class="server-btn active" data-server="vidsrcme">VidSrc.me <span class="server-badge">Instant</span></button>
+        <button class="server-btn" data-server="vidsrccc">VidSrc.cc <span class="server-badge">Fast</span></button>
+        <button class="server-btn" data-server="vidsrcnet">VidSrc.net <span class="server-badge">Light</span></button>
       </div>
 
       <div class="player-controls-row">
@@ -743,7 +742,7 @@ async function loadEps(id, sel, showName = '') {
 }
 
 let curPlaying = null;
-let currentServer = '2embed';
+let currentServer = 'vidsrcme';
 let autoNextEnabled = true;
 
 $('#autoNextToggle').onclick = () => {
@@ -761,16 +760,17 @@ document.querySelectorAll('.server-btn').forEach(btn => {
   };
 });
 
+// ULTRA-LIGHT DIRECT EMBEDS FOR WEAK WIFI
 function getEmbedUrl(server, id, t, s, e) {
   switch(server) {
-    case '2embed':
-      return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
-    case 'multiembed':
-      return t === 'movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`;
-    case 'autoembed':
-      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
+    case 'vidsrcme':
+      return t === 'movie' ? `https://vidsrc.me/embed/movie?tmdb=${id}` : `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
+    case 'vidsrccc':
+      return t === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`;
+    case 'vidsrcnet':
+      return t === 'movie' ? `https://vidsrc.net/embed/movie/${id}` : `https://vidsrc.net/embed/tv/${id}/${s}/${e}`;
     default:
-      return `https://www.2embed.cc/embed/${id}`;
+      return `https://vidsrc.me/embed/movie?tmdb=${id}`;
   }
 }
 
