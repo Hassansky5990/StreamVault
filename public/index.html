@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault Pro</title>
+<title>StreamVault Pro · Ultimate Edition</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://vidcore.org">
@@ -16,7 +16,7 @@
   --bg: #050407;
   --surface: #0e0c14;
   --surface-hover: #171421;
-  --surface-glass: rgba(14, 12, 20, 0.88);
+  --surface-glass: rgba(14, 12, 20, 0.9);
   --border: rgba(255, 255, 255, 0.08);
   --border-focus: rgba(229, 9, 20, 0.5);
   --text-main: #f9f8fc;
@@ -28,7 +28,7 @@
   --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
   --radius-sm: 10px;
   --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-lg: 20px;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -274,7 +274,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .layer{
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 50;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(16px);
   display: none;
@@ -318,17 +318,17 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .x:hover{background:rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.4)}
 
-/* SUBTITLE MODAL OVERLAY (OVER PLAYER) */
-.sub-layer { z-index: 70; }
+/* SUBTITLE MODAL (FIXED ALIGNMENT LAYER) */
+.sub-layer { z-index: 9999; }
 .sub-panel {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  max-width: 580px;
+  max-width: 520px;
   width: 100%;
   padding: 24px;
   position: relative;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
 }
 .sub-search-row {
   display: flex;
@@ -354,7 +354,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   font-size: 12px;
 }
 .sub-results-list {
-  max-height: 240px;
+  max-height: 220px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -384,19 +384,19 @@ main{position:relative;z-index:3;margin-top:-3vh}
   width: 100%;
   max-width: 960px;
   max-height: 94vh;
-  gap: 14px;
+  gap: 12px;
   margin: auto;
 }
 .player{
   width: 100%;
   aspect-ratio: 16/9;
-  max-height: 54vh;
+  max-height: 52vh;
   background: #000;
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
   border: 1px solid var(--border);
-  box-shadow: 0 0 80px var(--ambient-color), 0 24px 60px rgba(0,0,0,0.95);
+  box-shadow: 0 0 70px var(--ambient-color), 0 24px 60px rgba(0,0,0,0.95);
   transition: box-shadow 0.8s ease;
 }
 .player iframe{width:100%;height:100%;border:0;display:block}
@@ -404,10 +404,10 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .server-bar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   background: var(--surface);
-  padding: 18px;
+  padding: 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -423,54 +423,55 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .server-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
 }
 .server-btn {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
-  padding: 10px 14px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 4px;
 }
 .server-btn:hover { background: var(--surface-hover); color: #fff; border-color: rgba(255,255,255,0.25); }
 .server-btn.active { background: rgba(229, 9, 20, 0.12); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(229,9,20,0.2); }
-.server-badge { font-size: 8px; background: var(--accent); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+.server-badge { font-size: 7px; background: var(--accent); color: #fff; padding: 2px 4px; border-radius: 3px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; }
 
+/* STRICT 3-COLUMN CONTROLS GRID */
 .player-controls-row { 
   display: grid; 
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px; 
+  gap: 8px; 
   align-items: center; 
   width: 100%; 
 }
 .icon-btn {
   background: var(--surface-hover);
   border: 1px solid var(--border);
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
 }
 .icon-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(229, 9, 20, 0.08); }
-.icon-btn svg{width:14px;height:14px;fill:currentColor; flex-shrink: 0;}
+.icon-btn svg{width:13px;height:13px;fill:currentColor; flex-shrink: 0;}
 
 .ep-nav-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -486,7 +487,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 
 .ep-header-bar {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   margin-bottom: 14px;
   flex-wrap: wrap;
@@ -540,7 +541,7 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
   border-radius: var(--radius-sm);
   font-weight: 700;
   font-size: 12px;
-  z-index: 100;
+  z-index: 1000;
   display: none;
   box-shadow: 0 8px 24px rgba(0,0,0,0.6);
 }
@@ -548,13 +549,14 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
 @media(max-width:768px){
   header{padding:14px 4vw;gap:10px}
   .logo{font-size:18px}
-  #q{width:140px}
+  #q{width:130px}
   .hero{min-height:55vh;padding:100px 4vw 4vh}
-  .hero h1{font-size:26px}
+  .hero h1{font-size:24px}
   .grid{padding-top:120px}
-  .player{max-height:38vh}
+  .player{max-height:36vh}
   .server-grid { grid-template-columns: repeat(2, 1fr); }
   .player-controls-row { grid-template-columns: repeat(1, 1fr); }
+  .ep-nav-row { grid-template-columns: repeat(1, 1fr); }
   #toast{left:16px;right:16px;text-align:center}
 }
 </style>
@@ -594,12 +596,12 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
-<!-- SUBTITLE MODAL OVERLAY -->
+<!-- SUBTITLE MODAL (FIXED OVERLAY LAYER) -->
 <div class="layer sub-layer" id="subModal">
   <div class="sub-panel">
     <button class="x" onclick="$('#subModal').classList.remove('open')">×</button>
     <h3 style="font-family:var(--font-display);font-size:18px;color:#fff;">Search Web Subtitles</h3>
-    <p style="color:var(--text-muted);font-size:11px;margin-top:2px;">Find and attach subtitles from global databases directly to your video.</p>
+    <p style="color:var(--text-muted);font-size:11px;margin-top:2px;">Find and attach subtitles from global databases instantly.</p>
     
     <div class="sub-search-row">
       <input type="text" id="subQuery" class="sub-input" placeholder="Movie or Show Title...">
@@ -635,17 +637,17 @@ footer{padding:35px 5vw 100px;color:var(--text-muted);font-size:11px;text-align:
   <div class="player-wrap">
     <div class="player" id="pv"></div>
     
-    <!-- GUARANTEED SUBTITLE SERVERS BAR -->
+    <!-- SUBTITLE-GUARANTEED SERVERS BAR -->
     <div class="server-bar" id="serverBarContainer">
       <div class="server-header">
         <span>SUBTITLE-GUARANTEED SERVERS</span>
         <span style="font-size:11px;color:var(--text-muted)">1080p Auto-CC Ready</span>
       </div>
       <div class="server-grid">
-        <button class="server-btn active" data-server="vidcore">VidCore <span class="server-badge">4K + CC</span></button>
-        <button class="server-btn" data-server="autoembed">AutoEmbed <span class="server-badge">Auto-Sub</span></button>
-        <button class="server-btn" data-server="2embed">2Embed Pro <span class="server-badge">Multi-CC</span></button>
-        <button class="server-btn" data-server="superembed">SuperEmbed <span class="server-badge">Fast CC</span></button>
+        <button class="server-btn active" data-server="vidcore">VidCore <span class="server-badge">4K+CC</span></button>
+        <button class="server-btn" data-server="autoembed">AutoEmbed <span class="server-badge">Auto</span></button>
+        <button class="server-btn" data-server="2embed">2Embed <span class="server-badge">CC</span></button>
+        <button class="server-btn" data-server="superembed">SuperEmbed <span class="server-badge">Fast</span></button>
       </div>
 
       <div class="player-controls-row">
@@ -857,7 +859,7 @@ async function openInfo(id, t) {
   $('#mp').scrollTop = 0;
 
   if (t === 'movie') $('#mw').onclick = () => playStream(id, 'movie', 1, 1, name(d));
-  if (t === 'tv') loadEps(id, $('#sn'), name(d));
+  if (t === 'tv') loadEps(id, $('#sn'), name(d), id);
   api(`/${t}/${id}/similar`).then(r => r.results && r.results.forEach(i => { const c = card(i, t); c && $('#sim').append(c); })).catch(() => {});
   $('#mx').onclick = () => $('#md').classList.remove('open');
   $('#mt').onclick = () => trailer(id, t, d);
@@ -873,14 +875,14 @@ async function openInfo(id, t) {
 $('#md').onclick = e => { if (e.target === $('#md')) $('#md').classList.remove('open'); };
 $('#pl').onclick = e => { if (e.target === $('#pl')) closePlayer(); };
 
-async function loadEps(id, sel, showName = '') {
+async function loadEps(id, sel, showName = '', showId = id) {
   if (!sel || !sel.value) return;
-  sel.onchange = () => loadEps(id, sel, showName);
+  sel.onchange = () => loadEps(id, sel, showName, showId);
   const box = $('#eps');
   box.innerHTML = '<p class="meta">Loading episodes…</p>';
   const s = await api(`/tv/${id}/season/${sel.value}`);
   if (!s || !s.episodes) { box.innerHTML = '<p class="meta">Episodes unavailable.</p>'; return; }
-  allSeasonEpisodes = s.episodes.map(e => ({ ...e, showName }));
+  allSeasonEpisodes = s.episodes.map(e => ({ ...e, showName, showId }));
   renderEpisodesList(allSeasonEpisodes);
 }
 
@@ -897,7 +899,7 @@ function filterEpisodes() {
 function renderEpisodesList(episodes) {
   const box = $('#eps');
   if (!episodes.length) { box.innerHTML = '<p class="meta">No matching episodes found.</p>'; return; }
-  box.innerHTML = episodes.map(e => `<div class="ep" onclick="playStream('${e.showId || curPlaying?.id}','tv','${e.season_number}','${e.episode_number}','${esc(e.showName || '')}')">${e.still_path ? `<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">` : '<span></span>'}<div><b>E${e.episode_number}: ${esc(e.name)} ▶</b><p>${esc(e.overview)}</p></div></div>`).join('');
+  box.innerHTML = episodes.map(e => `<div class="ep" onclick="playStream('${e.showId}','tv','${e.season_number}','${e.episode_number}','${esc(e.showName)}')">${e.still_path ? `<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">` : '<span></span>'}<div><b>E${e.episode_number}: ${esc(e.name)} ▶</b><p>${esc(e.overview)}</p></div></div>`).join('');
 }
 
 let curPlaying = null;
@@ -953,7 +955,7 @@ function attachSubtitle(title) {
   toast(`Subtitles Loaded: ${title}`);
 }
 
-// GUARANTEED SUBTITLE ENDPOINTS
+// 100% SUBTITLE-GUARANTEED EMBED URL MAPPER
 function getEmbedUrl(server, id, t, s, e) {
   switch(server) {
     case 'vidcore':
