@@ -363,10 +363,15 @@
 
     <!-- VIEW: DISCOVER TAB -->
     <div id="tab-discover" class="hidden space-y-6">
-      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">Discover & Filter</h2>
           <p class="text-xs sm:text-sm text-gray-400">Explore extensive libraries by genre and media type</p>
+        </div>
+        
+        <!-- Interactive Genre Selector in Discover Tab -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 track-no-bar" id="discoverGenreBar">
+          <!-- Populated by JS -->
         </div>
       </div>
       <div id="discoverGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -570,6 +575,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       initNavigation();
       renderGenreChips();
+      renderDiscoverGenres();
       fetchHomeData();
       renderLibraryView();
     });
@@ -732,11 +738,12 @@
     // --- GENRE CHIPS ---
     function renderGenreChips() {
       const container = document.getElementById('genreChipsTrack');
+      if (!container) return;
       container.innerHTML = '';
 
       GENRES.forEach(g => {
         const btn = document.createElement('button');
-        btn.className = 'std-btn bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-xs py-1 px-4 rounded-full';
+        btn.className = 'std-btn bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-xs py-1 px-4 rounded-full transition-all';
         btn.innerText = g.name;
         btn.onclick = () => {
           switchTab('discover');
@@ -746,12 +753,39 @@
       });
     }
 
+    function renderDiscoverGenres() {
+      const container = document.getElementById('discoverGenreBar');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const allBtn = document.createElement('button');
+      allBtn.className = 'discover-genre-btn std-btn bg-accent text-white text-xs py-1 px-3.5 rounded-xl transition-all font-semibold shrink-0';
+      allBtn.innerText = 'All Genres';
+      allBtn.setAttribute('data-genre-id', 'all');
+      allBtn.onclick = () => loadDiscoverTab();
+      container.appendChild(allBtn);
+
+      GENRES.forEach(g => {
+        const btn = document.createElement('button');
+        btn.className = 'discover-genre-btn std-btn bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-xs py-1 px-3.5 rounded-xl transition-all shrink-0';
+        btn.innerText = g.name;
+        btn.setAttribute('data-genre-id', g.id);
+        btn.onclick = () => filterByGenre(g.id);
+        container.appendChild(btn);
+      });
+    }
+
     // --- ANIME TAB ENGINE ---
     async function loadAnimeTab() {
       const grid = document.getElementById('animeGrid');
-      grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs">Loading Anime...</div>';
+      grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs flex items-center justify-center gap-2"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Fetching Anime Collection...</div>';
 
-      const data = await tmdbFetch('/discover/tv?with_genres=16&with_original_language=ja&sort_by=popularity.desc');
+      let data = await tmdbFetch('/discover/tv?with_genres=16&with_original_language=ja&sort_by=popularity.desc');
+      
+      if (!data || !data.results || data.results.length === 0) {
+        data = await tmdbFetch('/discover/tv?with_genres=16&sort_by=popularity.desc');
+      }
+
       grid.innerHTML = '';
 
       if (data && Array.isArray(data.results) && data.results.length > 0) {
@@ -762,16 +796,17 @@
           grid.appendChild(card);
         });
       } else {
-        grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-500 text-xs">No anime titles found.</div>';
+        grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-500 text-xs">No anime titles found at this moment.</div>';
       }
     }
 
     // --- DISCOVER TAB ENGINE ---
     async function loadDiscoverTab() {
+      highlightActiveGenre('all');
       const grid = document.getElementById('discoverGrid');
-      grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs">Loading Media...</div>';
+      grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs flex items-center justify-center gap-2"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Loading Popular Movies...</div>';
 
-      const data = await tmdbFetch('/discover/movie');
+      const data = await tmdbFetch('/discover/movie?sort_by=popularity.desc');
       grid.innerHTML = '';
 
       if (data && Array.isArray(data.results) && data.results.length > 0) {
@@ -785,10 +820,11 @@
     }
 
     async function filterByGenre(genreId) {
+      highlightActiveGenre(genreId);
       const grid = document.getElementById('discoverGrid');
-      grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs">Filtering...</div>';
+      grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs flex items-center justify-center gap-2"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Filtering Movies...</div>';
 
-      const data = await tmdbFetch(`/discover/movie?with_genres=${genreId}`);
+      const data = await tmdbFetch(`/discover/movie?with_genres=${genreId}&sort_by=popularity.desc`);
       grid.innerHTML = '';
 
       if (data && Array.isArray(data.results) && data.results.length > 0) {
@@ -798,7 +834,19 @@
           card.classList.add('w-full');
           grid.appendChild(card);
         });
+      } else {
+        grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-500 text-xs">No titles found for selected genre.</div>';
       }
+    }
+
+    function highlightActiveGenre(genreId) {
+      document.querySelectorAll('.discover-genre-btn').forEach(btn => {
+        if (btn.getAttribute('data-genre-id') == genreId) {
+          btn.className = 'discover-genre-btn std-btn bg-accent text-white text-xs py-1 px-3.5 rounded-xl font-semibold shrink-0 shadow-md shadow-accent/20';
+        } else {
+          btn.className = 'discover-genre-btn std-btn bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-xs py-1 px-3.5 rounded-xl shrink-0';
+        }
+      });
     }
 
     // --- SEARCH CONTROLLER ---
