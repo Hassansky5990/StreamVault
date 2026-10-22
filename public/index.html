@@ -8,6 +8,8 @@
   <!-- Fonts: Inter & Outfit for refined, high-end UI hierarchy -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://image.tmdb.org" crossorigin />
+  <link rel="preconnect" href="https://api.themoviedb.org" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   
   <!-- Tailwind CSS CDN -->
@@ -75,6 +77,7 @@
     .track-no-bar {
       -ms-overflow-style: none;
       scrollbar-width: none;
+      scroll-behavior: smooth;
     }
 
     /* Refined Liquid Glass Surfaces */
@@ -297,14 +300,22 @@
         </div>
       </section>
 
-      <!-- TOP 10 TODAY ROW -->
-      <section class="space-y-4">
+      <!-- TOP 10 TODAY ROW WITH SLIDER BUTTONS -->
+      <section class="space-y-4 relative">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="w-1.5 h-5 bg-accent rounded-full"></div>
             <h2 class="font-heading text-xl sm:text-2xl font-bold text-white tracking-tight">Top 10 Today</h2>
           </div>
-          <span class="text-xs text-gray-400 font-medium">Updated daily</span>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 font-medium mr-2 hidden sm:inline">Updated daily</span>
+            <button onclick="scrollTrack('top10Track', -350)" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white transition-all shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button onclick="scrollTrack('top10Track', 350)" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white transition-all shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
 
         <div id="top10Track" class="flex gap-4 sm:gap-6 overflow-x-auto pb-4 track-no-bar pt-2">
@@ -312,11 +323,11 @@
         </div>
       </section>
 
-      <!-- GENRE QUICK CHIPS BAR -->
+      <!-- GENRE QUICK CHIPS BAR (STATIC WRAP, NO SLIDER) -->
       <section class="space-y-3">
         <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Popular Categories</h3>
-        <div id="genreChipsTrack" class="flex items-center gap-2 overflow-x-auto pb-2 track-no-bar">
-          <!-- Populated dynamically -->
+        <div id="genreChipsTrack" class="flex flex-wrap items-center gap-2">
+          <!-- Populated dynamically as static flex items -->
         </div>
       </section>
 
@@ -327,18 +338,34 @@
             <div class="w-1.5 h-5 bg-violet-500 rounded-full"></div>
             <h2 class="font-heading text-xl sm:text-2xl font-bold text-white tracking-tight">Trending Movies</h2>
           </div>
+          <div class="flex items-center gap-2">
+            <button onclick="scrollTrack('trendingMoviesTrack', -400)" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white transition-all shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button onclick="scrollTrack('trendingMoviesTrack', 400)" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white transition-all shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
         <div id="trendingMoviesTrack" class="flex gap-4 overflow-x-auto pb-4 track-no-bar">
           <!-- Populated dynamically -->
         </div>
       </section>
 
-      <!-- POPULAR TV SHOWS ROW -->
+      <!-- Popular TV Shows Row -->
       <section class="space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="w-1.5 h-5 bg-red-500 rounded-full"></div>
             <h2 class="font-heading text-xl sm:text-2xl font-bold text-white tracking-tight">Popular Series & Shows</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="scrollTrack('popularTvTrack', -400)" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white transition-all shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button onclick="scrollTrack('popularTvTrack', 400)" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white transition-all shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
           </div>
         </div>
         <div id="popularTvTrack" class="flex gap-4 overflow-x-auto pb-4 track-no-bar">
@@ -350,10 +377,19 @@
 
     <!-- VIEW: ANIME TAB -->
     <div id="tab-anime" class="hidden space-y-6">
-      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">Anime Collection</h2>
           <p class="text-xs sm:text-sm text-gray-400">Discover trending subbed & dubbed Japanese animation</p>
+        </div>
+        
+        <!-- Interactive Anime Genre Selector Bar with Slider Buttons -->
+        <div class="flex items-center gap-2">
+          <button onclick="scrollTrack('animeGenreBar', -220)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white shrink-0 text-xs">‹</button>
+          <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 track-no-bar max-w-md" id="animeGenreBar">
+            <!-- Populated by JS -->
+          </div>
+          <button onclick="scrollTrack('animeGenreBar', 220)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white shrink-0 text-xs">›</button>
         </div>
       </div>
       <div id="animeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -369,9 +405,13 @@
           <p class="text-xs sm:text-sm text-gray-400">Explore extensive libraries by genre and media type</p>
         </div>
         
-        <!-- Interactive Genre Selector in Discover Tab -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 track-no-bar" id="discoverGenreBar">
-          <!-- Populated by JS -->
+        <!-- Interactive Genre Selector in Discover Tab with Slider Buttons -->
+        <div class="flex items-center gap-2">
+          <button onclick="scrollTrack('discoverGenreBar', -220)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white shrink-0 text-xs">‹</button>
+          <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 track-no-bar max-w-md" id="discoverGenreBar">
+            <!-- Populated by JS -->
+          </div>
+          <button onclick="scrollTrack('discoverGenreBar', 220)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white shrink-0 text-xs">›</button>
         </div>
       </div>
       <div id="discoverGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -543,6 +583,7 @@
     const TMDB_API_KEY = "6c9d63d13035995f6127e4b5c3689cb4";
     const BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
     const BACKDROP_IMAGE_URL = "https://image.tmdb.org/t/p/original";
+    const PLACEHOLDER_POSTER = "https://placehold.co/300x450/12121a/e50914?text=StreamVault";
 
     let currentTab = 'home';
     let currentMedia = null;
@@ -551,6 +592,7 @@
     let currentEpisode = 1;
     let episodesData = [];
     let searchDebounceTimer = null;
+    const fetchCache = new Map();
 
     // Stream Server Proxy Formatters
     const SERVERS = [
@@ -571,14 +613,33 @@
       { id: 878, name: 'Sci-Fi' }
     ];
 
+    const ANIME_GENRES = [
+      { id: 'all', name: 'All Anime' },
+      { id: 16, name: 'Animation' },
+      { id: 10759, name: 'Action & Adventure' },
+      { id: 35, name: 'Comedy' },
+      { id: 18, name: 'Drama' },
+      { id: 9648, name: 'Mystery' },
+      { id: 10765, name: 'Sci-Fi & Fantasy' }
+    ];
+
     // --- INITIALIZATION ---
     window.addEventListener('DOMContentLoaded', () => {
       initNavigation();
       renderGenreChips();
       renderDiscoverGenres();
+      renderAnimeGenres();
       fetchHomeData();
       renderLibraryView();
     });
+
+    // --- HORIZONTAL SLIDER CONTROLLER ---
+    function scrollTrack(trackId, offset) {
+      const track = document.getElementById(trackId);
+      if (track) {
+        track.scrollBy({ left: offset, behavior: 'smooth' });
+      }
+    }
 
     // --- NAVIGATION CONTROLLER ---
     function initNavigation() {
@@ -618,30 +679,39 @@
       }
     }
 
-    // --- TMDB API FETCH ENGINE ---
+    // --- OPTIMIZED TMDB API FETCH ENGINE WITH IN-MEMORY CACHE ---
     async function tmdbFetch(endpoint) {
+      if (fetchCache.has(endpoint)) {
+        return fetchCache.get(endpoint);
+      }
       try {
-        const res = await fetch(`https://api.themoviedb.org/3${endpoint}?api_key=${TMDB_API_KEY}&language=en-US`);
-        return await res.json();
+        const res = await fetch(`https://api.themoviedb.org/3${endpoint}${endpoint.includes('?') ? '&' : '?'}api_key=${TMDB_API_KEY}&language=en-US`);
+        const data = await res.json();
+        if (data) fetchCache.set(endpoint, data);
+        return data;
       } catch (err) {
         console.error("TMDB Fetch Error:", err);
         return null;
       }
     }
 
+    // --- PARALLEL ASYNC LOADING ---
     async function fetchHomeData() {
-      const trending = await tmdbFetch('/trending/movie/week');
+      const [trending, tvShows, top10Data] = await Promise.all([
+        tmdbFetch('/trending/movie/week'),
+        tmdbFetch('/tv/popular'),
+        tmdbFetch('/trending/all/day')
+      ]);
+
       if (trending && Array.isArray(trending.results) && trending.results.length > 0) {
         setupHeroBanner(trending.results[0]);
         renderMediaTrack('trendingMoviesTrack', trending.results, 'movie');
       }
 
-      const tvShows = await tmdbFetch('/tv/popular');
       if (tvShows && Array.isArray(tvShows.results)) {
         renderMediaTrack('popularTvTrack', tvShows.results, 'tv');
       }
 
-      const top10Data = await tmdbFetch('/trending/all/day');
       if (top10Data && Array.isArray(top10Data.results)) {
         renderTop10Row(top10Data.results.slice(0, 10));
       }
@@ -657,7 +727,8 @@
       const heroPlayBtn = document.getElementById('heroPlayBtn');
       const heroBookmarkBtn = document.getElementById('heroBookmarkBtn');
 
-      heroBg.style.backgroundImage = `url(${BACKDROP_IMAGE_URL}${item.backdrop_path || item.poster_path})`;
+      const bgUrl = item.backdrop_path || item.poster_path ? `${BACKDROP_IMAGE_URL}${item.backdrop_path || item.poster_path}` : PLACEHOLDER_POSTER;
+      heroBg.style.backgroundImage = `url(${bgUrl})`;
       heroTitle.innerText = item.title || item.name;
       heroOverview.innerText = item.overview || "Experience high quality streaming directly from your web browser.";
       heroRating.innerText = `★ ${(item.vote_average || 8.5).toFixed(1)}`;
@@ -674,7 +745,7 @@
 
       items.forEach((item, index) => {
         const rank = index + 1;
-        const posterSrc = item.poster_path ? `${BASE_IMAGE_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450/111/fff?text=No+Poster';
+        const posterSrc = item.poster_path ? `${BASE_IMAGE_URL}${item.poster_path}` : PLACEHOLDER_POSTER;
         const type = item.media_type || (item.title ? 'movie' : 'tv');
 
         const el = document.createElement('div');
@@ -684,7 +755,7 @@
         el.innerHTML = `
           <div class="tp-rank-num">${rank}</div>
           <div class="w-32 sm:w-40 rounded-2xl overflow-hidden liquid-glass-card transition-all duration-300 group-hover:scale-105 shadow-xl relative">
-            <img src="${posterSrc}" alt="Poster" class="w-full h-48 sm:h-56 object-cover" loading="lazy" />
+            <img src="${posterSrc}" alt="Poster" class="w-full h-48 sm:h-56 object-cover" loading="lazy" onerror="this.src='${PLACEHOLDER_POSTER}'" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-end">
               <span class="text-xs font-bold text-white leading-tight clamp-2">${item.title || item.name}</span>
             </div>
@@ -706,7 +777,7 @@
     }
 
     function createMediaCard(item, mediaType) {
-      const posterSrc = item.poster_path ? `${BASE_IMAGE_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450/111/fff?text=No+Poster';
+      const posterSrc = item.poster_path ? `${BASE_IMAGE_URL}${item.poster_path}` : PLACEHOLDER_POSTER;
       const title = item.title || item.name || 'Untitled';
       const rating = (item.vote_average || 0).toFixed(1);
       const year = (item.release_date || item.first_air_date || '').substring(0, 4);
@@ -717,7 +788,7 @@
 
       card.innerHTML = `
         <div class="relative rounded-2xl overflow-hidden liquid-glass-card aspect-[2/3] transition-all duration-300 group-hover:scale-105 shadow-md">
-          <img src="${posterSrc}" alt="${title}" class="w-full h-full object-cover" loading="lazy" />
+          <img src="${posterSrc}" alt="${title}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='${PLACEHOLDER_POSTER}'" />
           <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md text-[10px] font-bold text-yellow-400">
             ★ ${rating}
           </div>
@@ -775,8 +846,25 @@
       });
     }
 
+    function renderAnimeGenres() {
+      const container = document.getElementById('animeGenreBar');
+      if (!container) return;
+      container.innerHTML = '';
+
+      ANIME_GENRES.forEach((ag, index) => {
+        const btn = document.createElement('button');
+        const isActive = index === 0;
+        btn.className = `anime-genre-btn std-btn ${isActive ? 'bg-accent text-white font-semibold shadow-md shadow-accent/20' : 'bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300'} text-xs py-1 px-3.5 rounded-xl transition-all shrink-0`;
+        btn.innerText = ag.name;
+        btn.setAttribute('data-anime-genre', ag.id);
+        btn.onclick = () => filterAnimeByGenre(ag.id);
+        container.appendChild(btn);
+      });
+    }
+
     // --- ANIME TAB ENGINE ---
     async function loadAnimeTab() {
+      renderAnimeGenres();
       const grid = document.getElementById('animeGrid');
       grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs flex items-center justify-center gap-2"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Fetching Anime Collection...</div>';
 
@@ -800,8 +888,41 @@
       }
     }
 
+    async function filterAnimeByGenre(genreId) {
+      document.querySelectorAll('.anime-genre-btn').forEach(btn => {
+        if (btn.getAttribute('data-anime-genre') == genreId) {
+          btn.className = 'anime-genre-btn std-btn bg-accent text-white text-xs py-1 px-3.5 rounded-xl font-semibold shrink-0 shadow-md shadow-accent/20';
+        } else {
+          btn.className = 'anime-genre-btn std-btn bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 text-xs py-1 px-3.5 rounded-xl shrink-0';
+        }
+      });
+
+      const grid = document.getElementById('animeGrid');
+      grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs flex items-center justify-center gap-2"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Filtering Anime...</div>';
+
+      let endpoint = '/discover/tv?with_genres=16&with_original_language=ja&sort_by=popularity.desc';
+      if (genreId !== 'all') {
+        endpoint = `/discover/tv?with_genres=16,${genreId}&with_original_language=ja&sort_by=popularity.desc`;
+      }
+
+      const data = await tmdbFetch(endpoint);
+      grid.innerHTML = '';
+
+      if (data && Array.isArray(data.results) && data.results.length > 0) {
+        data.results.forEach(item => {
+          const card = createMediaCard(item, 'tv');
+          card.classList.remove('w-36', 'sm:w-44', 'shrink-0');
+          card.classList.add('w-full');
+          grid.appendChild(card);
+        });
+      } else {
+        grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-500 text-xs">No anime found for selected category.</div>';
+      }
+    }
+
     // --- DISCOVER TAB ENGINE ---
     async function loadDiscoverTab() {
+      renderDiscoverGenres();
       highlightActiveGenre('all');
       const grid = document.getElementById('discoverGrid');
       grid.innerHTML = '<div class="col-span-full py-12 text-center text-gray-400 text-xs flex items-center justify-center gap-2"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Loading Popular Movies...</div>';
@@ -849,155 +970,149 @@
       });
     }
 
-    // --- SEARCH CONTROLLER ---
-    function handleSearchInput(e) {
-      const query = e.target.value.trim();
-      const clearBtn = document.getElementById('clearSearchBtn');
-      const dropdown = document.getElementById('searchDropdown');
-
-      if (query.length > 0) clearBtn.classList.remove('hidden');
-      else clearBtn.classList.add('hidden');
-
-      if (query.length < 2) {
-        dropdown.classList.add('hidden');
-        return;
+    // --- LIBRARY & WATCHLIST ENGINE ---
+    function getStoredList(key) {
+      try {
+        const val = localStorage.getItem(key);
+        return val ? JSON.parse(val) : [];
+      } catch (e) {
+        return [];
       }
-
-      clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(async () => {
-        const res = await tmdbFetch(`/search/multi?query=${encodeURIComponent(query)}`);
-        if (res && Array.isArray(res.results)) {
-          renderSearchDropdown(res.results.slice(0, 6));
-        }
-      }, 300);
     }
 
-    function renderSearchDropdown(results) {
-      const dropdown = document.getElementById('searchDropdown');
-      dropdown.innerHTML = '';
+    function saveStoredList(key, list) {
+      try {
+        localStorage.setItem(key, JSON.stringify(list));
+      } catch (e) {}
+    }
 
-      if (results.length === 0) {
-        dropdown.innerHTML = '<div class="p-3 text-xs text-gray-400 text-center">No results found</div>';
+    function toggleBookmark(item, mediaType) {
+      let watchlist = getStoredList('streamvault_watchlist');
+      const idx = watchlist.findIndex(x => x.id === item.id);
+      if (idx >= 0) {
+        watchlist.splice(idx, 1);
+        showToast('Removed from Watchlist');
       } else {
-        results.forEach(item => {
-          if (!item.poster_path && !item.backdrop_path) return;
-          const title = item.title || item.name;
-          const type = item.media_type || 'movie';
-          const year = (item.release_date || item.first_air_date || '').substring(0, 4);
+        watchlist.push({ ...item, media_type: mediaType });
+        showToast('Saved to Watchlist');
+      }
+      saveStoredList('streamvault_watchlist', watchlist);
+      if (currentTab === 'library') renderLibraryView();
+    }
 
-          const row = document.createElement('div');
-          row.className = 'flex items-center gap-3 p-2 hover:bg-white/10 rounded-xl cursor-pointer transition-colors';
-          row.onclick = () => {
-            dropdown.classList.add('hidden');
-            openPlayerModal(item, type);
-          };
+    function addToHistory(item, mediaType) {
+      let history = getStoredList('streamvault_history');
+      history = history.filter(x => x.id !== item.id);
+      history.unshift({ ...item, media_type: mediaType });
+      if (history.length > 24) history.pop();
+      saveStoredList('streamvault_history', history);
+    }
 
-          row.innerHTML = `
-            <img src="${BASE_IMAGE_URL}${item.poster_path || item.backdrop_path}" class="w-10 h-14 object-cover rounded-lg" />
-            <div class="flex-1 min-w-0">
-              <h5 class="text-xs font-bold text-white clamp-1">${title}</h5>
-              <p class="text-[10px] text-gray-400">${year} • ${type.toUpperCase()}</p>
-            </div>
-          `;
-          dropdown.appendChild(row);
+    function renderLibraryView() {
+      const watchlistGrid = document.getElementById('watchlistGrid');
+      const historyGrid = document.getElementById('historyGrid');
+      if (!watchlistGrid || !historyGrid) return;
+
+      const watchlist = getStoredList('streamvault_watchlist');
+      const history = getStoredList('streamvault_history');
+
+      watchlistGrid.innerHTML = '';
+      if (watchlist.length === 0) {
+        watchlistGrid.innerHTML = '<div class="col-span-full py-8 text-center text-gray-500 text-xs">Your watchlist is empty. Save movies & TV shows to watch later.</div>';
+      } else {
+        watchlist.forEach(item => {
+          const type = item.media_type || (item.title ? 'movie' : 'tv');
+          const card = createMediaCard(item, type);
+          card.classList.remove('w-36', 'sm:w-44', 'shrink-0');
+          card.classList.add('w-full');
+          watchlistGrid.appendChild(card);
         });
       }
-      dropdown.classList.remove('hidden');
+
+      historyGrid.innerHTML = '';
+      if (history.length === 0) {
+        historyGrid.innerHTML = '<div class="col-span-full py-8 text-center text-gray-500 text-xs">No recently watched items.</div>';
+      } else {
+        history.forEach(item => {
+          const type = item.media_type || (item.title ? 'movie' : 'tv');
+          const card = createMediaCard(item, type);
+          card.classList.remove('w-36', 'sm:w-44', 'shrink-0');
+          card.classList.add('w-full');
+          historyGrid.appendChild(card);
+        });
+      }
     }
 
-    function clearSearch() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('clearSearchBtn').classList.add('hidden');
-      document.getElementById('searchDropdown').classList.add('hidden');
-    }
-
-    // --- PLAYER MODAL CONTROLLER ---
-    function openPlayerModal(item, mediaType) {
-      currentMedia = item;
-      currentMedia.type = mediaType;
+    // --- PLAYER & STREAM SERVER ENGINE ---
+    async function openPlayerModal(item, mediaType) {
+      currentMedia = { ...item, media_type: mediaType };
       currentSeason = 1;
       currentEpisode = 1;
 
+      addToHistory(item, mediaType);
+
       const modal = document.getElementById('playerModal');
-      const titleEl = document.getElementById('modalMediaTitle');
-      const metaEl = document.getElementById('modalMediaMeta');
-      const overviewEl = document.getElementById('modalMediaOverview');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      document.getElementById('modalMediaTitle').innerText = item.title || item.name || 'Stream Player';
+      const year = (item.release_date || item.first_air_date || '2026').substring(0, 4);
+      const rating = (item.vote_average || 8.5).toFixed(1);
+      document.getElementById('modalMediaType').innerText = mediaType.toUpperCase();
+      document.getElementById('modalMediaMeta').innerText = `${year} • Rating: ★ ${rating}`;
+      document.getElementById('modalMediaOverview').innerText = item.overview || 'Enjoy high-speed streaming without interruptions.';
+
       const tvControls = document.getElementById('tvShowControls');
-
-      titleEl.innerText = item.title || item.name;
-      metaEl.innerText = `${(item.release_date || item.first_air_date || '2026').substring(0, 4)} • Rating: ${(item.vote_average || 8.5).toFixed(1)}`;
-      overviewEl.innerText = item.overview || "High clarity streaming with synchronized video servers.";
-
-      renderServerGrid();
-
       if (mediaType === 'tv') {
         tvControls.classList.remove('hidden');
-        setupTvSeasons(item.id);
+        await fetchTVSeasonsAndEpisodes(item.id);
       } else {
         tvControls.classList.add('hidden');
       }
 
-      updateIframeSource();
-      saveToHistory(item, mediaType);
-      modal.classList.remove('hidden');
+      renderServerGrid();
+      loadStreamSource();
     }
 
     function closePlayerModal() {
       const modal = document.getElementById('playerModal');
-      const iframe = document.getElementById('mainIframe');
-      iframe.src = 'about:blank';
       modal.classList.add('hidden');
+      document.getElementById('mainIframe').src = 'about:blank';
+      document.body.style.overflow = '';
     }
 
     function renderServerGrid() {
-      const container = document.getElementById('serverGrid');
-      container.innerHTML = '';
+      const grid = document.getElementById('serverGrid');
+      grid.innerHTML = '';
 
-      SERVERS.forEach(server => {
+      SERVERS.forEach(srv => {
         const btn = document.createElement('button');
-        const isActive = server.id === currentServer;
-        btn.className = `std-btn text-xs ${isActive ? 'bg-accent text-white border-none font-bold shadow-md shadow-accent/20' : 'bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300'}`;
-        btn.innerText = server.name;
+        const isActive = srv.id === currentServer;
+        btn.className = `std-btn text-xs py-2 rounded-xl transition-all ${isActive ? 'bg-accent text-white font-bold shadow-md shadow-accent/30' : 'bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300'}`;
+        btn.innerText = srv.name;
         btn.onclick = () => {
-          currentServer = server.id;
+          currentServer = srv.id;
           renderServerGrid();
-          updateIframeSource();
+          loadStreamSource();
         };
-        container.appendChild(btn);
+        grid.appendChild(btn);
       });
     }
 
-    function updateIframeSource() {
-      const iframe = document.getElementById('mainIframe');
-      const serverObj = SERVERS.find(s => s.id === currentServer) || SERVERS[0];
-      const type = currentMedia.type || 'movie';
-      const id = currentMedia.id;
-
-      iframe.src = serverObj.url(type, id, currentSeason, currentEpisode);
+    function loadStreamSource() {
+      if (!currentMedia) return;
+      const srvObj = SERVERS.find(s => s.id === currentServer) || SERVERS[0];
+      const url = srvObj.url(currentMedia.media_type, currentMedia.id, currentSeason, currentEpisode);
+      document.getElementById('mainIframe').src = url;
     }
 
-    function triggerNativeFullscreen() {
-      const iframe = document.getElementById('mainIframe');
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {
-        iframe.msRequestFullscreen();
-      } else {
-        showToast("Fullscreen mode unavailable");
-      }
-    }
-
-    // --- TV SHOW SEASON & EPISODE PICKER ---
-    async function setupTvSeasons(tvId) {
+    async function fetchTVSeasonsAndEpisodes(tvId) {
+      const data = await tmdbFetch(`/tv/${tvId}`);
       const seasonSelect = document.getElementById('seasonSelect');
-      seasonSelect.innerHTML = '<option value="1">Season 1</option>';
+      seasonSelect.innerHTML = '';
 
-      const details = await tmdbFetch(`/tv/${tvId}`);
-      if (details && details.seasons) {
-        seasonSelect.innerHTML = '';
-        details.seasons.forEach(s => {
+      if (data && Array.isArray(data.seasons)) {
+        data.seasons.forEach(s => {
           if (s.season_number > 0) {
             const opt = document.createElement('option');
             opt.value = s.season_number;
@@ -1006,109 +1121,136 @@
           }
         });
       }
-      loadEpisodesForSeason();
+      if (seasonSelect.options.length > 0) {
+        currentSeason = parseInt(seasonSelect.value);
+        await loadEpisodesForSeason();
+      }
     }
 
     async function loadEpisodesForSeason() {
       const seasonSelect = document.getElementById('seasonSelect');
-      currentSeason = parseInt(seasonSelect.value) || 1;
-      const listEl = document.getElementById('episodesList');
-      listEl.innerHTML = '<div class="col-span-full text-xs text-gray-400 py-2">Loading episodes...</div>';
-
+      currentSeason = parseInt(seasonSelect.value || 1);
       const data = await tmdbFetch(`/tv/${currentMedia.id}/season/${currentSeason}`);
-      listEl.innerHTML = '';
+      
+      const listContainer = document.getElementById('episodesList');
+      listContainer.innerHTML = '';
 
-      if (data && data.episodes) {
+      if (data && Array.isArray(data.episodes)) {
         episodesData = data.episodes;
         renderEpisodesList(episodesData);
+      } else {
+        episodesData = [];
+        listContainer.innerHTML = '<div class="text-xs text-gray-500 py-2">No episodes listed.</div>';
       }
     }
 
-    function renderEpisodesList(episodes) {
-      const listEl = document.getElementById('episodesList');
-      listEl.innerHTML = '';
+    function renderEpisodesList(eps) {
+      const listContainer = document.getElementById('episodesList');
+      listContainer.innerHTML = '';
 
-      episodes.forEach(ep => {
-        const isActive = ep.episode_number === currentEpisode;
-        const item = document.createElement('button');
-        item.className = `p-2 rounded-xl text-left text-xs transition-all border ${isActive ? 'bg-accent/20 border-accent text-white font-bold' : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'}`;
-        item.onclick = () => {
+      eps.forEach(ep => {
+        const isCurrent = ep.episode_number === currentEpisode;
+        const btn = document.createElement('button');
+        btn.className = `p-2 rounded-xl text-left text-xs transition-all flex items-center justify-between border ${isCurrent ? 'bg-accent/20 border-accent text-white font-bold' : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'}`;
+        btn.innerHTML = `<span class="clamp-1">E${ep.episode_number}: ${ep.name}</span> <span class="text-[10px] text-gray-400 shrink-0 ml-2">${ep.runtime ? ep.runtime + 'm' : ''}</span>`;
+        btn.onclick = () => {
           currentEpisode = ep.episode_number;
           renderEpisodesList(episodesData);
-          updateIframeSource();
+          loadStreamSource();
         };
-
-        item.innerHTML = `<div class="clamp-1">E${ep.episode_number}: ${ep.name}</div>`;
-        listEl.appendChild(item);
+        listContainer.appendChild(btn);
       });
     }
 
     function filterEpisodes() {
       const q = document.getElementById('epSearchInput').value.toLowerCase();
-      const filtered = episodesData.filter(e => e.name.toLowerCase().includes(q) || e.episode_number.toString() === q);
+      const filtered = episodesData.filter(ep => ep.name.toLowerCase().includes(q) || ep.episode_number.toString().includes(q));
       renderEpisodesList(filtered);
     }
 
-    // --- SHARE LINK GENERATOR ---
-    function generateWatchPartyLink() {
-      const link = `${window.location.origin}?media=${currentMedia.id}&s=${currentSeason}&e=${currentEpisode}`;
-      navigator.clipboard ? navigator.clipboard.writeText(link) : document.execCommand('copy');
-      showToast("Shareable link copied to clipboard");
-    }
-
-    // --- LIBRARY STORAGE MANAGER ---
-    function saveToHistory(item, mediaType) {
-      let history = JSON.parse(localStorage.getItem('sv_history') || '[]');
-      history = history.filter(x => x.id !== item.id);
-      history.unshift({ ...item, mediaType, watchedAt: Date.now() });
-      localStorage.setItem('sv_history', JSON.stringify(history.slice(0, 18)));
-    }
-
-    function toggleBookmark(item, mediaType) {
-      let watchlist = JSON.parse(localStorage.getItem('sv_watchlist') || '[]');
-      const exists = watchlist.some(x => x.id === item.id);
-
-      if (exists) {
-        watchlist = watchlist.filter(x => x.id !== item.id);
-        showToast("Removed from Library");
-      } else {
-        watchlist.push({ ...item, mediaType });
-        showToast("Saved to Watchlist!");
+    function triggerNativeFullscreen() {
+      const container = document.getElementById('playerContainer');
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
       }
-      localStorage.setItem('sv_watchlist', JSON.stringify(watchlist));
     }
 
-    function renderLibraryView() {
-      const watchlistGrid = document.getElementById('watchlistGrid');
-      const historyGrid = document.getElementById('historyGrid');
-
-      const watchlist = JSON.parse(localStorage.getItem('sv_watchlist') || '[]');
-      const history = JSON.parse(localStorage.getItem('sv_history') || '[]');
-
-      renderGridItems(watchlistGrid, watchlist, "Your watchlist is empty.");
-      renderGridItems(historyGrid, history, "No watch history recorded.");
+    function generateWatchPartyLink() {
+      const shareUrl = window.location.href.split('#')[0] + `?watch=${currentMedia.id}&type=${currentMedia.media_type}&s=${currentSeason}&e=${currentEpisode}`;
+      const tempInput = document.createElement('textarea');
+      tempInput.value = shareUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast('Watch Party link copied to clipboard!');
     }
 
-    function renderGridItems(container, items, emptyText) {
-      container.innerHTML = '';
-      if (items.length === 0) {
-        container.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-gray-500">${emptyText}</div>`;
+    // --- LIVE SEARCH ENGINE ---
+    function handleSearchInput(e) {
+      const query = e.target.value.trim();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      const dropdown = document.getElementById('searchDropdown');
+
+      if (query.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+        dropdown.classList.add('hidden');
         return;
       }
 
-      items.forEach(item => {
-        const card = createMediaCard(item, item.mediaType || 'movie');
-        card.classList.remove('w-36', 'sm:w-44', 'shrink-0');
-        card.classList.add('w-full');
-        container.appendChild(card);
-      });
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(async () => {
+        const data = await tmdbFetch(`/search/multi?query=${encodeURIComponent(query)}`);
+        dropdown.innerHTML = '';
+        
+        if (data && Array.isArray(data.results) && data.results.length > 0) {
+          dropdown.classList.remove('hidden');
+          data.results.slice(0, 6).forEach(item => {
+            if (item.media_type === 'person') return;
+            const poster = item.poster_path ? `${BASE_IMAGE_URL}${item.poster_path}` : PLACEHOLDER_POSTER;
+            const title = item.title || item.name || 'Untitled';
+            const year = (item.release_date || item.first_air_date || '').substring(0, 4);
+            const type = item.media_type || 'movie';
+
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-3 p-2 hover:bg-white/10 rounded-xl cursor-pointer transition-all';
+            row.onclick = () => {
+              dropdown.classList.add('hidden');
+              document.getElementById('searchInput').value = '';
+              clearBtn.classList.add('hidden');
+              openPlayerModal(item, type);
+            };
+
+            row.innerHTML = `
+              <img src="${poster}" class="w-10 h-14 object-cover rounded-lg shrink-0" onerror="this.src='${PLACEHOLDER_POSTER}'" />
+              <div class="flex-1 min-w-0">
+                <h5 class="text-xs font-bold text-white clamp-1">${title}</h5>
+                <p class="text-[10px] text-gray-400">${year} • ${type.toUpperCase()} • ★ ${(item.vote_average || 0).toFixed(1)}</p>
+              </div>
+            `;
+            dropdown.appendChild(row);
+          });
+        } else {
+          dropdown.classList.remove('hidden');
+          dropdown.innerHTML = '<div class="p-4 text-center text-xs text-gray-500">No results found</div>';
+        }
+      }, 180);
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      document.getElementById('searchDropdown').classList.add('hidden');
     }
 
     // --- TOAST NOTIFICATION ---
     function showToast(msg) {
       const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMsg');
-      toastMsg.innerText = msg;
+      document.getElementById('toastMsg').innerText = msg;
       toast.classList.remove('hidden');
       setTimeout(() => {
         toast.classList.add('hidden');
