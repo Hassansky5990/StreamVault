@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault Pro · Pure Crystal Liquid Edition</title>
+<title>StreamVault Pro · Pixel Perfect Edition</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://vidcore.org">
@@ -115,7 +115,8 @@ header.solid{
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #fff;
   border-radius: 99px;
-  padding: 9px 14px 9px 36px;
+  padding: 0 14px 0 36px;
+  height: 38px;
   width: 100%;
   font-size: 12px;
   transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -141,12 +142,14 @@ header.solid{
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   color: #fff;
-  padding: 8px 14px;
+  padding: 0 16px;
+  height: 38px;
   border-radius: 99px;
   font-size: 11px;
   font-weight: 700;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 1.5px 0 var(--border-glass-specular);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -258,34 +261,61 @@ header.solid{
   font-size: 13px;
   line-height: 1.5;
 }
-.hero-btns{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.hero-btns{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
 
-.btn{
-  background: var(--accent-gradient);
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 10px 20px;
+/* STRICT UNIFIED BUTTON LAYOUT ENGINE */
+.btn {
+  height: 42px;
+  padding: 0 22px;
   border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
   text-decoration: none;
+  background: var(--accent-gradient);
+  color: #fff;
+  border: 1px solid transparent;
   box-shadow: 0 8px 25px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.4);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  vertical-align: middle;
 }
-.btn:hover{
+
+.btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.btn:hover {
   transform: translateY(-2px);
   filter: brightness(1.1);
   box-shadow: 0 12px 30px var(--accent-glow);
 }
-.btn.alt{
+
+.btn.alt {
   background: var(--crystal-liquid);
   backdrop-filter: blur(12px);
   color: #fff;
   border: 1px solid var(--border-glass);
   box-shadow: inset 0 1px 0 var(--border-glass-specular);
+}
+
+.btn.alt:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 /* CARDS & TRACKS */
@@ -309,12 +339,15 @@ main{position:relative;z-index:3;margin-top:-3vh}
   backdrop-filter: blur(15px);
   border: 1px solid var(--border-glass);
   color: #fff;
-  padding: 6px 12px;
+  padding: 0 12px;
+  height: 36px;
   border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 600;
   outline: none;
   box-shadow: inset 0 1px 0 var(--border-glass-specular);
+  display: flex;
+  align-items: center;
 }
 .genre-select option { background: #09080e; color: #fff; }
 
@@ -587,7 +620,8 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .icon-btn {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.1);
-  padding: 8px 10px;
+  padding: 0 10px;
+  height: 38px;
   border-radius: var(--radius-sm);
   font-size: 10px;
   font-weight: 600;
@@ -629,7 +663,8 @@ main{position:relative;z-index:3;margin-top:-3vh}
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.1);
   color: #fff;
-  padding: 8px 10px;
+  padding: 0 10px;
+  height: 36px;
   border-radius: 6px;
   font-size: 11px;
   flex: 1;
@@ -716,7 +751,7 @@ footer{padding:30px 4vw 90px;color:var(--text-muted);font-size:10px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault Pro · Pure Crystal Edition</footer>
+<footer>StreamVault Pro · Pixel Perfect Edition</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
@@ -1008,8 +1043,25 @@ function heroBanner(i) {
   if (!i) return;
   const h = $('#hero');
   const t = type(i);
-  h.innerHTML = `<section class="hero" style="background-image:url(${IMG}w1280${i.backdrop_path})"><div class="hero-content"><div class="chips"><span>★ ${(i.vote_average || 0).toFixed(1)}</span><span>${year(i)}</span><span>${t === 'tv' ? 'Series' : 'Movie'}</span></div><h1>${esc(name(i))}</h1><p>${esc(i.overview)}</p>
-  <div class="hero-btns"><button class="btn" id="hp">▶ Play Now</button><button class="btn alt" id="ht">Trailer</button><button class="btn alt" id="hi">Details</button></div></div></section>`;
+  h.innerHTML = `<section class="hero" style="background-image:url(${IMG}w1280${i.backdrop_path})">
+    <div class="hero-content">
+      <div class="chips">
+        <span>★ ${(i.vote_average || 0).toFixed(1)}</span>
+        <span>${year(i)}</span>
+        <span>${t === 'tv' ? 'Series' : 'Movie'}</span>
+      </div>
+      <h1>${esc(name(i))}</h1>
+      <p>${esc(i.overview)}</p>
+      <div class="hero-btns">
+        <button class="btn" id="hp">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <span>Play Now</span>
+        </button>
+        <button class="btn alt" id="ht">Trailer</button>
+        <button class="btn alt" id="hi">Details</button>
+      </div>
+    </div>
+  </section>`;
   $('#hp').onclick = () => playStream(i.id, t, 1, 1, name(i));
   $('#ht').onclick = () => trailer(i.id, t);
   $('#hi').onclick = () => openInfo(i.id, t);
@@ -1026,12 +1078,12 @@ async function openInfo(id, t) {
   <div class="in"><h2>${esc(name(d))}</h2>
   <p class="meta">${year(d)} · ★ ${(d.vote_average || 0).toFixed(1)} · ${(d.genres || []).map(g => esc(g.name)).slice(0,3).join(', ')}</p>
   <p style="margin-bottom:14px;font-size:12px;line-height:1.5">${esc(d.overview)}</p>
-  <div class="hero-btns">${t === 'movie' ? `<button class="btn" id="mw">▶ Play Now</button>` : ''}
+  <div class="hero-btns">${t === 'movie' ? `<button class="btn" id="mw"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>Play Now</span></button>` : ''}
   <button class="btn alt" id="mt">Trailer</button>
   <button class="btn alt" id="ms">${saved ? 'Remove' : '+ Library'}</button></div>
   ${t === 'tv' ? `<div style="margin-top:16px">
     <div class="ep-header-bar">
-      <select id="sn" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:8px 10px;border-radius:6px;font-size:11px">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}" style="background:#09080e;">Season ${s.season_number}</option>`).join('')}</select>
+      <select id="sn" class="genre-select">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
       <input type="search" id="epFilter" class="ep-search-input" placeholder="Search episode..." oninput="filterEpisodes()">
     </div>
     <div id="eps"></div>
