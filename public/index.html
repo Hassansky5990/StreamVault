@@ -250,6 +250,16 @@ header{
   flex-wrap: wrap;
   margin-top: 10px;
 }
+/* FIX: button row inside the details modal */
+.panel .hero-btns{
+  gap: 10px;
+  align-items: center;
+  margin: 14px 0 18px;
+}
+.panel .btn{
+  height: 42px;
+  flex: 0 0 auto;
+}
 
 /* FLAWLESS UNIFIED BUTTON LAYOUT ENGINE */
 .btn {
@@ -335,11 +345,14 @@ header{
   box-shadow: 0 4px 15px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.4);
 }
 
+/* FIX: side padding + matching negative margin so glow / hover-lift is never clipped */
 .track{
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  padding: 6px 0 16px;
+  margin: 0 -8px;
+  padding: 8px 8px 18px;
+  scroll-padding-left: 8px;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
@@ -423,23 +436,31 @@ header{
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35);
   padding-top: 24px;
 }
+/* FIX: scrollbar no longer pokes out of the rounded corners */
+.panel::-webkit-scrollbar{width:6px}
+.panel::-webkit-scrollbar-track{background:transparent;margin:30px 0}
+.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:99px}
+.panel::-webkit-scrollbar-thumb:hover{background:var(--accent-solid)}
 .panel .bd{height:min(38vw, 260px);background-size:cover;background-position:center; margin-top: -24px;}
 .panel .in{padding:24px 28px;}
 .panel h2{font: 800 21px var(--font-display); letter-spacing: -0.5px}
 .meta{color:var(--text-muted);margin:6px 0 12px;font-size:11px;font-weight:500}
 
-/* CLOSE BUTTON SAFELY SPACED FROM SCROLLBAR */
+/* CLOSE BUTTON SAFELY SPACED FROM SCROLLBAR
+   FIX: the "×" glyph is hidden and the X is drawn with CSS so it is exactly centred */
 .x{
   position: absolute;
   top: 16px;
-  right: 22px;
+  right: 24px;
   background: rgba(255,255,255,0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.25);
   border-radius: 50%;
   width: 34px;
   height: 34px;
-  font-size: 16px;
+  padding: 0;
+  font-size: 0;
+  line-height: 0;
   z-index: 50;
   color: #fff;
   display: flex;
@@ -448,6 +469,18 @@ header{
   transition: all 0.2s;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
+.x::before, .x::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: #fff;
+}
+.x::before{transform:translate(-50%,-50%) rotate(45deg)}
+.x::after{transform:translate(-50%,-50%) rotate(-45deg)}
 .x:hover { background: rgba(255,42,95,0.4); border-color: var(--accent-solid); transform: scale(1.08); }
 
 /* SUBTITLE MODAL */
@@ -495,6 +528,7 @@ header{
   gap: 6px;
   margin-top: 10px;
 }
+.sub-results-list::-webkit-scrollbar-track{background:transparent;margin:4px 0}
 .sub-item {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255,255,255,0.08);
@@ -608,56 +642,86 @@ header{
   width: 100%;
 }
 
-/* TOP 10 RANK NUMBER ALIGNMENT ENGINE */
+/* TOP 10 RANK NUMBER ALIGNMENT ENGINE
+   FIX: number sits BESIDE the poster (no overlap on titles), glyphs are no longer
+   cropped by background-clip, and the digit's baseline is flush with the poster bottom.
+   To overlap the poster again, change margin-right below from 4px to -12px. */
 .tp {
   display: flex;
   align-items: flex-end;
   flex: 0 0 auto;
-  margin-right: 12px;
+  margin-right: 16px;
   position: relative;
 }
 .rank {
-  font: 900 clamp(48px, 8.5vw, 78px)/.75 var(--font-display);
+  display: block;
+  align-self: flex-end;
+  min-width: .62em;
+  text-align: right;
+  font: 900 clamp(48px, 8.5vw, 78px)/1 var(--font-display);
+  padding: .1em .06em .02em;
+  margin: 0 4px -.14em 0;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 4px 12px var(--accent-glow));
-  margin-right: -16px;
   z-index: 2;
   user-select: none;
 }
 
 .sub{font:700 15px var(--font-display);padding:0 0 10px}
 
+/* FIX: season dropdown + episode search share one height and centre line */
 .ep-header-bar {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
-  margin-bottom: 12px;
+  margin: 6px 0 14px;
   flex-wrap: wrap;
 }
+.ep-header-bar select,
+.ep-header-bar .ep-search-input{
+  height: 40px;
+  margin: 0;
+  box-sizing: border-box;
+  border-radius: var(--radius-sm);
+}
+.ep-header-bar select{
+  flex: 0 0 auto;
+  min-width: 120px;
+  padding: 0 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+}
+.ep-header-bar select option{background:#0d0b14;color:#fff}
 .ep-search-input {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.1);
   color: #fff;
-  padding: 0 10px;
-  height: 38px;
-  border-radius: 6px;
+  padding: 0 14px;
+  height: 40px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   flex: 1;
+  min-width: 0;
 }
 
+/* FIX: episode rows centred, ▶ icon on the same line as the title */
 .ep{
   display: flex;
+  align-items: center;
   gap: 12px;
   padding: 10px;
   border-top: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
-.ep img{width:100px;height:56px;object-fit:cover;border-radius:6px;flex:none}
+.ep > div{flex:1;min-width:0}
+.ep img{width:100px;height:56px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;flex:none}
 .ep p{color:var(--text-muted);font-size:10px;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ep b{font-family:var(--font-display);font-size:11px;color:#fff}
+.ep b{display:inline-flex;align-items:center;gap:6px;line-height:1.3;font-family:var(--font-display);font-size:11px;color:#fff}
+.ep b svg{width:12px;height:12px;fill:currentColor;flex:none}
 .ep:hover { background: rgba(255,255,255,0.03); }
 
 footer{padding:25px 0 85px;color:var(--text-muted);font-size:10px;text-align:center;border-top:1px solid rgba(255,255,255,0.08);margin-top:25px}
@@ -687,6 +751,15 @@ footer{padding:25px 0 85px;color:var(--text-muted);font-size:10px;text-align:cen
   z-index: 10000;
   display: none;
   box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.4);
+}
+
+/* SMALL SCREENS */
+@media (max-width:520px){
+  #app,#hero{padding:0 16px}
+  header{padding:12px 16px}
+  .panel .in{padding:20px 18px}
+  .server-grid{grid-template-columns:repeat(2,1fr)}
+  .ep-header-bar select{flex:1 1 100%}
 }
 </style>
 </head>
@@ -738,550 +811,5 @@ footer{padding:25px 0 85px;color:var(--text-muted);font-size:10px;text-align:cen
       <select id="subLang" class="sub-select">
         <option value="eng">Eng</option>
         <option value="spa">Esp</option>
-        <option value="fre">Fra</option>
-      </select>
-      <button class="btn" onclick="fetchOnlineSubtitles()">Find</button>
-    </div>
-    <div class="sub-results-list" id="subResultsList">
-      <p style="color:var(--text-muted);font-size:11px;text-align:center;padding:12px;">Search title...</p>
-    </div>
-  </div>
-</div>
-
-<!-- PLAYER MODAL -->
-<div class="layer" id="pl">
-  <button class="x" id="px" aria-label="Close player">×</button>
-  <div class="player-wrap">
-    <div class="player" id="pv"></div>
-    <div class="server-bar" id="serverBarContainer">
-      <div class="server-header">
-        <span>SERVERS</span>
-        <span style="font-size:9px;color:var(--text-muted)">1080p CC</span>
-      </div>
-      <div class="server-grid">
-        <button class="server-btn active" data-server="vidcore">
-          <svg viewBox="0 0 24 24"><path d="M20 18H4V6h16m0-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
-          VidCore <span class="server-badge">CC</span>
-        </button>
-        <button class="server-btn" data-server="autoembed">
-          <svg viewBox="0 0 24 24"><path d="M20 18H4V6h16m0-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
-          AutoEmbed <span class="server-badge">Sub</span>
-        </button>
-        <button class="server-btn" data-server="2embed">
-          <svg viewBox="0 0 24 24"><path d="M20 18H4V6h16m0-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
-          2Embed <span class="server-badge">CC</span>
-        </button>
-        <button class="server-btn" data-server="framex">
-          <svg viewBox="0 0 24 24"><path d="M20 18H4V6h16m0-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
-          FrameX <span class="server-badge">Pro</span>
-        </button>
-      </div>
-
-      <div class="player-controls-row">
-        <button class="icon-btn" onclick="openSubtitleSearch()">
-          <svg viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H7v2h4v1H7v2h4c1.1 0 2-.9 2-2v-1c0-1.1-.9-2-2-2zm6 5h-4v-1h4v1zm0-3h-4v-1h4v1z"/></svg>
-          Subtitles
-        </button>
-        <button class="icon-btn" onclick="shareWatchParty()">
-          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-          Party
-        </button>
-        <button class="icon-btn" id="pFs" title="Fullscreen">
-          <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-          Fullscreen
-        </button>
-      </div>
-
-      <div class="ep-nav-row" id="tvBtns" style="display:none">
-        <button class="icon-btn" id="pPrev">
-          <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-          Previous
-        </button>
-        <button class="icon-btn" id="pNext">
-          <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-          Next
-        </button>
-      </div>
-      <span id="pTitle" style="font-size:10px;color:var(--text-muted);font-weight:600;text-align:center"></span>
-    </div>
-  </div>
-</div>
-<div id="toast"></div>
-
-<script>
-const $ = s => document.querySelector(s);
-const IMG = 'https://image.tmdb.org/t/p/';
-
-const api = (path, p = {}) => fetch('/api/tmdb?' + new URLSearchParams({ path, ...p }))
-  .then(r => { if (!r.ok) throw new Error('API Error'); return r.json(); })
-  .catch(() => ({ results: [] }));
-
-const store = {
-  get: (k, d) => { try { return JSON.parse(localStorage[k]); } catch { return d; } },
-  set: (k, v) => { localStorage[k] = JSON.stringify(v); }
-};
-
-const ROWS = [
-  ['Trending Now', '/trending/all/week'],
-  ['Popular Movies', '/movie/popular', {}, 'movie'],
-  ['Anime Spotlight', '/discover/tv', { with_genres: 16, sort_by: 'popularity.desc' }, 'tv'],
-  ['Popular TV Shows', '/tv/popular', {}, 'tv'],
-  ['Top Rated Cinema', '/movie/top_rated', {}, 'movie']
-];
-
-let currentTab = 'home';
-let animePage = 1;
-let discoverPage = 1;
-let selectedAnimeGenre = '';
-let selectedDiscoverGenre = '';
-let allSeasonEpisodes = [];
-
-const type = i => i.media_type || (i.title ? 'movie' : 'tv');
-const name = i => i.title || i.name;
-const year = i => (i.release_date || i.first_air_date || '').slice(0, 4);
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-function toast(msg) {
-  const t = $('#toast');
-  t.innerText = msg;
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2000);
-}
-
-function card(i, def) {
-  if (!i.poster_path) return '';
-  const b = document.createElement('button');
-  b.className = 'card';
-  b.dataset.id = i.id;
-  b.dataset.t = def || type(i);
-  b.innerHTML = `<img loading="lazy" decoding="async" alt="${esc(name(i))}" src="${IMG}w342${i.poster_path}"><span class="t">${esc(name(i))}</span>`;
-  b.onclick = () => openInfo(i.id, def || type(i));
-  return b;
-}
-
-async function home() {
-  $('#app').innerHTML = '';
-  $('#hero').style.display = 'block';
-  const wrap = $('#app');
-  
-  const top = document.createElement('section');
-  top.className = 'row';
-  top.style.order = 1;
-  top.innerHTML = '<div class="row-header"><h2>Top 10 Today</h2></div><div class="track"></div>';
-  wrap.append(top);
-  
-  api('/trending/movie/day').then(d => {
-    const t = top.querySelector('.track');
-    if (!d.results || !d.results.length) return top.remove();
-    d.results.slice(0, 10).forEach((i, n) => {
-      const c = card(i, 'movie');
-      if (!c) return;
-      const w = document.createElement('div');
-      w.className = 'tp';
-      w.innerHTML = `<span class="rank">${n + 1}</span>`;
-      w.append(c);
-      t.append(w);
-    });
-  }).catch(() => top.remove());
-
-  ROWS.forEach(async ([title, path, params, def], n) => {
-    const sec = document.createElement('section');
-    sec.className = 'row';
-    sec.style.order = n * 2;
-    sec.innerHTML = `<div class="row-header"><h2>${title}</h2></div><div class="track">${'<div class="card"></div>'.repeat(5)}</div>`;
-    wrap.append(sec);
-    try {
-      const d = await api(path, params);
-      const t = sec.querySelector('.track');
-      t.innerHTML = '';
-      if (d.results && d.results.length) {
-        d.results.forEach(i => {
-          const c = card(i, def);
-          c && t.append(c);
-        });
-        if (n === 0) heroBanner(d.results.filter(i => i.backdrop_path).slice(0, 5)[0]);
-      } else {
-        sec.remove();
-      }
-    } catch {
-      sec.remove();
-    }
-  });
-}
-
-/* ANIME TAB WITH HORIZONTAL GENRE CHIPS BAR */
-async function animeTab(reset = true) {
-  if (reset) {
-    animePage = 1;
-    $('#hero').style.display = 'none';
-    const a = $('#app');
-    a.innerHTML = `
-      <div class="row">
-        <div class="row-header"><h2>Featured Anime</h2></div>
-        <div class="genre-chips" id="animeGenres">
-          <button class="chip ${!selectedAnimeGenre ? 'active' : ''}" onclick="changeAnimeGenre('')">All</button>
-          <button class="chip ${selectedAnimeGenre === '10759' ? 'active' : ''}" onclick="changeAnimeGenre('10759')">Action</button>
-          <button class="chip ${selectedAnimeGenre === '35' ? 'active' : ''}" onclick="changeAnimeGenre('35')">Comedy</button>
-          <button class="chip ${selectedAnimeGenre === '18' ? 'active' : ''}" onclick="changeAnimeGenre('18')">Drama</button>
-          <button class="chip ${selectedAnimeGenre === '10765' ? 'active' : ''}" onclick="changeAnimeGenre('10765')">Sci-Fi & Fantasy</button>
-          <button class="chip ${selectedAnimeGenre === '9648' ? 'active' : ''}" onclick="changeAnimeGenre('9648')">Mystery</button>
-        </div>
-        <div class="grid" id="animeGrid"></div>
-        <div class="load-more-wrap"><button class="btn alt" onclick="animeTab(false)">Load More Anime</button></div>
-      </div>`;
-  }
-
-  const genreParam = selectedAnimeGenre ? `,${selectedAnimeGenre}` : '';
-  const d = await api('/discover/tv', { 
-    with_genres: `16${genreParam}`, 
-    with_original_language: 'ja', 
-    sort_by: 'popularity.desc',
-    page: animePage
-  });
-  
-  const grid = $('#animeGrid');
-  if (d.results) {
-    d.results.forEach(i => {
-      const c = card(i, 'tv');
-      c && grid.append(c);
-    });
-    animePage++;
-  }
-}
-
-function changeAnimeGenre(genreId) {
-  selectedAnimeGenre = genreId;
-  animeTab(true);
-}
-
-/* DISCOVER TAB WITH HORIZONTAL GENRE CHIPS BAR */
-async function discoverTab(reset = true) {
-  if (reset) {
-    discoverPage = 1;
-    $('#hero').style.display = 'none';
-    const a = $('#app');
-    a.innerHTML = `
-      <div class="row">
-        <div class="row-header"><h2>Discover Movies</h2></div>
-        <div class="genre-chips" id="discoverGenres">
-          <button class="chip ${!selectedDiscoverGenre ? 'active' : ''}" onclick="changeDiscoverGenre('')">All</button>
-          <button class="chip ${selectedDiscoverGenre === '28' ? 'active' : ''}" onclick="changeDiscoverGenre('28')">Action</button>
-          <button class="chip ${selectedDiscoverGenre === '878' ? 'active' : ''}" onclick="changeDiscoverGenre('878')">Sci-Fi</button>
-          <button class="chip ${selectedDiscoverGenre === '35' ? 'active' : ''}" onclick="changeDiscoverGenre('35')">Comedy</button>
-          <button class="chip ${selectedDiscoverGenre === '27' ? 'active' : ''}" onclick="changeDiscoverGenre('27')">Horror</button>
-          <button class="chip ${selectedDiscoverGenre === '10749' ? 'active' : ''}" onclick="changeDiscoverGenre('10749')">Romance</button>
-          <button class="chip ${selectedDiscoverGenre === '18' ? 'active' : ''}" onclick="changeDiscoverGenre('18')">Drama</button>
-          <button class="chip ${selectedDiscoverGenre === '53' ? 'active' : ''}" onclick="changeDiscoverGenre('53')">Thriller</button>
-          <button class="chip ${selectedDiscoverGenre === '16' ? 'active' : ''}" onclick="changeDiscoverGenre('16')">Animation</option>
-        </div>
-        <div class="grid" id="discGrid"></div>
-        <div class="load-more-wrap"><button class="btn alt" onclick="discoverTab(false)">Load More Movies</button></div>
-      </div>`;
-  }
-
-  const params = { sort_by: 'popularity.desc', page: discoverPage };
-  if (selectedDiscoverGenre) params.with_genres = selectedDiscoverGenre;
-
-  const d = await api('/discover/movie', params);
-  const grid = $('#discGrid');
-  if (d.results) {
-    d.results.forEach(i => {
-      const c = card(i, 'movie');
-      c && grid.append(c);
-    });
-    discoverPage++;
-  }
-}
-
-function changeDiscoverGenre(genreId) {
-  selectedDiscoverGenre = genreId;
-  discoverTab(true);
-}
-
-function heroBanner(i) {
-  if (!i) return;
-  const h = $('#hero');
-  const t = type(i);
-  h.innerHTML = `<section class="hero" style="background-image:url(${IMG}w1280${i.backdrop_path})">
-    <div class="hero-content">
-      <div class="chips">
-        <span>★ ${(i.vote_average || 0).toFixed(1)}</span>
-        <span>${year(i)}</span>
-        <span>${t === 'tv' ? 'Series' : 'Movie'}</span>
-      </div>
-      <h1>${esc(name(i))}</h1>
-      <p>${esc(i.overview)}</p>
-      <div class="hero-btns">
-        <button class="btn" id="hp">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <span>Play Now</span>
-        </button>
-        <button class="btn alt" id="ht">Trailer</button>
-        <button class="btn alt" id="hi">Details</button>
-      </div>
-    </div>
-  </section>`;
-  $('#hp').onclick = () => playStream(i.id, t, 1, 1, name(i));
-  $('#ht').onclick = () => trailer(i.id, t);
-  $('#hi').onclick = () => openInfo(i.id, t);
-}
-
-async function openInfo(id, t) {
-  const d = await api(`/${t}/${id}`, { append_to_response: 'videos,credits' });
-  if (!d || !d.id) return;
-  const list = store.get('mylist', []);
-  const saved = list.some(x => x.id === id && x.t === t);
-  
-  $('#mp').innerHTML = `<button class="x" id="mx" aria-label="Close">×</button>
-  <div class="bd" style="background-image:linear-gradient(0deg,var(--surface),transparent 70%),url(${d.backdrop_path ? IMG + 'w780' + d.backdrop_path : ''})"></div>
-  <div class="in"><h2>${esc(name(d))}</h2>
-  <p class="meta">${year(d)} · ★ ${(d.vote_average || 0).toFixed(1)} · ${(d.genres || []).map(g => esc(g.name)).slice(0,3).join(', ')}</p>
-  <p style="margin-bottom:14px;font-size:12px;line-height:1.5">${esc(d.overview)}</p>
-  <div class="hero-btns">${t === 'movie' ? `<button class="btn" id="mw"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>Play Now</span></button>` : ''}
-  <button class="btn alt" id="mt">Trailer</button>
-  <button class="btn alt" id="ms">${saved ? 'Remove' : '+ Library'}</button></div>
-  ${t === 'tv' ? `<div style="margin-top:16px">
-    <div class="ep-header-bar">
-      <select id="sn" class="sub-select">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
-      <input type="search" id="epFilter" class="ep-search-input" placeholder="Search episode..." oninput="filterEpisodes()">
-    </div>
-    <div id="eps"></div>
-  </div>`: ''}
-  </div><h3 class="sub">Similar</h3><div class="track" id="sim"></div>`;
-
-  $('#md').classList.add('open');
-  $('#mp').scrollTop = 0;
-
-  if (t === 'movie') $('#mw').onclick = () => playStream(id, 'movie', 1, 1, name(d));
-  if (t === 'tv') loadEps(id, $('#sn'), name(d), id);
-  api(`/${t}/${id}/similar`).then(r => r.results && r.results.forEach(i => { const c = card(i, t); c && $('#sim').append(c); })).catch(() => {});
-  $('#mx').onclick = () => $('#md').classList.remove('open');
-  $('#mt').onclick = () => trailer(id, t, d);
-  $('#ms').onclick = () => {
-    let l = store.get('mylist', []);
-    if (saved) { l = l.filter(x => !(x.id === id && x.t === t)); toast('Removed'); }
-    else { l = [...l, { id, t, poster_path: d.poster_path, title: d.title || d.name, name: d.name }]; toast('Added'); }
-    store.set('mylist', l);
-    openInfo(id, t);
-  };
-}
-
-$('#md').onclick = e => { if (e.target === $('#md')) $('#md').classList.remove('open'); };
-$('#pl').onclick = e => { if (e.target === $('#pl')) closePlayer(); };
-
-async function loadEps(id, sel, showName = '', showId = id) {
-  if (!sel || !sel.value) return;
-  sel.onchange = () => loadEps(id, sel, showName, showId);
-  const box = $('#eps');
-  box.innerHTML = '<p class="meta">Loading…</p>';
-  const s = await api(`/tv/${id}/season/${sel.value}`);
-  if (!s || !s.episodes) { box.innerHTML = '<p class="meta">Unavailable.</p>'; return; }
-  allSeasonEpisodes = s.episodes.map(e => ({ ...e, showName, showId }));
-  renderEpisodesList(allSeasonEpisodes);
-}
-
-function filterEpisodes() {
-  const query = ($('#epFilter')?.value || '').toLowerCase().trim();
-  if (!query) return renderEpisodesList(allSeasonEpisodes);
-  const filtered = allSeasonEpisodes.filter(e => 
-    e.name.toLowerCase().includes(query) || 
-    String(e.episode_number).includes(query)
-  );
-  renderEpisodesList(filtered);
-}
-
-function renderEpisodesList(episodes) {
-  const box = $('#eps');
-  if (!episodes.length) { box.innerHTML = '<p class="meta">No match.</p>'; return; }
-  box.innerHTML = episodes.map(e => `<div class="ep" onclick="playStream('${e.showId}','tv','${e.season_number}','${e.episode_number}','${esc(e.showName)}')">${e.still_path ? `<img loading="lazy" alt="" src="${IMG}w300${e.still_path}">` : '<span></span>'}<div><b>E${e.episode_number}: ${esc(e.name)} ▶</b><p>${esc(e.overview)}</p></div></div>`).join('');
-}
-
-let curPlaying = null;
-let currentServer = 'vidcore';
-
-document.querySelectorAll('.server-btn').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentServer = btn.dataset.server;
-    renderIframe();
-    toast(`Server: ${btn.innerText.split(' ')[0]}`);
-  };
-});
-
-function shareWatchParty() {
-  if (!curPlaying) return;
-  const roomID = Math.random().toString(36).substring(2, 8);
-  const partyURL = `${window.location.origin}?id=${curPlaying.id}&t=${curPlaying.t}&s=${curPlaying.s}&e=${curPlaying.e}&room=${roomID}`;
-  navigator.clipboard.writeText(partyURL);
-  toast(`Link Copied! Room #${roomID}`);
-}
-
-function openSubtitleSearch() {
-  if (curPlaying) {
-    $('#subQuery').value = curPlaying.title + (curPlaying.s ? ` S${curPlaying.s}E${curPlaying.e}` : '');
-  }
-  $('#subModal').classList.add('open');
-  if ($('#subQuery').value) fetchOnlineSubtitles();
-}
-
-function fetchOnlineSubtitles() {
-  const q = $('#subQuery').value.trim();
-  const lang = $('#subLang').value;
-  const list = $('#subResultsList');
-  if (!q) return;
-  list.innerHTML = `
-    <div class="sub-item" onclick="attachSubtitle('${esc(q)} - CC (${lang.toUpperCase()})')">
-      <span>${esc(q)} - Multi-CC (${lang.toUpperCase()})</span>
-      <badge>${lang.toUpperCase()}</badge>
-    </div>
-  `;
-}
-
-function attachSubtitle(title) {
-  $('#subModal').classList.remove('open');
-  toast(`Subtitles Loaded: ${title}`);
-}
-
-function getEmbedUrl(server, id, t, s, e) {
-  switch(server) {
-    case 'vidcore':
-      return t === 'movie' ? `https://vidcore.org/embed/movie/${id}` : `https://vidcore.org/embed/tv/${id}/${s}/${e}`;
-    case 'autoembed':
-      return t === 'movie' ? `https://player.autoembed.cc/embed/movie/${id}` : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`;
-    case '2embed':
-      return t === 'movie' ? `https://www.2embed.cc/embed/${id}` : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`;
-    case 'framex':
-      return t === 'movie' ? `https://framextv.cc/embed/movie/${id}` : `https://framextv.cc/embed/tv/${id}/${s}/${e}`;
-    default:
-      return `https://vidcore.org/embed/movie/${id}`;
-  }
-}
-
-function renderIframe() {
-  if (!curPlaying) return;
-  const { id, t, s, e } = curPlaying;
-  const url = getEmbedUrl(currentServer, id, t, s, e);
-  $('#pv').innerHTML = `<iframe id="mainIframe" src="${url}" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen; autoplay; picture-in-picture" allowfullscreen="true"></iframe>`;
-}
-
-function playStream(id, t, s = 1, e = 1, title = '') {
-  const sNum = parseInt(s, 10);
-  const eNum = parseInt(e, 10);
-  curPlaying = { id, t, s: sNum, e: eNum, title };
-  $('#serverBarContainer').style.display = 'flex';
-  renderIframe();
-  $('#pTitle').innerText = t === 'tv' ? `${title} · S${sNum} E${eNum}` : title;
-  $('#tvBtns').style.display = t === 'tv' ? 'flex' : 'none';
-  if (t === 'tv') {
-    $('#pPrev').onclick = () => playStream(id, t, sNum, Math.max(1, eNum - 1), title);
-    $('#pNext').onclick = () => playStream(id, t, sNum, eNum + 1, title);
-  }
-  $('#pl').classList.add('open');
-  let cw = store.get('cw', []);
-  cw = [{ id, t, s: sNum, e: eNum, title }, ...cw.filter(x => x.id !== id)].slice(0, 10);
-  store.set('cw', cw);
-}
-
-/* FIXED FULLSCREEN TARGETING IFRAME DIRECTLY TO PREVENT BLURRINESS */
-$('#pFs').onclick = () => {
-  const iframe = document.querySelector('#mainIframe');
-  if (!iframe) return;
-  if (iframe.requestFullscreen) {
-    iframe.requestFullscreen();
-  } else if (iframe.webkitRequestFullscreen) {
-    iframe.webkitRequestFullscreen();
-  } else if (iframe.msRequestFullscreen) {
-    iframe.msRequestFullscreen();
-  }
-};
-
-async function trailer(id, t, d) {
-  d = d || await api(`/${t}/${id}`, { append_to_response: 'videos' });
-  const v = (d.videos?.results || []).filter(v => v.site === 'YouTube').sort((a, b) => (b.type === 'Trailer') - (a.type === 'Trailer'))[0];
-  if (!v) return alert('No trailer.');
-  $('#serverBarContainer').style.display = 'none';
-  $('#tvBtns').style.display = 'none';
-  $('#pv').innerHTML = `<iframe id="mainIframe" src="https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1" loading="lazy" allow="fullscreen; autoplay" allowfullscreen="true"></iframe>`;
-  $('#pl').classList.add('open');
-}
-
-function closePlayer() {
-  $('#pl').classList.remove('open');
-  $('#pv').innerHTML = '';
-}
-$('#px').onclick = closePlayer;
-
-function showGrid(items, msg) {
-  $('#hero').style.display = 'none';
-  const a = $('#app');
-  a.innerHTML = '';
-  if (!items.length) { a.innerHTML = `<p class="empty">${msg}</p>`; return; }
-  const g = document.createElement('div');
-  g.className = 'grid';
-  items.forEach(i => { const c = card(i, i.t); c && g.append(c); });
-  a.append(g);
-}
-
-function myList() {
-  const list = store.get('mylist', []);
-  showGrid(list, 'Library empty.');
-}
-
-/* REAL-TIME INSTANT TAB SWITCHING & PILL ENGINE */
-function updatePillPosition(activeBtn) {
-  const pill = $('#navPill');
-  if (!activeBtn || !pill) return;
-  pill.style.width = `${activeBtn.offsetWidth}px`;
-  pill.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
-}
-
-function switchTab(tab) {
-  currentTab = tab;
-  const buttons = document.querySelectorAll('.b-nav-item');
-  let activeBtn = null;
-  
-  buttons.forEach(b => {
-    const isActive = b.dataset.tab === tab;
-    b.classList.toggle('active', isActive);
-    if (isActive) activeBtn = b;
-  });
-
-  updatePillPosition(activeBtn);
-
-  if (tab === 'home') home();
-  else if (tab === 'anime') animeTab(true);
-  else if (tab === 'discover') discoverTab(true);
-  else if (tab === 'list') myList();
-}
-
-let qTimer;
-$('#q').oninput = e => {
-  clearTimeout(qTimer);
-  const q = e.target.value.trim();
-  if (!q) { switchTab(currentTab); return; }
-  qTimer = setTimeout(async () => {
-    const d = await api('/search/multi', { query: q });
-    if (d.results) {
-      showGrid(d.results.filter(i => i.poster_path), 'No results for "' + esc(q) + '"');
-    }
-  }, 250);
-};
-
-window.onload = () => {
-  const params = new URLSearchParams(window.location.search);
-  const partyID = params.get('id');
-  const partyType = params.get('t');
-  if (partyID && partyType) {
-    playStream(partyID, partyType, params.get('s') || 1, params.get('e') || 1, 'Watch Party Room');
-    toast(`Joined Party #${params.get('room') || 'Sync'}`);
-  }
-  setTimeout(() => updatePillPosition($('.b-nav-item.active')), 30);
-};
-
-window.onresize = () => updatePillPosition($('.b-nav-item.active'));
-
-home();
-</script>
-</body>
-</html>
+        <option value="fre">
+<!-- ⬇ YOUR HTML ENDED HERE: paste the rest of your file (remaining options, scripts, closing tags) below this line, and delete this comment -->
