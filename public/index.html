@@ -1114,13 +1114,13 @@
       seasonSelect.innerHTML = '';
 
       if (data && Array.isArray(data.seasons)) {
-        data.seasons.forEach(s => {
-          if (s.season_number > 0) {
-            const opt = document.createElement('option');
-            opt.value = s.season_number;
-            opt.innerText = `Season ${s.season_number} (${s.episode_count} Eps)`;
-            seasonSelect.appendChild(opt);
-          }
+        // Filter out season 0 (Specials) if there are regular seasons, or include them cleanly
+        const validSeasons = data.seasons.filter(s => s.season_number >= 0 && s.episode_count > 0);
+        validSeasons.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.season_number;
+          opt.innerText = s.season_number === 0 ? `Specials (${s.episode_count} Eps)` : `Season ${s.season_number} (${s.episode_count} Eps)`;
+          seasonSelect.appendChild(opt);
         });
       }
       if (seasonSelect.options.length > 0) {
@@ -1140,24 +1140,28 @@
       if (data && Array.isArray(data.episodes)) {
         const todayStr = new Date().toISOString().split('T')[0];
         
-        // Filter out future unreleased episodes or label them clearly
+        // Strictly filter episodes: Only include episodes where air_date is present and <= today.
+        // If an episode has no air_date, check if it's within the released threshold or mark as unreleased.
         episodesData = data.episodes.map(ep => {
-          const isAired = !ep.air_date || ep.air_date <= todayStr;
-          return { ...ep, isAired };
+          const hasAired = ep.air_date && ep.air_date <= todayStr;
+          return { ...ep, hasAired };
         });
 
-        // Filter default list to only show aired episodes or episodes with air dates up to today
-        const airedEpisodes = episodesData.filter(ep => ep.isAired);
-        
-        if (airedEpisodes.length === 0 && episodesData.length > 0) {
-          // If no episodes have technically aired yet according to date, show the first upcoming one with a badge
-          episodesData[0].isAired = true;
+        // If a season is brand new or future-scheduled where air_date is missing in TMDB API, fallback to first episode
+        const releasedEpisodes = episodesData.filter(ep => ep.hasAired);
+        if (releasedEpisodes.length === 0 && episodesData.length > 0) {
+          // If no episodes have confirmed past air dates, safely enable at least episode 1 to prevent empty lists
+          episodesData[0].hasAired = true;
         }
+
+        // Automatically set currentEpisode to the first available released episode
+        const firstAvailable = episodesData.find(ep => ep.hasAired);
+        currentEpisode = firstAvailable ? firstAvailable.episode_number : 1;
 
         renderEpisodesList(episodesData);
       } else {
         episodesData = [];
-        listContainer.innerHTML = '<div class="text-xs text-gray-500 py-2">No episodes listed.</div>';
+        listContainer.innerHTML = '<div class="text-xs text-gray-500 py-2 col-span-full text-center">No episodes listed for this season.</div>';
       }
     }
 
@@ -1166,16 +1170,27 @@
       listContainer.innerHTML = '';
       const todayStr = new Date().toISOString().split('T')[0];
 
-      eps.forEach(ep => {
+      // Filter out unreleased or future placeholder episodes so only actual released episodes appear
+      const activeEps = eps.filter(ep => {
+        // If air_date is in the future, filter it out or show as locked
+        if (ep.air_date && ep.air_date > todayStr) return false;
+        return true;
+      });
+
+      if (activeEps.length === 0 && eps.length > 0) {
+        // Fallback: if all filtered out, show at least the first episode
+        activeEps.push(eps[0]);
+      }
+
+      activeEps.forEach(ep => {
         const isCurrent = ep.episode_number === currentEpisode;
-        const isUpcoming = ep.air_date && ep.air_date > todayStr;
         
         const btn = document.createElement('button');
-        btn.className = `p-2.5 rounded-xl text-left text-xs transition-all flex items-center justify-between border ${isCurrent ? 'bg-accent/20 border-accent text-white font-bold' : isUpcoming ? 'bg-white/5 border-white/5 text-gray-400 opacity-70' : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'}`;
+        btn.className = `p-2.5 rounded-xl text-left text-xs transition-all flex items-center justify-between border ${isCurrent ? 'bg-accent/20 border-accent text-white font-bold' : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'}`;
         
         let rightBadge = `<span class="text-[10px] text-gray-400 shrink-0 ml-2">${ep.runtime ? ep.runtime + 'm' : ''}</span>`;
-        if (isUpcoming) {
-          rightBadge = `<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 ml-2">Coming ${ep.air_date}</span>`;
+        if (ep.air_date) {
+          rightBadge = `<span class="text-[9px] bg-white/10 text-gray-300 px-1.5 py-0.5 rounded shrink-0 ml-2">${ep.air_date}</span>`;
         }
 
         btn.innerHTML = `
@@ -1183,16 +1198,11 @@
           ${rightBadge}
         `;
         
-        if (!isUpcoming) {
-          btn.onclick = () => {
-            currentEpisode = ep.episode_number;
-            renderEpisodesList(episodesData);
-            loadStreamSource();
-          };
-        } else {
-          btn.title = `Upcoming episode releasing on ${ep.air_date}`;
-          btn.style.cursor = 'not-allowed';
-        }
+        btn.onclick = () => {
+          currentEpisode = ep.episode_number;
+          renderEpisodesList(episodesData);
+          loadStreamSource();
+        };
 
         listContainer.appendChild(btn);
       });
