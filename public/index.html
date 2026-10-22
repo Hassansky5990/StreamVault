@@ -505,7 +505,7 @@ header{
 .sub-item span { font-size: 11px; font-weight: 600; color: #fff; }
 .sub-item badge { font-size: 9px; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; color: var(--text-muted); }
 
-/* PLAYER & CONTROLS - RE-ENGINEERED ICON BUTTONS */
+/* PLAYER & CONTROLS */
 .player-wrap{
   display: flex;
   flex-direction: column;
@@ -1173,16 +1173,16 @@ function playStream(id, t, s = 1, e = 1, title = '') {
   store.set('cw', cw);
 }
 
-/* FIXED FULLSCREEN TARGETING PLAYER WRAPPER */
+/* FIXED FULLSCREEN TARGETING IFRAME DIRECTLY TO PREVENT BLURRINESS */
 $('#pFs').onclick = () => {
-  const playerBox = document.querySelector('.player');
-  if (!playerBox) return;
-  if (playerBox.requestFullscreen) {
-    playerBox.requestFullscreen();
-  } else if (playerBox.webkitRequestFullscreen) {
-    playerBox.webkitRequestFullscreen();
-  } else if (playerBox.msRequestFullscreen) {
-    playerBox.msRequestFullscreen();
+  const iframe = document.querySelector('#mainIframe');
+  if (!iframe) return;
+  if (iframe.requestFullscreen) {
+    iframe.requestFullscreen();
+  } else if (iframe.webkitRequestFullscreen) {
+    iframe.webkitRequestFullscreen();
+  } else if (iframe.msRequestFullscreen) {
+    iframe.msRequestFullscreen();
   }
 };
 
