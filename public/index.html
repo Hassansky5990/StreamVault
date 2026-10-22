@@ -15,25 +15,27 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            heading: ['Outfit', 'sans-serif'],
-            sans: ['Inter', 'sans-serif'],
-          },
-          colors: {
-            pitch: '#050508',
-            surface: 'rgba(18, 18, 26, 0.75)',
-            surfaceBorder: 'rgba(255, 255, 255, 0.08)',
-            accent: '#e50914',
-            accentHover: '#f40612',
-            accentGlow: 'rgba(229, 9, 20, 0.35)',
-            violetAccent: '#8b5cf6',
+    if (typeof tailwind !== 'undefined') {
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              heading: ['Outfit', 'sans-serif'],
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              pitch: '#050508',
+              surface: 'rgba(18, 18, 26, 0.75)',
+              surfaceBorder: 'rgba(255, 255, 255, 0.08)',
+              accent: '#e50914',
+              accentHover: '#f40612',
+              accentGlow: 'rgba(229, 9, 20, 0.35)',
+              violetAccent: '#8b5cf6',
+            },
           },
         },
-      },
+      }
     }
   </script>
 
@@ -1136,7 +1138,22 @@
       listContainer.innerHTML = '';
 
       if (data && Array.isArray(data.episodes)) {
-        episodesData = data.episodes;
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        // Filter out future unreleased episodes or label them clearly
+        episodesData = data.episodes.map(ep => {
+          const isAired = !ep.air_date || ep.air_date <= todayStr;
+          return { ...ep, isAired };
+        });
+
+        // Filter default list to only show aired episodes or episodes with air dates up to today
+        const airedEpisodes = episodesData.filter(ep => ep.isAired);
+        
+        if (airedEpisodes.length === 0 && episodesData.length > 0) {
+          // If no episodes have technically aired yet according to date, show the first upcoming one with a badge
+          episodesData[0].isAired = true;
+        }
+
         renderEpisodesList(episodesData);
       } else {
         episodesData = [];
@@ -1147,17 +1164,36 @@
     function renderEpisodesList(eps) {
       const listContainer = document.getElementById('episodesList');
       listContainer.innerHTML = '';
+      const todayStr = new Date().toISOString().split('T')[0];
 
       eps.forEach(ep => {
         const isCurrent = ep.episode_number === currentEpisode;
+        const isUpcoming = ep.air_date && ep.air_date > todayStr;
+        
         const btn = document.createElement('button');
-        btn.className = `p-2 rounded-xl text-left text-xs transition-all flex items-center justify-between border ${isCurrent ? 'bg-accent/20 border-accent text-white font-bold' : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'}`;
-        btn.innerHTML = `<span class="clamp-1">E${ep.episode_number}: ${ep.name}</span> <span class="text-[10px] text-gray-400 shrink-0 ml-2">${ep.runtime ? ep.runtime + 'm' : ''}</span>`;
-        btn.onclick = () => {
-          currentEpisode = ep.episode_number;
-          renderEpisodesList(episodesData);
-          loadStreamSource();
-        };
+        btn.className = `p-2.5 rounded-xl text-left text-xs transition-all flex items-center justify-between border ${isCurrent ? 'bg-accent/20 border-accent text-white font-bold' : isUpcoming ? 'bg-white/5 border-white/5 text-gray-400 opacity-70' : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'}`;
+        
+        let rightBadge = `<span class="text-[10px] text-gray-400 shrink-0 ml-2">${ep.runtime ? ep.runtime + 'm' : ''}</span>`;
+        if (isUpcoming) {
+          rightBadge = `<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 ml-2">Coming ${ep.air_date}</span>`;
+        }
+
+        btn.innerHTML = `
+          <span class="clamp-1">E${ep.episode_number}: ${ep.name}</span> 
+          ${rightBadge}
+        `;
+        
+        if (!isUpcoming) {
+          btn.onclick = () => {
+            currentEpisode = ep.episode_number;
+            renderEpisodesList(episodesData);
+            loadStreamSource();
+          };
+        } else {
+          btn.title = `Upcoming episode releasing on ${ep.air_date}`;
+          btn.style.cursor = 'not-allowed';
+        }
+
         listContainer.appendChild(btn);
       });
     }
