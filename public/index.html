@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault Pro · Neon Eclipse Edition</title>
+<title>StreamVault Pro · Liquid Glass Edition</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://vidcore.org">
@@ -14,17 +14,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #030305;
-  --surface: #0b0a10;
-  --surface-hover: #13111c;
-  --surface-glass: rgba(11, 10, 16, 0.85);
-  --border: rgba(255, 255, 255, 0.07);
-  --border-focus: rgba(255, 42, 95, 0.5);
-  --text-main: #f4f2f8;
-  --text-muted: #8b839a;
+  --bg: #020204;
+  --surface: #09080e;
+  --surface-hover: #121019;
+  --liquid-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(9, 8, 14, 0.75);
+  --liquid-glass-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%), rgba(18, 16, 25, 0.85);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-glass: rgba(255, 255, 255, 0.15);
+  --border-focus: rgba(255, 42, 95, 0.6);
+  --text-main: #f5f3f8;
+  --text-muted: #8c839c;
   --accent-gradient: linear-gradient(135deg, #ff2a5f 0%, #7928ca 100%);
   --accent-solid: #ff2a5f;
-  --accent-glow: rgba(255, 42, 95, 0.35);
+  --accent-glow: rgba(255, 42, 95, 0.4);
   --ambient-color: rgba(121, 40, 202, 0.25);
   --font-display: 'Outfit', -apple-system, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
@@ -47,6 +49,15 @@ body{
 button, input, select{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none;transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1)}
 
+/* LIQUID GLASS MIXIN */
+.liquid-panel {
+  background: var(--liquid-glass);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
 /* HEADER / NAVBAR */
 header{
   position: fixed;
@@ -57,15 +68,15 @@ header{
   justify-content: space-between;
   gap: 12px;
   padding: 16px 4vw;
-  background: linear-gradient(180deg, rgba(3,3,5,0.9) 0%, rgba(3,3,5,0) 100%);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(2,2,4,0.85) 0%, rgba(2,2,4,0) 100%);
+  backdrop-filter: blur(12px);
   transition: all .3s ease;
 }
 header.solid{
-  background: var(--surface-glass);
-  backdrop-filter: blur(24px);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  background: var(--liquid-glass);
+  backdrop-filter: blur(30px) saturate(190%);
+  border-bottom: 1px solid var(--border-glass);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .logo{
   font: 800 19px/1 var(--font-display);
@@ -86,12 +97,17 @@ header.solid{
 }
 .logo span{background: var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .search-box{
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1;
-  max-width: 220px;
+  max-width: 200px;
 }
 #q{
   background: rgba(255, 255, 255, 0.04);
@@ -118,16 +134,48 @@ header.solid{
   pointer-events: none;
 }
 
-/* FLOATING BOTTOM NAV */
+/* LIQUID GLASS DONATE BUTTON */
+.donate-btn {
+  background: linear-gradient(135deg, rgba(255, 42, 95, 0.15) 0%, rgba(121, 40, 202, 0.15) 100%), rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 42, 95, 0.35);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 15px rgba(255, 42, 95, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+.donate-btn svg { width: 13px; height: 13px; fill: #ff2a5f; animation: pulse-heart 2s infinite; }
+.donate-btn:hover {
+  background: var(--accent-gradient);
+  border-color: transparent;
+  box-shadow: 0 6px 25px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+}
+.donate-btn:hover svg { fill: #fff; }
+
+@keyframes pulse-heart {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* FLOATING LIQUID GLASS BOTTOM NAV */
 .bottom-nav {
   position: fixed;
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   height: 58px;
-  background: rgba(11, 10, 16, 0.9);
-  backdrop-filter: blur(24px);
-  border: 1px solid var(--border);
+  background: var(--liquid-glass);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid var(--border-glass);
   border-radius: 99px;
   display: flex;
   align-items: center;
@@ -135,7 +183,7 @@ header.solid{
   gap: 6px;
   z-index: 45;
   padding: 0 12px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   width: 92%;
   max-width: 420px;
 }
@@ -153,7 +201,7 @@ header.solid{
 }
 .b-nav-item svg { width: 16px; height: 16px; fill: currentColor; transition: transform .2s; }
 .b-nav-item.active, .b-nav-item:hover { color: #fff; background: rgba(255,255,255,0.06); }
-.b-nav-item.active { background: var(--accent-gradient); color: #fff; box-shadow: 0 4px 16px var(--accent-glow); }
+.b-nav-item.active { background: var(--accent-gradient); color: #fff; box-shadow: 0 4px 16px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.3); }
 .b-nav-item.active svg { fill: #fff; }
 
 /* HERO BANNER */
@@ -171,8 +219,8 @@ header.solid{
   position: absolute;
   inset: 0;
   background: 
-    linear-gradient(90deg, var(--bg) 0%, rgba(3,3,5,0.6) 55%, transparent 100%),
-    linear-gradient(0deg, var(--bg) 0%, rgba(3,3,5,0.2) 60%);
+    linear-gradient(90deg, var(--bg) 0%, rgba(2,2,4,0.65) 55%, transparent 100%),
+    linear-gradient(0deg, var(--bg) 0%, rgba(2,2,4,0.25) 60%);
 }
 .hero-content{position:relative;max-width:620px;z-index:2}
 .hero h1{
@@ -207,19 +255,19 @@ header.solid{
   justify-content: center;
   gap: 6px;
   text-decoration: none;
-  box-shadow: 0 8px 25px var(--accent-glow);
+  box-shadow: 0 8px 25px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 .btn:hover{
   transform: translateY(-2px);
   filter: brightness(1.1);
-  box-shadow: 0 12px 30px var(--accent-glow);
+  box-shadow: 0 12px 30px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.4);
 }
 .btn.alt{
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--liquid-glass);
+  backdrop-filter: blur(20px);
   color: #fff;
-  border: 1px solid var(--border);
-  box-shadow: none;
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-glass);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 /* CARDS & TRACKS */
@@ -252,12 +300,12 @@ main{position:relative;z-index:3;margin-top:-3vh}
   position: relative;
   scroll-snap-align: start;
   border: 1px solid var(--border);
-  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card:hover{
   transform: translateY(-6px) scale(1.02);
-  border-color: rgba(255, 42, 95, 0.5);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 42, 95, 0.15);
+  border-color: rgba(255, 42, 95, 0.6);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 42, 95, 0.2);
 }
 .card img{width:100%;height:100%;object-fit:cover;display:block}
 .card .t{
@@ -266,7 +314,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   padding: 25px 8px 8px;
   font-size: 10px;
   font-weight: 600;
-  background: linear-gradient(transparent, rgba(3,3,5,0.98));
+  background: linear-gradient(transparent, rgba(2,2,4,0.98));
   color: #fff;
   opacity: 0;
   transition: opacity .2s ease;
@@ -282,13 +330,14 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .grid .card{width:auto}
 .empty{padding:100px 4vw;color:var(--text-muted);text-align:center;font-size:13px}
 
-/* MODALS */
+/* MODALS WITH LIQUID GLASS */
 .layer{
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgba(3, 3, 5, 0.85);
-  backdrop-filter: blur(20px);
+  background: rgba(2, 2, 4, 0.8);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   display: none;
   align-items: center;
   justify-content: center;
@@ -298,15 +347,17 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .layer.open{display:flex}
 
 .panel{
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--liquid-glass);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
   max-width: 820px;
   width: 100%;
   max-height: 88vh;
   overflow: auto;
   position: relative;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 50px 120px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 .panel .bd{height:min(40vw, 280px);background-size:cover;background-position:center}
 .panel .in{padding:24px}
@@ -316,8 +367,9 @@ main{position:relative;z-index:3;margin-top:-3vh}
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(0,0,0,0.65);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-glass);
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -327,18 +379,49 @@ main{position:relative;z-index:3;margin-top:-3vh}
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
+}
+.x:hover { background: rgba(255,255,255,0.15); }
+
+/* DONATE MODAL PANEL */
+.donate-panel {
+  background: var(--liquid-glass);
+  backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  max-width: 440px;
+  width: 100%;
+  padding: 28px;
+  position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.2);
+  text-align: center;
+}
+.donate-panel h3 { font: 800 20px var(--font-display); margin-bottom: 8px; color: #fff; }
+.donate-panel p { color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 20px; }
+.crypto-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 11px;
+  color: #ff2a5f;
+  word-break: break-all;
+  margin-bottom: 16px;
 }
 
 /* SUBTITLE MODAL */
 .sub-layer { z-index: 9999; }
 .sub-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--liquid-glass);
+  backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
   max-width: 500px;
   width: 100%;
   padding: 20px;
   position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 .sub-search-row {
   display: flex;
@@ -347,7 +430,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
 }
 .sub-input {
   flex: 1;
-  background: var(--surface-hover);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
   color: #fff;
   padding: 10px 14px;
@@ -355,7 +438,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   font-size: 12px;
 }
 .sub-select {
-  background: var(--surface-hover);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
   color: #fff;
   padding: 10px 10px;
@@ -402,7 +485,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-glass);
   box-shadow: 0 0 70px var(--ambient-color), 0 24px 60px rgba(0,0,0,0.95);
 }
 .player iframe{width:100%;height:100%;border:0;display:block}
@@ -412,10 +495,12 @@ main{position:relative;z-index:3;margin-top:-3vh}
   flex-direction: column;
   gap: 10px;
   width: 100%;
-  background: var(--surface);
+  background: var(--liquid-glass);
+  backdrop-filter: blur(30px) saturate(190%);
   padding: 14px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .server-header {
   display: flex;
@@ -444,7 +529,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   justify-content: space-between;
   gap: 4px;
 }
-.server-btn.active { background: rgba(255, 42, 95, 0.15); border-color: var(--accent-solid); color: #fff; }
+.server-btn.active { background: rgba(255, 42, 95, 0.2); border-color: var(--accent-solid); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2); }
 .server-badge { font-size: 6px; background: var(--accent-gradient); color: #fff; padding: 2px 4px; border-radius: 3px; font-weight: 700; text-transform: uppercase; }
 
 .player-controls-row { 
@@ -455,7 +540,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   width: 100%; 
 }
 .icon-btn {
-  background: var(--surface-hover);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
   padding: 8px 10px;
   border-radius: var(--radius-sm);
@@ -469,6 +554,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   width: 100%;
 }
 .icon-btn svg{width:12px;height:12px;fill:currentColor; flex-shrink: 0;}
+.icon-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--border-glass); }
 
 .ep-nav-row {
   display: grid;
@@ -495,7 +581,7 @@ main{position:relative;z-index:3;margin-top:-3vh}
   flex-wrap: wrap;
 }
 .ep-search-input {
-  background: var(--surface-hover);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
   color: #fff;
   padding: 8px 10px;
@@ -515,13 +601,15 @@ main{position:relative;z-index:3;margin-top:-3vh}
 .ep img{width:100px;height:56px;object-fit:cover;border-radius:6px;flex:none}
 .ep p{color:var(--text-muted);font-size:10px;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ep b{font-family:var(--font-display);font-size:11px;color:#fff}
+.ep:hover { background: rgba(255,255,255,0.03); }
 
 footer{padding:30px 4vw 90px;color:var(--text-muted);font-size:10px;text-align:center;border-top:1px solid var(--border);margin-top:30px}
 
 .chips{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 .chips span{
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(10px);
   border-radius: 99px;
   padding: 3px 10px;
   font-size: 9px;
@@ -541,15 +629,22 @@ footer{padding:30px 4vw 90px;color:var(--text-muted);font-size:10px;text-align:c
   font-size: 11px;
   z-index: 10000;
   display: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 </style>
 </head>
 <body>
 <header id="hd">
   <span class="logo" onclick="switchTab('home')"><div class="logo-icon"></div>Stream<span>Vault</span></span>
-  <div class="search-box">
-    <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input id="q" type="search" placeholder="Search..." aria-label="Search">
+  <div class="header-right">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input id="q" type="search" placeholder="Search..." aria-label="Search">
+    </div>
+    <button class="donate-btn" onclick="openDonateModal()">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>Donate</span>
+    </button>
   </div>
 </header>
 
@@ -575,9 +670,28 @@ footer{padding:30px 4vw 90px;color:var(--text-muted);font-size:10px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault Pro · Neon Eclipse Engine</footer>
+<footer>StreamVault Pro · Liquid Glass Edition</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
+
+<!-- DONATE MODAL -->
+<div class="layer" id="donateModal">
+  <div class="donate-panel">
+    <button class="x" onclick="$('#donateModal').classList.remove('open')">×</button>
+    <div style="width:40px;height:40px;background:var(--accent-gradient);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 0 20px var(--accent-glow);">
+      <svg style="width:20px;height:20px;fill:#fff;" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+    <h3>Support StreamVault</h3>
+    <p>Help keep servers running, ad-free, and lightning fast. Your support means the world!</p>
+    
+    <div style="text-align:left;font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">USDT / TRC20 Address:</div>
+    <div class="crypto-box" onclick="copyCrypto()" title="Click to copy">
+      TYourCryptoWalletAddressHere12345
+    </div>
+
+    <button class="btn" style="width:100%;" onclick="copyCrypto()">Copy Wallet Address</button>
+  </div>
+</div>
 
 <!-- SUBTITLE MODAL -->
 <div class="layer sub-layer" id="subModal">
@@ -674,6 +788,15 @@ function toast(msg) {
   t.innerText = msg;
   t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 2000);
+}
+
+function openDonateModal() {
+  $('#donateModal').classList.add('open');
+}
+
+function copyCrypto() {
+  navigator.clipboard.writeText('TYourCryptoWalletAddressHere12345');
+  toast('Wallet address copied to clipboard! 💖');
 }
 
 function card(i, def) {
@@ -811,7 +934,7 @@ async function openInfo(id, t) {
   <button class="btn alt" id="ms">${saved ? 'Remove' : '+ Library'}</button></div>
   ${t === 'tv' ? `<div style="margin-top:16px">
     <div class="ep-header-bar">
-      <select id="sn" style="background:var(--surface-hover);border:1px solid var(--border);color:#fff;padding:8px 10px;border-radius:6px;font-size:11px">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}">Season ${s.season_number}</option>`).join('')}</select>
+      <select id="sn" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;padding:8px 10px;border-radius:6px;font-size:11px">${(d.seasons || []).filter(s => s.season_number > 0).map(s => `<option value="${s.season_number}" style="background:#09080e;">Season ${s.season_number}</option>`).join('')}</select>
       <input type="search" id="epFilter" class="ep-search-input" placeholder="Search episode..." oninput="filterEpisodes()">
     </div>
     <div id="eps"></div>
@@ -837,6 +960,7 @@ async function openInfo(id, t) {
 
 $('#md').onclick = e => { if (e.target === $('#md')) $('#md').classList.remove('open'); };
 $('#pl').onclick = e => { if (e.target === $('#pl')) closePlayer(); };
+$('#donateModal').onclick = e => { if (e.target === $('#donateModal')) $('#donateModal').classList.remove('open'); };
 
 async function loadEps(id, sel, showName = '', showId = id) {
   if (!sel || !sel.value) return;
