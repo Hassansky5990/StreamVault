@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault Pro · iOS Liquid Glass</title>
+<title>StreamVault Pro · Flawless Liquid Glass</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://vidcore.org">
@@ -14,12 +14,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #010103;
-  --surface: #08070d;
+  --bg: #020204;
+  --surface: #09080f;
   
-  /* GENUINE IOS LIQUID GLASS (High gloss dark refraction, zero milky frost) */
-  --ios-liquid: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(255, 255, 255, 0.05) 100%), rgba(8, 7, 13, 0.75);
-  --ios-border: inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 1px rgba(0, 0, 0, 0.9), 0 15px 35px rgba(0, 0, 0, 0.7);
+  /* PURE IOS LIQUID GLASS OPTICS */
+  --ios-liquid: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.01) 50%, rgba(255, 255, 255, 0.04) 100%), rgba(8, 7, 13, 0.8);
+  --ios-border: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.8), 0 20px 40px rgba(0, 0, 0, 0.85);
   
   --text-main: #f5f3f8;
   --text-muted: #8c839c;
@@ -29,7 +29,7 @@
   --ambient-color: rgba(121, 40, 202, 0.25);
   --font-display: 'Outfit', -apple-system, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
-  --radius-sm: 14px;
+  --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 26px;
 }
@@ -42,19 +42,19 @@ body{
   font: 400 14px/1.6 var(--font-body);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  padding-top: 72px; /* SAFE PADDING SO HEADER NEVER OVERLAPS CONTENT */
+  padding-top: 90px;
   padding-bottom: 110px;
 }
 
 button, input, select{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none;}
 
-/* PAGE TRANSITION */
-#app {
-  transition: opacity 0.2s ease;
-}
-#app.tab-changing {
-  opacity: 0;
+/* CONTAINMENT TO ELIMINATE WALL CLIPPING */
+#app, #hero {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 28px;
 }
 
 /* HEADER */
@@ -66,7 +66,7 @@ header{
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 4vw;
+  padding: 14px 28px;
   background: var(--ios-liquid);
   backdrop-filter: blur(25px) saturate(200%);
   -webkit-backdrop-filter: blur(25px) saturate(200%);
@@ -110,7 +110,7 @@ header{
   color: #fff;
   border-radius: 99px;
   padding: 0 14px 0 34px;
-  height: 36px;
+  height: 38px;
   width: 100%;
   font-size: 12px;
   transition: all .3s ease;
@@ -135,8 +135,8 @@ header{
   background: linear-gradient(135deg, rgba(255, 42, 95, 0.25) 0%, rgba(121, 40, 202, 0.25) 100%), rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
-  padding: 0 14px;
-  height: 36px;
+  padding: 0 16px;
+  height: 38px;
   border-radius: 99px;
   font-size: 11px;
   font-weight: 700;
@@ -162,7 +162,7 @@ header{
   50% { transform: scale(1.18); }
 }
 
-/* REAL-TIME IOS BOTTOM NAVIGATION & SLIDING PILL */
+/* FLOATING NAVIGATION & SLIDING PILL */
 .bottom-nav {
   position: fixed;
   bottom: 16px;
@@ -219,13 +219,17 @@ header{
 
 /* HERO BANNER */
 .hero{
-  min-height: 70vh;
+  min-height: 60vh;
   display: flex;
   align-items: flex-end;
-  padding: 40px 5vw 6vh;
+  padding: 30px 28px;
+  border-radius: var(--radius-lg);
   background-size: cover;
   background-position: center 25%;
   position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.85);
 }
 .hero::before{
   content: "";
@@ -261,10 +265,10 @@ header{
   margin-top: 10px;
 }
 
-/* UNIFIED BUTTON ENGINE */
+/* FLAWLESS UNIFIED BUTTON LAYOUT ENGINE */
 .btn {
-  height: 40px;
-  padding: 0 20px;
+  height: 42px;
+  padding: 0 22px;
   border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
@@ -281,6 +285,7 @@ header{
   box-shadow: 0 6px 20px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.4);
   transition: all 0.2s ease;
   vertical-align: middle;
+  box-sizing: border-box;
 }
 .btn svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
 .btn:hover {
@@ -301,18 +306,17 @@ header{
 }
 
 /* CARDS & TRACKS */
-main{position:relative;z-index:3;margin-top:10px}
-.row{margin:24px 0}
+.row{margin:28px 0}
 .row-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5vw 10px;
+  padding: 0 0 12px;
   flex-wrap: wrap;
   gap: 10px;
 }
 .row h2{
-  font: 700 16px var(--font-display);
+  font: 700 18px var(--font-display);
   letter-spacing: -0.3px;
   color: #fff;
 }
@@ -322,7 +326,7 @@ main{position:relative;z-index:3;margin-top:10px}
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 4px 5vw 12px;
+  padding: 4px 0 16px;
   scrollbar-width: none;
 }
 .genre-chips::-webkit-scrollbar { display: none; }
@@ -330,7 +334,7 @@ main{position:relative;z-index:3;margin-top:10px}
   background: var(--ios-liquid);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--text-muted);
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 99px;
   font-size: 11px;
   font-weight: 600;
@@ -349,7 +353,7 @@ main{position:relative;z-index:3;margin-top:10px}
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  padding: 6px 5vw 16px 5vw;
+  padding: 6px 0 16px;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
@@ -357,7 +361,7 @@ main{position:relative;z-index:3;margin-top:10px}
 
 .card{
   flex: 0 0 auto;
-  width: 125px;
+  width: 130px;
   aspect-ratio: 2/3;
   border-radius: var(--radius-sm);
   background: var(--surface);
@@ -388,9 +392,9 @@ main{position:relative;z-index:3;margin-top:10px}
 
 .grid{
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
-  padding: 10px 4vw 20px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+  padding: 10px 0 20px;
 }
 .grid .card{width:auto}
 
@@ -400,7 +404,7 @@ main{position:relative;z-index:3;margin-top:10px}
   margin: 20px 0 35px;
 }
 
-.empty{padding:80px 4vw;color:var(--text-muted);text-align:center;font-size:13px}
+.empty{padding:80px 0;color:var(--text-muted);text-align:center;font-size:13px}
 
 /* MODALS WITH IOS LIQUID GLASS */
 .layer{
@@ -506,7 +510,7 @@ main{position:relative;z-index:3;margin-top:10px}
   border: 1px solid rgba(255,255,255,0.1);
   color: #fff;
   padding: 0 12px;
-  height: 36px;
+  height: 38px;
   border-radius: var(--radius-sm);
   font-size: 12px;
 }
@@ -515,7 +519,7 @@ main{position:relative;z-index:3;margin-top:10px}
   border: 1px solid rgba(255,255,255,0.1);
   color: #fff;
   padding: 0 10px;
-  height: 36px;
+  height: 38px;
   border-radius: var(--radius-sm);
   font-size: 11px;
 }
@@ -617,7 +621,7 @@ main{position:relative;z-index:3;margin-top:10px}
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.1);
   padding: 0 10px;
-  height: 36px;
+  height: 38px;
   border-radius: var(--radius-sm);
   font-size: 10px;
   font-weight: 600;
@@ -646,7 +650,7 @@ main{position:relative;z-index:3;margin-top:10px}
   margin-right: -10px;
   z-index: 1;
 }
-.sub{font:700 15px var(--font-display);padding:0 5vw 10px}
+.sub{font:700 15px var(--font-display);padding:0 0 10px}
 
 .ep-header-bar {
   display: flex;
@@ -660,7 +664,7 @@ main{position:relative;z-index:3;margin-top:10px}
   border: 1px solid rgba(255,255,255,0.1);
   color: #fff;
   padding: 0 10px;
-  height: 36px;
+  height: 38px;
   border-radius: 6px;
   font-size: 11px;
   flex: 1;
@@ -679,7 +683,7 @@ main{position:relative;z-index:3;margin-top:10px}
 .ep b{font-family:var(--font-display);font-size:11px;color:#fff}
 .ep:hover { background: rgba(255,255,255,0.03); }
 
-footer{padding:25px 4vw 85px;color:var(--text-muted);font-size:10px;text-align:center;border-top:1px solid rgba(255,255,255,0.08);margin-top:25px}
+footer{padding:25px 0 85px;color:var(--text-muted);font-size:10px;text-align:center;border-top:1px solid rgba(255,255,255,0.08);margin-top:25px}
 
 .chips{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 .chips span{
@@ -747,7 +751,7 @@ footer{padding:25px 4vw 85px;color:var(--text-muted);font-size:10px;text-align:c
   </button>
 </nav>
 
-<footer>StreamVault Pro · iOS Liquid Glass</footer>
+<footer>StreamVault Pro · Flawless Liquid Glass</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
 
@@ -894,7 +898,7 @@ function card(i, def) {
 
 async function home() {
   $('#app').innerHTML = '';
-  $('#hero').style.display = '';
+  $('#hero').style.display = 'block';
   const wrap = $('#app');
   
   const top = document.createElement('section');
@@ -942,14 +946,14 @@ async function home() {
   });
 }
 
-// ANIME TAB WITH REAL GENRE CHIPS AND LOAD MORE
+// ANIME TAB WITH HORIZONTAL GENRE CHIPS BAR
 async function animeTab(reset = true) {
   if (reset) {
     animePage = 1;
     $('#hero').style.display = 'none';
     const a = $('#app');
     a.innerHTML = `
-      <div class="row" style="padding-top:10px">
+      <div class="row">
         <div class="row-header"><h2>Featured Anime</h2></div>
         <div class="genre-chips" id="animeGenres">
           <button class="chip ${!selectedAnimeGenre ? 'active' : ''}" onclick="changeAnimeGenre('')">All</button>
@@ -987,14 +991,14 @@ function changeAnimeGenre(genreId) {
   animeTab(true);
 }
 
-// DISCOVER TAB WITH REAL GENRE CHIPS AND LOAD MORE
+// DISCOVER TAB WITH HORIZONTAL GENRE CHIPS BAR
 async function discoverTab(reset = true) {
   if (reset) {
     discoverPage = 1;
     $('#hero').style.display = 'none';
     const a = $('#app');
     a.innerHTML = `
-      <div class="row" style="padding-top:10px">
+      <div class="row">
         <div class="row-header"><h2>Discover Movies</h2></div>
         <div class="genre-chips" id="discoverGenres">
           <button class="chip ${!selectedDiscoverGenre ? 'active' : ''}" onclick="changeDiscoverGenre('')">All</button>
@@ -1005,7 +1009,7 @@ async function discoverTab(reset = true) {
           <button class="chip ${selectedDiscoverGenre === '10749' ? 'active' : ''}" onclick="changeDiscoverGenre('10749')">Romance</button>
           <button class="chip ${selectedDiscoverGenre === '18' ? 'active' : ''}" onclick="changeDiscoverGenre('18')">Drama</button>
           <button class="chip ${selectedDiscoverGenre === '53' ? 'active' : ''}" onclick="changeDiscoverGenre('53')">Thriller</button>
-          <button class="chip ${selectedDiscoverGenre === '16' ? 'active' : ''}" onclick="changeDiscoverGenre('16')">Animation</button>
+          <button class="chip ${selectedDiscoverGenre === '16' ? 'active' : ''}" onclick="changeDiscoverGenre('16')">Animation</option>
         </div>
         <div class="grid" id="discGrid"></div>
         <div class="load-more-wrap"><button class="btn alt" onclick="discoverTab(false)">Load More Movies</button></div>
@@ -1276,16 +1280,10 @@ function switchTab(tab) {
 
   updatePillPosition(activeBtn);
 
-  const app = $('#app');
-  app.classList.add('tab-changing');
-  
-  // Instant real-time rendering
   if (tab === 'home') home();
   else if (tab === 'anime') animeTab(true);
   else if (tab === 'discover') discoverTab(true);
   else if (tab === 'list') myList();
-  
-  setTimeout(() => app.classList.remove('tab-changing'), 50);
 }
 
 let qTimer;
@@ -1313,7 +1311,6 @@ window.onload = () => {
 };
 
 window.onresize = () => updatePillPosition($('.b-nav-item.active'));
-window.onscroll = () => {};
 
 home();
 </script>
