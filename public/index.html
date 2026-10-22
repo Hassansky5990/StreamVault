@@ -18,7 +18,7 @@
   --surface: #09080f;
   
   /* PURE IOS LIQUID GLASS OPTICS */
-  --ios-liquid: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.01) 50%, rgba(255, 255, 255, 0.04) 100%), rgba(8, 7, 13, 0.8);
+  --ios-liquid: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.01) 50%, rgba(255, 255, 255, 0.04) 100%), rgba(8, 7, 13, 0.85);
   --ios-border: inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -1px 1px rgba(0, 0, 0, 0.8), 0 20px 40px rgba(0, 0, 0, 0.85);
   
   --text-main: #f5f3f8;
@@ -44,6 +44,23 @@ body{
   -webkit-font-smoothing: antialiased;
   padding-top: 90px;
   padding-bottom: 110px;
+}
+
+/* CUSTOM DARK SCROLLBARS SO CLOSE BUTTONS NEVER HUG WHITE TRACKS */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: rgba(2, 2, 4, 0.5);
+  border-radius: 99px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 42, 95, 0.5);
 }
 
 button, input, select{font:inherit;color:inherit}
@@ -375,18 +392,18 @@ header{
 
 .empty{padding:80px 0;color:var(--text-muted);text-align:center;font-size:13px}
 
-/* MODALS WITH IOS LIQUID GLASS */
+/* MODALS WITH IOS LIQUID GLASS & SPACED CLOSE BUTTON */
 .layer{
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgba(1, 1, 3, 0.82);
+  background: rgba(1, 1, 3, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 16px;
   overflow-y: auto;
 }
 .layer.open{display:flex}
@@ -400,33 +417,35 @@ header{
   max-width: 800px;
   width: 100%;
   max-height: 88vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35);
+  padding-right: 4px; /* Space from scrollbar */
 }
 .panel .bd{height:min(38vw, 260px);background-size:cover;background-position:center}
-.panel .in{padding:22px}
+.panel .in{padding:24px 28px;}
 .panel h2{font: 800 21px var(--font-display); letter-spacing: -0.5px}
 .meta{color:var(--text-muted);margin:6px 0 12px;font-size:11px;font-weight:500}
 .x{
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 16px;
+  right: 18px;
   background: rgba(255,255,255,0.08);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 15px;
-  z-index: 10;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  z-index: 20;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
 }
-.x:hover { background: rgba(255,255,255,0.2); }
+.x:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
 
 /* SUBTITLE MODAL */
 .sub-layer { z-index: 9999; }
@@ -437,7 +456,7 @@ header{
   border-radius: var(--radius-lg);
   max-width: 480px;
   width: 100%;
-  padding: 20px;
+  padding: 24px;
   position: relative;
   box-shadow: 0 35px 90px rgba(0,0,0,0.9), inset 0 1.5px 1.5px rgba(255,255,255,0.35);
 }
@@ -486,7 +505,7 @@ header{
 .sub-item span { font-size: 11px; font-weight: 600; color: #fff; }
 .sub-item badge { font-size: 9px; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; color: var(--text-muted); }
 
-/* PLAYER & CONTROLS */
+/* PLAYER & CONTROLS - FLUSH ALIGNMENT FIX */
 .player-wrap{
   display: flex;
   flex-direction: column;
@@ -494,7 +513,7 @@ header{
   width: 100%;
   max-width: 900px;
   max-height: 92vh;
-  gap: 10px;
+  gap: 12px;
   margin: auto;
 }
 .player{
@@ -513,11 +532,11 @@ header{
 .server-bar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
   background: var(--ios-liquid);
   backdrop-filter: blur(25px) saturate(180%);
-  padding: 12px;
+  padding: 14px;
   border-radius: var(--radius-md);
   border: 1px solid rgba(255,255,255,0.2);
   box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.3);
@@ -534,12 +553,13 @@ header{
 .server-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
 }
 .server-btn {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255,255,255,0.1);
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
   font-size: 10px;
   font-weight: 600;
@@ -548,21 +568,21 @@ header{
   align-items: center;
   justify-content: space-between;
   gap: 4px;
+  width: 100%;
 }
 .server-btn.active { background: rgba(255, 42, 95, 0.25); border-color: var(--accent-solid); color: #fff; box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
 .server-badge { font-size: 6px; background: var(--accent-gradient); color: #fff; padding: 2px 4px; border-radius: 3px; font-weight: 700; text-transform: uppercase; }
 
 .player-controls-row { 
-  display: grid; 
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px; 
+  display: flex; 
+  gap: 8px;
   align-items: center; 
   width: 100%; 
 }
 .icon-btn {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.1);
-  padding: 0 10px;
+  padding: 0 12px;
   height: 38px;
   border-radius: var(--radius-sm);
   font-size: 10px;
@@ -572,15 +592,14 @@ header{
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 100%;
+  flex: 1;
 }
 .icon-btn svg{width:12px;height:12px;fill:currentColor; flex-shrink: 0;}
 .icon-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
 
 .ep-nav-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
+  display: flex;
+  gap: 8px;
   width: 100%;
 }
 
@@ -1124,7 +1143,7 @@ function playStream(id, t, s = 1, e = 1, title = '') {
   $('#serverBarContainer').style.display = 'flex';
   renderIframe();
   $('#pTitle').innerText = t === 'tv' ? `${title} · S${sNum} E${eNum}` : title;
-  $('#tvBtns').style.display = t === 'tv' ? 'grid' : 'none';
+  $('#tvBtns').style.display = t === 'tv' ? 'flex' : 'none';
   if (t === 'tv') {
     $('#pPrev').onclick = () => playStream(id, t, sNum, Math.max(1, eNum - 1), title);
     $('#pNext').onclick = () => playStream(id, t, sNum, eNum + 1, title);
