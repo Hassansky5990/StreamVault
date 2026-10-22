@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>StreamVault Pro · Flawless Liquid Glass</title>
+<title>StreamVault Pro · Flawless iOS Liquid Edition</title>
 <link rel="preconnect" href="https://image.tmdb.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://vidcore.org">
@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://www.2embed.cc">
 <link rel="preconnect" href="https://framextv.cc">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #020204;
@@ -79,7 +79,7 @@ header{
   letter-spacing: -0.5px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -102,7 +102,7 @@ header{
   position: relative;
   display: flex;
   align-items: center;
-  max-width: 180px;
+  max-width: 220px;
 }
 #q{
   background: rgba(255, 255, 255, 0.03);
@@ -129,37 +129,6 @@ header{
   height: 14px;
   fill: var(--text-muted);
   pointer-events: none;
-}
-
-.donate-btn {
-  background: linear-gradient(135deg, rgba(255, 42, 95, 0.25) 0%, rgba(121, 40, 202, 0.25) 100%), rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  padding: 0 16px;
-  height: 38px;
-  border-radius: 99px;
-  font-size: 11px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 4px 15px rgba(0,0,0,0.4);
-  transition: all 0.25s ease;
-  flex-shrink: 0;
-}
-.donate-btn svg { width: 12px; height: 12px; fill: #ff2a5f; animation: pulse-heart 2s infinite; }
-.donate-btn:hover {
-  background: var(--accent-gradient);
-  border-color: transparent;
-  box-shadow: 0 6px 20px var(--accent-glow), inset 0 1px 1px rgba(255,255,255,0.5);
-  transform: translateY(-1px);
-}
-.donate-btn:hover svg { fill: #fff; }
-
-@keyframes pulse-heart {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.18); }
 }
 
 /* FLOATING NAVIGATION & SLIDING PILL */
@@ -459,33 +428,6 @@ header{
 }
 .x:hover { background: rgba(255,255,255,0.2); }
 
-/* DONATE MODAL PANEL */
-.donate-panel {
-  background: var(--ios-liquid);
-  backdrop-filter: blur(30px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-lg);
-  max-width: 420px;
-  width: 100%;
-  padding: 26px;
-  position: relative;
-  box-shadow: 0 35px 90px rgba(0,0,0,0.9), inset 0 1.5px 1.5px rgba(255,255,255,0.35);
-  text-align: center;
-}
-.donate-panel h3 { font: 800 19px var(--font-display); margin-bottom: 6px; color: #fff; }
-.donate-panel p { color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-bottom: 18px; }
-.crypto-box {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 10px;
-  border-radius: var(--radius-sm);
-  font-family: monospace;
-  font-size: 11px;
-  color: #ff2a5f;
-  word-break: break-all;
-  margin-bottom: 14px;
-}
-
 /* SUBTITLE MODAL */
 .sub-layer { z-index: 9999; }
 .sub-panel {
@@ -643,13 +585,18 @@ header{
 }
 
 .tp{display:flex;align-items:flex-end;flex:0 0 auto;margin-right:6px}
-.rank{
-  font: 800 clamp(45px, 8vw, 75px)/.8 var(--font-display);
-  color: transparent;
-  -webkit-text-stroke: 2px rgba(255, 42, 95, 0.7);
-  margin-right: -10px;
+
+/* STYLISH PREMIUM FONT FOR TOP 10 NUMBERS */
+.rank {
+  font: 900 clamp(50px, 9vw, 85px)/.75 var(--font-display);
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 12px var(--accent-glow));
+  margin-right: -14px;
   z-index: 1;
 }
+
 .sub{font:700 15px var(--font-display);padding:0 0 10px}
 
 .ep-header-bar {
@@ -715,16 +662,12 @@ footer{padding:25px 0 85px;color:var(--text-muted);font-size:10px;text-align:cen
 </head>
 <body>
 <header id="hd">
-  <span class="logo" onclick="switchTab('home')"><div class="logo-icon"></div>Stream<span>Vault</span></span>
+  <span class="logo" onclick="switchTab('home')"><div class="logo-icon"></div>StreamVault</span>
   <div class="header-right">
     <div class="search-box">
       <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
       <input id="q" type="search" placeholder="Search..." aria-label="Search">
     </div>
-    <button class="donate-btn" onclick="openDonateModal()">
-      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-      <span>Donate</span>
-    </button>
   </div>
 </header>
 
@@ -751,28 +694,9 @@ footer{padding:25px 0 85px;color:var(--text-muted);font-size:10px;text-align:cen
   </button>
 </nav>
 
-<footer>StreamVault Pro · Flawless Liquid Glass</footer>
+<footer>StreamVault Pro · Flawless iOS Liquid Glass</footer>
 
 <div class="layer" id="md"><div class="panel" id="mp" tabindex="-1"></div></div>
-
-<!-- DONATE MODAL -->
-<div class="layer" id="donateModal">
-  <div class="donate-panel">
-    <button class="x" onclick="$('#donateModal').classList.remove('open')">×</button>
-    <div style="width:38px;height:38px;background:var(--accent-gradient);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 0 18px var(--accent-glow);">
-      <svg style="width:18px;height:18px;fill:#fff;" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-    </div>
-    <h3>Support StreamVault</h3>
-    <p>Help keep servers running, ad-free, and lightning fast. Your support means the world!</p>
-    
-    <div style="text-align:left;font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">USDT / TRC20 Address:</div>
-    <div class="crypto-box" onclick="copyCrypto()" title="Click to copy">
-      TYourCryptoWalletAddressHere12345
-    </div>
-
-    <button class="btn" style="width:100%;" onclick="copyCrypto()">Copy Wallet Address</button>
-  </div>
-</div>
 
 <!-- SUBTITLE MODAL -->
 <div class="layer sub-layer" id="subModal">
@@ -876,15 +800,6 @@ function toast(msg) {
   setTimeout(() => t.style.display = 'none', 2000);
 }
 
-function openDonateModal() {
-  $('#donateModal').classList.add('open');
-}
-
-function copyCrypto() {
-  navigator.clipboard.writeText('TYourCryptoWalletAddressHere12345');
-  toast('Wallet address copied! 💖');
-}
-
 function card(i, def) {
   if (!i.poster_path) return '';
   const b = document.createElement('button');
@@ -946,7 +861,7 @@ async function home() {
   });
 }
 
-// ANIME TAB WITH HORIZONTAL GENRE CHIPS BAR
+/* ANIME TAB WITH HORIZONTAL GENRE CHIPS BAR */
 async function animeTab(reset = true) {
   if (reset) {
     animePage = 1;
@@ -991,7 +906,7 @@ function changeAnimeGenre(genreId) {
   animeTab(true);
 }
 
-// DISCOVER TAB WITH HORIZONTAL GENRE CHIPS BAR
+/* DISCOVER TAB WITH HORIZONTAL GENRE CHIPS BAR */
 async function discoverTab(reset = true) {
   if (reset) {
     discoverPage = 1;
@@ -1105,7 +1020,6 @@ async function openInfo(id, t) {
 
 $('#md').onclick = e => { if (e.target === $('#md')) $('#md').classList.remove('open'); };
 $('#pl').onclick = e => { if (e.target === $('#pl')) closePlayer(); };
-$('#donateModal').onclick = e => { if (e.target === $('#donateModal')) $('#donateModal').classList.remove('open'); };
 
 async function loadEps(id, sel, showName = '', showId = id) {
   if (!sel || !sel.value) return;
@@ -1221,10 +1135,17 @@ function playStream(id, t, s = 1, e = 1, title = '') {
   store.set('cw', cw);
 }
 
+/* FIXED FULLSCREEN TARGETING PLAYER WRAPPER */
 $('#pFs').onclick = () => {
-  const iframe = $('#mainIframe');
-  if (!iframe) return;
-  if (iframe.requestFullscreen) iframe.requestFullscreen();
+  const playerBox = document.querySelector('.player');
+  if (!playerBox) return;
+  if (playerBox.requestFullscreen) {
+    playerBox.requestFullscreen();
+  } else if (playerBox.webkitRequestFullscreen) {
+    playerBox.webkitRequestFullscreen();
+  } else if (playerBox.msRequestFullscreen) {
+    playerBox.msRequestFullscreen();
+  }
 };
 
 async function trailer(id, t, d) {
@@ -1259,7 +1180,7 @@ function myList() {
   showGrid(list, 'Library empty.');
 }
 
-// REAL-TIME INSTANT TAB SWITCHING & PILL ENGINE
+/* REAL-TIME INSTANT TAB SWITCHING & PILL ENGINE */
 function updatePillPosition(activeBtn) {
   const pill = $('#navPill');
   if (!activeBtn || !pill) return;
