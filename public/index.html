@@ -62,19 +62,66 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
     }
-    
-    .glass-card {
-      background: rgba(18, 24, 38, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* Modern Sleek Genre Pill Bar */
+    .genre-scroll-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.25rem 0.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(244, 63, 94, 0.4) transparent;
     }
-    
-    .glass-nav {
-      background: rgba(7, 9, 14, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    .genre-scroll-container::-webkit-scrollbar {
+      height: 4px;
+    }
+    .genre-scroll-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 9999px;
+    }
+    .genre-scroll-container::-webkit-scrollbar-thumb {
+      background: rgba(244, 63, 94, 0.4);
+      border-radius: 9999px;
+    }
+    .genre-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(244, 63, 94, 0.8);
+    }
+
+    .genre-pill {
+      flex: 0 0 auto;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.025em;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(17, 21, 32, 0.7);
+      color: #9ca3af;
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .genre-pill:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .genre-pill.active-pill {
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+      color: #ffffff;
+      border-color: rgba(244, 63, 94, 0.5);
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+      transform: translateY(-1px);
     }
 
     /* Custom Horizontal Scrollbar Styling */
@@ -122,26 +169,22 @@
       box-shadow: 0 20px 30px -10px rgba(244, 63, 94, 0.25);
     }
 
-    .shimmer {
-      background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 100%);
-      background-size: 200% 100%;
-      animation: shimmer 1.8s infinite;
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+    .glass-card {
+      background: rgba(17, 21, 32, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
 
   <!-- NAVIGATION BAR -->
-  <header class="sticky top-0 z-40 glass-nav transition-all duration-300">
+  <header class="sticky top-0 z-50 bg-[#07090e]/90 backdrop-blur-xl border-b border-white/10 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
         
         <!-- Brand Logo -->
-        <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+        <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="switchTab('home')">
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-accent flex items-center justify-center shadow-lg shadow-brand-500/30">
             <i class="fa-solid font-black fa-play text-white text-lg"></i>
           </div>
@@ -152,7 +195,7 @@
 
         <!-- Navigation Links -->
         <nav class="hidden md:flex items-center gap-2 bg-white/5 p-1.5 rounded-full border border-white/10">
-          <button id="tab-home" onclick="switchTab('home')" class="px-5 py-2 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 hover:bg-white/10 active">Home</button>
+          <button id="tab-home" onclick="switchTab('home')" class="px-5 py-2 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-white bg-accent shadow-lg shadow-accent/30 active">Home</button>
           <button id="tab-movies" onclick="switchTab('movies')" class="px-5 py-2 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-all duration-200 hover:bg-white/10">Movies</button>
           <button id="tab-tv" onclick="switchTab('tv')" class="px-5 py-2 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-all duration-200 hover:bg-white/10">TV Shows</button>
           <button id="tab-anime" onclick="switchTab('anime')" class="px-5 py-2 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-all duration-200 hover:bg-white/10">Anime</button>
@@ -163,9 +206,9 @@
         </nav>
 
         <!-- Search Bar -->
-        <div class="relative w-48 sm:w-64">
+        <div class="relative w-48 sm:w-64 flex items-center">
           <input type="text" id="searchInput" placeholder="Search title..." onkeyup="handleSearch(event)" class="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-10 pr-4 text-xs text-white placeholder-gray-400 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all duration-200">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-xs text-gray-400"></i>
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
         </div>
       </div>
     </div>
@@ -181,17 +224,17 @@
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 relative z-10">
 
-    <!-- HERO BANNER SECTION (DYNAMIC PER CATEGORY) -->
-    <section id="heroSection" class="relative rounded-3xl overflow-hidden glass-card h-[420px] sm:h-[480px] flex items-end p-6 sm:p-10 border border-white/15 shadow-2xl">
+    <!-- HERO BANNER SECTION -->
+    <section id="heroSection" class="relative rounded-3xl overflow-hidden glass-card min-h-[380px] sm:min-h-[440px] flex items-end p-6 sm:p-10 border border-white/15 shadow-2xl z-10">
       <!-- Backdrop Image -->
       <div id="heroBg" class="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out scale-105"></div>
       <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-[#07090e]/60 to-transparent"></div>
       <div class="absolute inset-0 bg-gradient-to-r from-[#07090e] via-[#07090e]/40 to-transparent"></div>
 
       <!-- Hero Content -->
-      <div class="relative z-10 max-w-2xl space-y-4">
+      <div class="relative z-20 max-w-2xl space-y-4">
         <span id="heroBadge" class="inline-block px-3 py-1 rounded-full bg-accent/20 border border-accent/40 text-accent text-xs font-heading font-bold uppercase tracking-widest">
           Featured Masterpiece
         </span>
@@ -222,9 +265,10 @@
           <i class="fa-solid fa-magnifying-glass text-accent"></i>
           Search Results
         </h2>
-        <button onclick="clearSearch()" class="text-xs text-gray-400 hover:text-white transition-colors">Clear Search</button>
+        <button onclick="clearSearch()" class="text-xs text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full border border-white/10">Clear Search</button>
       </div>
       <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
+      <div id="searchEmpty" class="hidden text-center py-12 text-gray-400 text-sm">No results found for your search query.</div>
     </section>
 
     <!-- HOME TAB VIEW -->
@@ -266,102 +310,163 @@
       </section>
     </div>
 
-    <!-- MOVIES TAB VIEW WITH GENRE FILTERING -->
+    <!-- MOVIES TAB VIEW -->
     <div id="view-movies" class="hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
-        <h2 class="text-2xl font-heading font-bold text-white">Movie Library</h2>
-        
-        <!-- Genre Filter Pills -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
-          <button onclick="filterByGenre('movies', 'all')" class="movie-genre-btn px-3 py-1 rounded-full text-xs font-bold bg-accent text-white whitespace-nowrap">All</button>
-          <button onclick="filterByGenre('movies', '28')" class="movie-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Action</button>
-          <button onclick="filterByGenre('movies', '878')" class="movie-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Sci-Fi</button>
-          <button onclick="filterByGenre('movies', '18')" class="movie-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Drama</button>
-          <button onclick="filterByGenre('movies', '35')" class="movie-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Comedy</button>
-          <button onclick="filterByGenre('movies', '27')" class="movie-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Horror</button>
+        <h2 class="text-2xl font-heading font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-film text-accent"></i> Movie Library
+        </h2>
+        <div class="relative max-w-full sm:max-w-2xl group">
+          <div class="genre-scroll-container">
+            <button onclick="filterByGenre('movies', 'all')" class="genre-pill movie-genre-btn active-pill"><i class="fa-solid fa-border-all text-[10px]"></i> All</button>
+            <button onclick="filterByGenre('movies', '28')" class="genre-pill movie-genre-btn">Action</button>
+            <button onclick="filterByGenre('movies', '12')" class="genre-pill movie-genre-btn">Adventure</button>
+            <button onclick="filterByGenre('movies', '16')" class="genre-pill movie-genre-btn">Animation</button>
+            <button onclick="filterByGenre('movies', '35')" class="genre-pill movie-genre-btn">Comedy</button>
+            <button onclick="filterByGenre('movies', '80')" class="genre-pill movie-genre-btn">Crime</button>
+            <button onclick="filterByGenre('movies', '99')" class="genre-pill movie-genre-btn">Documentary</button>
+            <button onclick="filterByGenre('movies', '18')" class="genre-pill movie-genre-btn">Drama</button>
+            <button onclick="filterByGenre('movies', '10751')" class="genre-pill movie-genre-btn">Family</button>
+            <button onclick="filterByGenre('movies', '14')" class="genre-pill movie-genre-btn">Fantasy</button>
+            <button onclick="filterByGenre('movies', '36')" class="genre-pill movie-genre-btn">History</button>
+            <button onclick="filterByGenre('movies', '27')" class="genre-pill movie-genre-btn">Horror</button>
+            <button onclick="filterByGenre('movies', '10402')" class="genre-pill movie-genre-btn">Music</button>
+            <button onclick="filterByGenre('movies', '9648')" class="genre-pill movie-genre-btn">Mystery</button>
+            <button onclick="filterByGenre('movies', '10749')" class="genre-pill movie-genre-btn">Romance</button>
+            <button onclick="filterByGenre('movies', '878')" class="genre-pill movie-genre-btn">Sci-Fi</button>
+            <button onclick="filterByGenre('movies', '53')" class="genre-pill movie-genre-btn">Thriller</button>
+            <button onclick="filterByGenre('movies', '10752')" class="genre-pill movie-genre-btn">War</button>
+            <button onclick="filterByGenre('movies', '37')" class="genre-pill movie-genre-btn">Western</button>
+          </div>
         </div>
       </div>
       <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
+      <div class="flex justify-center pt-6">
+        <button id="loadMoreMoviesBtn" onclick="loadMoreContent('movies')" class="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-xs uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-2">
+          <span>Load More Movies</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- TV SHOWS TAB VIEW WITH GENRE FILTERING -->
+    <!-- TV SHOWS TAB VIEW -->
     <div id="view-tv" class="hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
-        <h2 class="text-2xl font-heading font-bold text-white">TV Shows Library</h2>
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
-          <button onclick="filterByGenre('tv', 'all')" class="tv-genre-btn px-3 py-1 rounded-full text-xs font-bold bg-accent text-white whitespace-nowrap">All</button>
-          <button onclick="filterByGenre('tv', '10759')" class="tv-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Action & Adventure</button>
-          <button onclick="filterByGenre('tv', '18')" class="tv-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Drama</button>
-          <button onclick="filterByGenre('tv', '10765')" class="tv-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Sci-Fi & Fantasy</button>
-          <button onclick="filterByGenre('tv', '35')" class="tv-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Comedy</button>
+        <h2 class="text-2xl font-heading font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-tv text-accent"></i> TV Shows Library
+        </h2>
+        <div class="relative max-w-full sm:max-w-2xl">
+          <div class="genre-scroll-container">
+            <button onclick="filterByGenre('tv', 'all')" class="genre-pill tv-genre-btn active-pill"><i class="fa-solid fa-border-all text-[10px]"></i> All</button>
+            <button onclick="filterByGenre('tv', '10759')" class="genre-pill tv-genre-btn">Action & Adventure</button>
+            <button onclick="filterByGenre('tv', '16')" class="genre-pill tv-genre-btn">Animation</button>
+            <button onclick="filterByGenre('tv', '35')" class="genre-pill tv-genre-btn">Comedy</button>
+            <button onclick="filterByGenre('tv', '80')" class="genre-pill tv-genre-btn">Crime</button>
+            <button onclick="filterByGenre('tv', '99')" class="genre-pill tv-genre-btn">Documentary</button>
+            <button onclick="filterByGenre('tv', '18')" class="genre-pill tv-genre-btn">Drama</button>
+            <button onclick="filterByGenre('tv', '10751')" class="genre-pill tv-genre-btn">Family</button>
+            <button onclick="filterByGenre('tv', '10762')" class="genre-pill tv-genre-btn">Kids</button>
+            <button onclick="filterByGenre('tv', '9648')" class="genre-pill tv-genre-btn">Mystery</button>
+            <button onclick="filterByGenre('tv', '10765')" class="genre-pill tv-genre-btn">Sci-Fi & Fantasy</button>
+            <button onclick="filterByGenre('tv', '10768')" class="genre-pill tv-genre-btn">War & Politics</button>
+            <button onclick="filterByGenre('tv', '37')" class="genre-pill tv-genre-btn">Western</button>
+          </div>
         </div>
       </div>
       <div id="tvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
+      <div class="flex justify-center pt-6">
+        <button id="loadMoreTvBtn" onclick="loadMoreContent('tv')" class="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-xs uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-2">
+          <span>Load More Series</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- ANIME TAB VIEW WITH GENRE FILTERING -->
+    <!-- ANIME TAB VIEW -->
     <div id="view-anime" class="hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
-        <h2 class="text-2xl font-heading font-bold text-white">Anime Collection</h2>
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
-          <button onclick="filterByGenre('anime', 'all')" class="anime-genre-btn px-3 py-1 rounded-full text-xs font-bold bg-accent text-white whitespace-nowrap">All</button>
-          <button onclick="filterByGenre('anime', '10759')" class="anime-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Action</button>
-          <button onclick="filterByGenre('anime', '10765')" class="anime-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Fantasy</button>
-          <button onclick="filterByGenre('anime', '16')" class="anime-genre-btn px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap">Animation</button>
+        <h2 class="text-2xl font-heading font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-dragon text-accent"></i> Anime Collection
+        </h2>
+        <div class="relative max-w-full sm:max-w-2xl">
+          <div class="genre-scroll-container">
+            <button onclick="filterByGenre('anime', 'all')" class="genre-pill anime-genre-btn active-pill"><i class="fa-solid fa-border-all text-[10px]"></i> All</button>
+            <button onclick="filterByGenre('anime', 'Action')" class="genre-pill anime-genre-btn">Action</button>
+            <button onclick="filterByGenre('anime', 'Adventure')" class="genre-pill anime-genre-btn">Adventure</button>
+            <button onclick="filterByGenre('anime', 'Comedy')" class="genre-pill anime-genre-btn">Comedy</button>
+            <button onclick="filterByGenre('anime', 'Drama')" class="genre-pill anime-genre-btn">Drama</button>
+            <button onclick="filterByGenre('anime', 'Fantasy')" class="genre-pill anime-genre-btn">Fantasy</button>
+            <button onclick="filterByGenre('anime', 'Horror')" class="genre-pill anime-genre-btn">Horror</button>
+            <button onclick="filterByGenre('anime', 'Mystery')" class="genre-pill anime-genre-btn">Mystery</button>
+            <button onclick="filterByGenre('anime', 'Romance')" class="genre-pill anime-genre-btn">Romance</button>
+            <button onclick="filterByGenre('anime', 'Sci-Fi')" class="genre-pill anime-genre-btn">Sci-Fi</button>
+            <button onclick="filterByGenre('anime', 'Slice of Life')" class="genre-pill anime-genre-btn">Slice of Life</button>
+            <button onclick="filterByGenre('anime', 'Sports')" class="genre-pill anime-genre-btn">Sports</button>
+            <button onclick="filterByGenre('anime', 'Supernatural')" class="genre-pill anime-genre-btn">Supernatural</button>
+          </div>
         </div>
       </div>
       <div id="animeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
+      <div class="flex justify-center pt-6">
+        <button id="loadMoreAnimeBtn" onclick="loadMoreContent('anime')" class="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-xs uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-2">
+          <span>Load More Anime</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- WATCHLIST TAB VIEW -->
+    <!-- WATCHLIST VIEW -->
     <div id="view-watchlist" class="hidden space-y-6">
-      <div class="flex items-center justify-between border-b border-white/10 pb-4">
-        <h2 class="text-2xl font-heading font-bold text-white">Your Saved Watchlist</h2>
+      <div class="border-b border-white/10 pb-4">
+        <h2 class="text-2xl font-heading font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-bookmark text-accent"></i> Saved Watchlist
+        </h2>
       </div>
       <div id="watchlistGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
-      <div id="watchlistEmpty" class="hidden text-center py-16 space-y-4">
-        <i class="fa-solid fa-bookmark text-4xl text-gray-600"></i>
-        <p class="text-gray-400 text-sm">Your watchlist is currently empty. Bookmark titles to save them here!</p>
+      <div id="watchlistEmpty" class="hidden text-center py-16 text-gray-400 text-sm space-y-3">
+        <i class="fa-solid fa-film text-4xl text-gray-600"></i>
+        <p>Your watchlist is currently empty. Bookmark movies and shows to watch later!</p>
       </div>
     </div>
 
   </main>
 
   <!-- VIDEO PLAYER MODAL -->
-  <div id="playerModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
-    <div class="relative w-full max-w-5xl glass-card rounded-3xl overflow-hidden border border-white/20 shadow-2xl space-y-4 p-4 sm:p-6">
-      <!-- Player Header Controls -->
-      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+  <div id="playerModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-xl flex items-center justify-center p-3 sm:p-6 overflow-y-auto" onclick="closePlayer()">
+    <div class="relative w-full max-w-4xl glass-card rounded-3xl overflow-hidden border border-white/20 shadow-2xl flex flex-col p-4 sm:p-6 space-y-3" onclick="event.stopPropagation()">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3 shrink-0">
         <div class="flex items-center gap-3">
-          <span id="playerTitle" class="font-heading font-bold text-lg text-white">Streaming</span>
+          <span id="playerTitle" class="font-heading font-bold text-base sm:text-lg text-white truncate max-w-[200px] sm:max-w-md">Streaming</span>
           <span id="playerServerBadge" class="text-[10px] bg-accent/30 text-accent border border-accent/40 px-2 py-0.5 rounded-full uppercase font-bold">VidSrc Server</span>
         </div>
         
-        <!-- TV Episode Controls (Shown only for TV/Anime) -->
         <div id="tvControls" class="hidden flex items-center gap-2 bg-white/5 px-3 py-1 rounded-2xl border border-white/10">
           <div class="flex items-center gap-1 text-xs text-gray-300">
             <span class="font-bold">S:</span>
-            <select id="seasonSelect" onchange="updateEpisodeList()" class="bg-dark-card text-white text-xs rounded-lg px-2 py-1 border border-white/10 focus:outline-none focus:border-accent"></select>
+            <select id="seasonSelect" onchange="updateEpisodeList()" class="bg-dark-card text-white text-xs rounded-lg px-2 py-1 border border-white/10 focus:outline-none focus:border-accent">
+              <option value="1">Season 1</option>
+            </select>
           </div>
           <div class="flex items-center gap-1 text-xs text-gray-300">
             <span class="font-bold">E:</span>
-            <select id="episodeSelect" onchange="changeEpisode()" class="bg-dark-card text-white text-xs rounded-lg px-2 py-1 border border-white/10 focus:outline-none focus:border-accent"></select>
+            <select id="episodeSelect" onchange="changeEpisode()" class="bg-dark-card text-white text-xs rounded-lg px-2 py-1 border border-white/10 focus:outline-none focus:border-accent">
+              <option value="1">Episode 1</option>
+            </select>
           </div>
         </div>
 
-        <button onclick="closePlayer()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+        <button onclick="closePlayer()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Video iFrame Container -->
-      <div class="relative aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-inner">
+      <!-- Video Container -->
+      <div class="relative aspect-video w-full max-h-[60vh] rounded-2xl overflow-hidden bg-black shadow-inner shrink">
         <iframe id="videoIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
       </div>
 
-      <!-- Server Switcher Options -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-1 shrink-0">
+        <div class="flex flex-wrap items-center gap-2">
           <span class="text-xs text-gray-400 font-semibold">Switch Source:</span>
           <button id="serverBtn-vidsrc" onclick="switchServer('vidsrc')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-accent text-white hover:bg-brand-600 transition-colors">Server 1 (VidSrc)</button>
           <button id="serverBtn-superembed" onclick="switchServer('superembed')" class="px-3 py-1.5 rounded-xl text-xs font-bold glass-card text-gray-300 hover:text-white transition-colors">Server 2 (SuperEmbed)</button>
@@ -378,9 +483,7 @@
     <span id="toastMsg">Notification message</span>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // TMDB API Config
     const TMDB_CONFIG = {
       apiKey: '6c9d63d13035995f6127e4b5c3689cb4',
       baseUrl: 'https://api.themoviedb.org/3',
@@ -392,30 +495,154 @@
     let currentPlayingItem = null;
     let currentServer = 'vidsrc';
     let heroItem = null;
-
     let currentSeason = 1;
     let currentEpisode = 1;
+    let currentTVData = null;
 
-    let categoryHeroItems = {
-      home: null,
-      movies: null,
-      tv: null,
-      anime: null
+    let categoryHeroItems = { home: null, movies: null, tv: null, anime: null };
+    let cacheData = { movies: [], tv: [], anime: [] };
+
+    // Helper function to build poster card HTML across all views
+    function createCardHTML(item) {
+      if (!item) return '';
+      const encodedItem = encodeURIComponent(JSON.stringify(item));
+      const rawTitle = item.title || item.name || 'Untitled';
+      const title = rawTitle.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      const releaseYear = (item.release_date || item.first_air_date || '').substring(0, 4) || 'N/A';
+      const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : 'N/A';
+      
+      let posterSrc = 'https://placehold.co/500x750/111520/f43f5e?text=No+Poster';
+      if (item.poster_path) {
+        posterSrc = item.poster_path.startsWith('http') 
+          ? item.poster_path 
+          : `${TMDB_CONFIG.imageBaseUrl}${item.poster_path}`;
+      }
+
+      const inWatchlist = isItemInWatchlist(item.id);
+      const mediaBadge = item.media_type === 'anime' ? 'Anime' : (item.media_type || (item.first_air_date ? 'TV' : 'Movie'));
+
+      return `
+        <div class="group relative rounded-2xl overflow-hidden glass-card border border-white/10 card-hover flex flex-col justify-between cursor-pointer bg-dark-card select-none" onclick="playMedia('${encodedItem}')">
+          <!-- Poster Image with Gradient Overlay -->
+          <div class="relative aspect-[2/3] w-full overflow-hidden bg-dark-bg">
+            <img src="${posterSrc}" alt="${title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/500x750/111520/f43f5e?text=StreamVault';">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+            
+            <!-- Rating Badge -->
+            <div class="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-amber-400 flex items-center gap-1 shadow-md">
+              <i class="fa-solid fa-star text-[9px]"></i>
+              <span>${rating}</span>
+            </div>
+
+            <!-- Watchlist Button -->
+            <button onclick="event.stopPropagation(); toggleWatchlist('${encodedItem}')" class="absolute top-2.5 left-2.5 w-7 h-7 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-accent transition-colors shadow-md">
+              <i class="fa-solid ${inWatchlist ? 'fa-check text-accent group-hover:text-white' : 'fa-plus'} text-xs"></i>
+            </button>
+
+            <!-- Play Icon Hover Overlay -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+              <div class="w-12 h-12 rounded-full bg-accent/90 text-white flex items-center justify-center shadow-lg shadow-accent/40 transform scale-75 group-hover:scale-100 transition-transform">
+                <i class="fa-solid fa-play ml-0.5 text-lg"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Title Details -->
+          <div class="p-3.5 space-y-1">
+            <h3 class="text-xs sm:text-sm font-heading font-bold text-white truncate group-hover:text-accent transition-colors">${title}</h3>
+            <div class="flex items-center justify-between text-[11px] text-gray-400 font-semibold">
+              <span>${releaseYear}</span>
+              <span class="uppercase text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10">${mediaBadge}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateHeroDisplay(item, badgeText = 'Featured Masterpiece') {
+      if (!item) return;
+      heroItem = item;
+      
+      const heroBg = document.getElementById('heroBg');
+      const heroTitle = document.getElementById('heroTitle');
+      const heroOverview = document.getElementById('heroOverview');
+      const heroBadge = document.getElementById('heroBadge');
+      const heroPlayBtn = document.getElementById('heroPlayBtn');
+      const heroWatchlistText = document.getElementById('heroWatchlistText');
+
+      const backdrop = item.backdrop_path 
+        ? (item.backdrop_path.startsWith('http') ? item.backdrop_path : `${TMDB_CONFIG.backdropBaseUrl}${item.backdrop_path}`)
+        : (item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_CONFIG.backdropBaseUrl}${item.poster_path}`) : '');
+
+      if (heroBg && backdrop) {
+        heroBg.style.backgroundImage = `url('${backdrop}')`;
+      }
+      if (heroTitle) heroTitle.innerText = item.title || item.name || 'Featured Content';
+      if (heroOverview) heroOverview.innerText = item.overview || 'No description available for this title.';
+      if (heroBadge) heroBadge.innerText = badgeText;
+
+      const encoded = encodeURIComponent(JSON.stringify(item));
+      if (heroPlayBtn) heroPlayBtn.onclick = () => playMedia(encoded);
+      if (heroWatchlistText) heroWatchlistText.innerText = isItemInWatchlist(item.id) ? '✓ In Watchlist' : '+ Watchlist';
+    }
+
+    window.toggleHeroWatchlist = function() {
+      if (heroItem) {
+        toggleWatchlist(heroItem);
+      }
     };
 
-    let cacheData = {
-      movies: [],
-      tv: [],
-      anime: []
+    window.switchTab = function(tab) {
+      ['home', 'movies', 'tv', 'anime', 'watchlist'].forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        const mobBtn = document.getElementById(`mob-tab-${t}`);
+        
+        if (view) view.classList.add('hidden');
+        if (btn) btn.className = 'px-5 py-2 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-all duration-200 hover:bg-white/10';
+        if (mobBtn) mobBtn.className = 'text-xs font-heading font-black uppercase px-4 py-1.5 rounded-full text-gray-300 hover:bg-white/10';
+      });
+
+      const activeView = document.getElementById(`view-${tab}`);
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      const activeMobBtn = document.getElementById(`mob-tab-${tab}`);
+      const heroSection = document.getElementById('heroSection');
+
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeBtn) activeBtn.className = 'px-5 py-2 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 bg-accent shadow-lg shadow-accent/30 active';
+      if (activeMobBtn) activeMobBtn.className = 'text-xs font-heading font-black uppercase px-4 py-1.5 rounded-full text-white bg-accent';
+
+      if (tab === 'watchlist') {
+        if (heroSection) heroSection.style.display = 'none';
+        renderWatchlist();
+      } else {
+        if (heroSection) heroSection.style.display = 'flex';
+        const labels = {
+          home: 'Featured Masterpiece',
+          movies: 'Featured Cinema',
+          tv: 'Featured Series',
+          anime: 'Featured Anime'
+        };
+        if (categoryHeroItems[tab]) {
+          updateHeroDisplay(categoryHeroItems[tab], labels[tab] || 'Featured Masterpiece');
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Helper: Image Error Fallback
-    window.handlePosterError = function(img, title) {
-      img.onerror = null;
-      img.src = `https://placehold.co/500x750/111520/f43f5e?text=${encodeURIComponent(title || 'StreamVault')}`;
-    };
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      if (toast && toastMsg) {
+        toastMsg.innerText = message;
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 3000);
+      }
+    }
 
-    // Initialize Watchlist Badge
     function updateWatchlistBadge() {
       const badge = document.getElementById('watchlistBadge');
       if (badge) badge.innerText = watchlist.length;
@@ -431,7 +658,7 @@
       
       if (index > -1) {
         watchlist.splice(index, 1);
-        showToast(`Removed "${item.title || item.name}" from saved titles`);
+        showToast(`Removed "${item.title || item.name}" from watchlist`);
       } else {
         watchlist.push(item);
         showToast(`Saved "${item.title || item.name}" to Watchlist`);
@@ -440,141 +667,165 @@
       localStorage.setItem('streamvault_watchlist', JSON.stringify(watchlist));
       updateWatchlistBadge();
       
-      // Refresh current views
-      if (document.getElementById('view-watchlist').classList.contains('hidden') === false) {
+      if (!document.getElementById('view-watchlist').classList.contains('hidden')) {
         renderWatchlist();
       }
       
       if (heroItem && heroItem.id === item.id) {
         const hWBtn = document.getElementById('heroWatchlistText');
-        if (hWBtn) hWBtn.innerText = isItemInWatchlist(heroItem.id) ? '✓ In Watchlist' : '+ Add to Watchlist';
+        if (hWBtn) hWBtn.innerText = isItemInWatchlist(heroItem.id) ? '✓ In Watchlist' : '+ Watchlist';
       }
     };
 
-    function toggleHeroWatchlist() {
-      if (heroItem) window.toggleWatchlist(heroItem);
-    }
+    let pageState = {
+      movies: 1,
+      tv: 1,
+      anime: 1
+    };
+    let activeGenreFilter = {
+      movies: 'all',
+      tv: 'all',
+      anime: 'all'
+    };
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMsg');
-      if (!toast || !toastMsg) return;
-      toastMsg.innerText = msg;
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
-
-    function createCardHTML(item) {
-      const title = item.title || item.name || 'Untitled';
-      const posterPath = item.poster_path ? `${TMDB_CONFIG.imageBaseUrl}${item.poster_path}` : '';
-      const vote = item.vote_average ? item.vote_average.toFixed(1) : '8.0';
-      const year = (item.release_date || item.first_air_date || '2024').substring(0, 4);
-      const isSaved = isItemInWatchlist(item.id);
-      const encodedItem = encodeURIComponent(JSON.stringify(item));
-
-      return `
-        <div class="card-hover relative group rounded-2xl overflow-hidden glass-card cursor-pointer border border-white/10 flex flex-col justify-between">
-          <div class="relative aspect-[2/3] w-full overflow-hidden bg-dark-card" onclick="playMedia('${encodedItem}')">
-            <img src="${posterPath}" alt="${title}" onerror="handlePosterError(this, '${title.replace(/'/g, "\\'")}')" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-transparent to-transparent opacity-80"></div>
-            
-            <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md text-[10px] font-bold text-amber-400 flex items-center gap-1 border border-white/10">
-              <i class="fa-solid fa-star text-[9px]"></i> ${vote}
-            </div>
-
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
-              <div class="w-12 h-12 rounded-full bg-accent text-white flex items-center justify-center shadow-lg shadow-accent/50 transform scale-75 group-hover:scale-100 transition-transform">
-                <i class="fa-solid fa-play ml-0.5"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-3 flex items-center justify-between gap-2 bg-dark-card/90">
-            <div class="overflow-hidden" onclick="playMedia('${encodedItem}')">
-              <h3 class="text-xs font-heading font-bold text-white truncate">${title}</h3>
-              <p class="text-[10px] text-gray-400">${year}</p>
-            </div>
-            <button onclick="toggleWatchlist('${encodedItem}')" class="text-gray-400 hover:text-accent p-1 transition-colors">
-              <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark text-xs ${isSaved ? 'text-accent' : ''}"></i>
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    function updateHeroDisplay(item, categoryLabel) {
-      if (!item) return;
-      heroItem = item;
-      const heroSection = document.getElementById('heroSection');
-      const heroBadge = document.getElementById('heroBadge');
-      const heroTitle = document.getElementById('heroTitle');
-      const heroOverview = document.getElementById('heroOverview');
-      const heroPlayBtn = document.getElementById('heroPlayBtn');
-      const hWBtn = document.getElementById('heroWatchlistText');
-
-      if (heroSection) heroSection.style.display = 'flex';
-      if (heroBadge) heroBadge.innerText = categoryLabel || 'Featured Masterpiece';
-      if (document.getElementById('heroBg')) {
-        document.getElementById('heroBg').style.backgroundImage = `url(${TMDB_CONFIG.backdropBaseUrl}${item.backdrop_path || item.poster_path})`;
+    async function fetchFromTMDB(endpoint) {
+      try {
+        const separator = endpoint.includes('?') ? '&' : '?';
+        const res = await fetch(`${TMDB_CONFIG.baseUrl}${endpoint}${separator}api_key=${TMDB_CONFIG.apiKey}`);
+        return await res.json();
+      } catch (err) {
+        console.error('TMDB API Error:', err);
+        return null;
       }
-      if (heroTitle) heroTitle.innerText = item.title || item.name;
-      if (heroOverview) heroOverview.innerText = item.overview || 'No description available.';
-      if (heroPlayBtn) heroPlayBtn.onclick = () => playMedia(encodeURIComponent(JSON.stringify(item)));
-      if (hWBtn) hWBtn.innerText = isItemInWatchlist(item.id) ? '✓ In Watchlist' : '+ Add to Watchlist';
     }
 
-    window.switchTab = function(tabName) {
-      ['home', 'movies', 'tv', 'anime', 'watchlist'].forEach(t => {
-        const btn = document.getElementById(`tab-${t}`);
-        const mobBtn = document.getElementById(`mob-tab-${t}`);
-        const view = document.getElementById(`view-${t}`);
-        if (btn) btn.classList.remove('active', 'text-white');
-        if (mobBtn) mobBtn.className = 'text-xs font-heading font-black uppercase px-4 py-1.5 rounded-full whitespace-nowrap text-gray-300 hover:bg-white/10';
-        if (view) view.classList.add('hidden');
-      });
-
-      const activeBtn = document.getElementById(`tab-${tabName}`);
-      const activeMobBtn = document.getElementById(`mob-tab-${tabName}`);
-      const activeView = document.getElementById(`view-${tabName}`);
-      
-      if (activeBtn) activeBtn.classList.add('active', 'text-white');
-      if (activeMobBtn) activeMobBtn.className = 'text-xs font-heading font-black uppercase px-4 py-1.5 rounded-full whitespace-nowrap bg-accent text-white';
-      if (activeView) activeView.classList.remove('hidden');
-
+    async function handleSearch(event) {
+      const query = event.target.value.trim();
+      const searchSection = document.getElementById('searchSection');
+      const searchGrid = document.getElementById('searchGrid');
+      const searchEmpty = document.getElementById('searchEmpty');
       const heroSection = document.getElementById('heroSection');
-      if (tabName === 'watchlist') {
+
+      if (!query) {
+        clearSearch();
+        return;
+      }
+
+      if (event.key === 'Enter' || query.length >= 2) {
+        const data = await fetchFromTMDB(`/search/multi?query=${encodeURIComponent(query)}`);
+        
+        ['home', 'movies', 'tv', 'anime', 'watchlist'].forEach(t => {
+          const view = document.getElementById(`view-${t}`);
+          if (view) view.classList.add('hidden');
+        });
         if (heroSection) heroSection.style.display = 'none';
-        renderWatchlist();
-      } else {
-        const labels = {
-          home: 'Featured Masterpiece',
-          movies: 'Featured Movie',
-          tv: 'Featured TV Series',
-          anime: 'Featured Anime'
-        };
-        if (categoryHeroItems[tabName]) {
-          updateHeroDisplay(categoryHeroItems[tabName], labels[tabName]);
+
+        if (data && data.results && data.results.length) {
+          const filtered = data.results.filter(i => i.media_type === 'movie' || i.media_type === 'tv' || i.poster_path);
+          if (filtered.length > 0) {
+            if (searchGrid) searchGrid.innerHTML = filtered.map(createCardHTML).join('');
+            if (searchEmpty) searchEmpty.classList.add('hidden');
+          } else {
+            if (searchGrid) searchGrid.innerHTML = '';
+            if (searchEmpty) searchEmpty.classList.remove('hidden');
+          }
+        } else {
+          if (searchGrid) searchGrid.innerHTML = '';
+          if (searchEmpty) searchEmpty.classList.remove('hidden');
+        }
+        
+        if (searchSection) searchSection.classList.remove('hidden');
+      }
+    }
+
+    function clearSearch() {
+      const searchSection = document.getElementById('searchSection');
+      const searchInput = document.getElementById('searchInput');
+      if (searchSection) searchSection.classList.add('hidden');
+      if (searchInput) searchInput.value = '';
+
+      const activeBtn = document.querySelector('nav button.active') || document.getElementById('tab-home');
+      const tabName = activeBtn ? activeBtn.id.replace('tab-', '') : 'home';
+      switchTab(tabName);
+    }
+
+    window.loadMoreContent = async function(type) {
+      pageState[type] += 1;
+      const page = pageState[type];
+      const genreId = activeGenreFilter[type];
+      const containerId = `${type}Grid`;
+
+      if (type === 'movies' || type === 'tv') {
+        let endpoint = type === 'movies' 
+          ? `/discover/movie?page=${page}` 
+          : `/discover/tv?page=${page}`;
+        
+        if (genreId !== 'all') {
+          endpoint += `&with_genres=${genreId}`;
+        }
+
+        const data = await fetchFromTMDB(endpoint);
+        if (data && data.results && data.results.length) {
+          cacheData[type] = cacheData[type].concat(data.results);
+          const newHTML = data.results.map(createCardHTML).join('');
+          document.getElementById(containerId).insertAdjacentHTML('beforeend', newHTML);
+        } else {
+          showToast('No more titles available.');
+        }
+      } else if (type === 'anime') {
+        const tmdbAnime = await fetchFromTMDB(`/discover/tv?with_genres=16&with_original_language=ja&page=${page}`);
+        if (tmdbAnime && tmdbAnime.results && tmdbAnime.results.length) {
+          const animeList = tmdbAnime.results.map(i => ({ ...i, media_type: 'anime' }));
+          cacheData.anime = cacheData.anime.concat(animeList);
+          const newHTML = animeList.map(createCardHTML).join('');
+          document.getElementById(containerId).insertAdjacentHTML('beforeend', newHTML);
+        } else {
+          showToast('No more anime titles available.');
         }
       }
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.filterByGenre = function(type, genreId) {
+    window.filterByGenre = async function(type, genreId) {
+      activeGenreFilter[type] = genreId;
+      pageState[type] = 1;
       const containerId = `${type}Grid`;
       const btnClass = `${type}-genre-btn`;
       
       document.querySelectorAll(`.${btnClass}`).forEach(b => {
-        b.className = `${btnClass} px-3 py-1 rounded-full text-xs font-bold glass-card text-gray-300 hover:text-white whitespace-nowrap`;
+        b.classList.remove('active-pill');
       });
-      event.target.className = `${btnClass} px-3 py-1 rounded-full text-xs font-bold bg-accent text-white whitespace-nowrap`;
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active-pill');
+      }
 
-      const list = cacheData[type] || [];
       if (genreId === 'all') {
+        const list = cacheData[type] || [];
         document.getElementById(containerId).innerHTML = list.map(createCardHTML).join('');
-      } else {
-        const filtered = list.filter(item => item.genre_ids && item.genre_ids.includes(parseInt(genreId)));
-        document.getElementById(containerId).innerHTML = filtered.map(createCardHTML).join('');
+        return;
+      }
+
+      if (type === 'movies' || type === 'tv') {
+        const endpoint = type === 'movies' 
+          ? `/discover/movie?with_genres=${genreId}` 
+          : `/discover/tv?with_genres=${genreId}`;
+        
+        const fetchedData = await fetchFromTMDB(endpoint);
+        if (fetchedData && fetchedData.results && fetchedData.results.length) {
+          document.getElementById(containerId).innerHTML = fetchedData.results.map(createCardHTML).join('');
+        } else {
+          document.getElementById(containerId).innerHTML = '<p class="col-span-full text-center text-gray-400 py-8 text-xs font-semibold">No titles found for this genre filter.</p>';
+        }
+      } else if (type === 'anime') {
+        const list = cacheData[type] || [];
+        const filtered = list.filter(item => {
+          if (Array.isArray(item.genres)) {
+            return item.genres.some(g => String(g).toLowerCase().includes(String(genreId).toLowerCase()));
+          }
+          return false;
+        });
+        document.getElementById(containerId).innerHTML = filtered.length 
+          ? filtered.map(createCardHTML).join('') 
+          : '<p class="col-span-full text-center text-gray-400 py-8 text-xs font-semibold">No titles found for this genre filter.</p>';
       }
     };
 
@@ -592,50 +843,116 @@
       }
     }
 
+    async function loadTVDetailsAndPopulateControls(tvId) {
+      const seasonSelect = document.getElementById('seasonSelect');
+      const episodeSelect = document.getElementById('episodeSelect');
+      if (!seasonSelect || !episodeSelect) return;
+
+      seasonSelect.innerHTML = '<option value="1">Season 1</option>';
+      episodeSelect.innerHTML = '<option value="1">Episode 1</option>';
+
+      try {
+        const data = await fetchFromTMDB(`/tv/${tvId}`);
+        currentTVData = data;
+
+        if (data && data.seasons && data.seasons.length) {
+          const validSeasons = data.seasons.filter(s => s.season_number > 0);
+          if (validSeasons.length > 0) {
+            seasonSelect.innerHTML = validSeasons.map(s => 
+              `<option value="${s.season_number}">Season ${s.season_number} (${s.episode_count} Ep)</option>`
+            ).join('');
+            currentSeason = validSeasons[0].season_number;
+            seasonSelect.value = currentSeason;
+          }
+        }
+        await updateEpisodeList();
+      } catch (err) {
+        console.warn('Failed to load TV details for ID:', tvId, err);
+        populateFallbackEpisodes(20);
+      }
+    }
+
+    window.updateEpisodeList = async function() {
+      const seasonSelect = document.getElementById('seasonSelect');
+      const episodeSelect = document.getElementById('episodeSelect');
+      if (!seasonSelect || !episodeSelect) return;
+
+      currentSeason = parseInt(seasonSelect.value) || 1;
+      
+      if (currentTVData && currentTVData.id) {
+        try {
+          const seasonData = await fetchFromTMDB(`/tv/${currentTVData.id}/season/${currentSeason}`);
+          if (seasonData && seasonData.episodes && seasonData.episodes.length > 0) {
+            episodeSelect.innerHTML = seasonData.episodes.map(ep => {
+              const rawEpName = ep.name || ('Episode ' + ep.episode_number);
+              const epTitle = rawEpName.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+              return `<option value="${ep.episode_number}">Ep ${ep.episode_number}: ${epTitle}</option>`;
+            }).join('');
+            currentEpisode = seasonData.episodes[0].episode_number;
+            episodeSelect.value = currentEpisode;
+            switchServer(currentServer);
+            return;
+          }
+        } catch (err) {
+          console.warn('Could not fetch season episode details:', err);
+        }
+      }
+
+      let epCount = 20;
+      if (currentTVData && currentTVData.seasons) {
+        const currentSeasonObj = currentTVData.seasons.find(s => s.season_number === currentSeason);
+        if (currentSeasonObj && currentSeasonObj.episode_count) {
+          epCount = currentSeasonObj.episode_count;
+        }
+      }
+      populateFallbackEpisodes(epCount);
+    };
+
+    function populateFallbackEpisodes(count) {
+      const episodeSelect = document.getElementById('episodeSelect');
+      if (!episodeSelect) return;
+      
+      let optionsHTML = '';
+      for (let i = 1; i <= count; i++) {
+        optionsHTML += `<option value="${i}">Episode ${i}</option>`;
+      }
+      episodeSelect.innerHTML = optionsHTML;
+      currentEpisode = 1;
+      episodeSelect.value = 1;
+      switchServer(currentServer);
+    }
+
+    window.changeEpisode = function() {
+      const episodeSelect = document.getElementById('episodeSelect');
+      if (episodeSelect) {
+        currentEpisode = parseInt(episodeSelect.value) || 1;
+        switchServer(currentServer);
+      }
+    };
+
     window.playMedia = async function(itemStr) {
       const item = typeof itemStr === 'string' ? JSON.parse(decodeURIComponent(itemStr)) : itemStr;
       currentPlayingItem = item;
       currentSeason = 1;
       currentEpisode = 1;
+      currentTVData = null;
       
       const modal = document.getElementById('playerModal');
       const title = document.getElementById('playerTitle');
       const tvControls = document.getElementById('tvControls');
       if (title) title.innerText = item.title || item.name;
 
-      const isTV = !!item.first_air_date || item.media_type === 'tv';
+      const isTV = !!item.first_air_date || item.media_type === 'tv' || item.media_type === 'anime';
       if (isTV) {
         if (tvControls) tvControls.classList.remove('hidden');
-        setupTVSelectors(item.id);
+        await loadTVDetailsAndPopulateControls(item.id);
       } else {
         if (tvControls) tvControls.classList.add('hidden');
+        switchServer('vidsrc');
       }
       
-      switchServer('vidsrc');
       if (modal) modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
-    };
-
-    async function setupTVSelectors(tvId) {
-      const sSelect = document.getElementById('seasonSelect');
-      const eSelect = document.getElementById('episodeSelect');
-      if (!sSelect || !eSelect) return;
-
-      sSelect.innerHTML = '<option value="1">Season 1</option><option value="2">Season 2</option><option value="3">Season 3</option>';
-      eSelect.innerHTML = '';
-      for (let i = 1; i <= 24; i++) {
-        eSelect.innerHTML += `<option value="${i}">Episode ${i}</option>`;
-      }
-    }
-
-    window.updateEpisodeList = function() {
-      currentSeason = document.getElementById('seasonSelect').value;
-      switchServer(currentServer);
-    };
-
-    window.changeEpisode = function() {
-      currentEpisode = document.getElementById('episodeSelect').value;
-      switchServer(currentServer);
     };
 
     window.closePlayer = function() {
@@ -660,7 +977,7 @@
       });
 
       const id = currentPlayingItem.id;
-      const isTV = !!currentPlayingItem.first_air_date || currentPlayingItem.media_type === 'tv';
+      const isTV = !!currentPlayingItem.first_air_date || currentPlayingItem.media_type === 'tv' || currentPlayingItem.media_type === 'anime';
 
       if (serverType === 'vidsrc') {
         iframe.src = isTV ? `https://vidsrc.pro/embed/tv/${id}/${currentSeason}/${currentEpisode}` : `https://vidsrc.pro/embed/movie/${id}`;
@@ -674,60 +991,20 @@
       }
     };
 
-    async function fetchFromTMDB(endpoint) {
-      try {
-        const res = await fetch(`${TMDB_CONFIG.baseUrl}${endpoint}?api_key=${TMDB_CONFIG.apiKey}`);
-        return await res.json();
-      } catch (err) {
-        console.error('TMDB API Error:', err);
-        return null;
-      }
-    }
-
-    async function handleSearch(event) {
-      const query = event.target.value.trim();
-      const searchSection = document.getElementById('searchSection');
-      const searchGrid = document.getElementById('searchGrid');
-
-      if (!query) {
-        clearSearch();
-        return;
-      }
-
-      if (event.key === 'Enter' || query.length >= 3) {
-        const data = await fetchFromTMDB(`/search/multi&query=${encodeURIComponent(query)}`);
-        if (data && data.results) {
-          const filtered = data.results.filter(i => i.media_type === 'movie' || i.media_type === 'tv');
-          if (searchGrid) searchGrid.innerHTML = filtered.map(createCardHTML).join('');
-          if (searchSection) searchSection.classList.remove('hidden');
-        }
-      }
-    }
-
-    function clearSearch() {
-      const searchSection = document.getElementById('searchSection');
-      const searchInput = document.getElementById('searchInput');
-      if (searchSection) searchSection.classList.add('hidden');
-      if (searchInput) searchInput.value = '';
-    }
-
-    // Load initial data on startup
     window.onload = async function() {
       updateWatchlistBadge();
 
-      // Fetch Home & Category Media with distinct queries
-      const [movies, discoverMovies, tvShows, discoverTv, anime] = await Promise.all([
+      // Fetch Home & Category Media
+      const [movies, discoverMovies, tvShows, discoverTv] = await Promise.all([
         fetchFromTMDB('/trending/movie/week'),
         fetchFromTMDB('/discover/movie'),
         fetchFromTMDB('/trending/tv/week'),
-        fetchFromTMDB('/discover/tv'),
-        fetchFromTMDB('/discover/tv?with_keywords=210024|287501&with_original_language=ja')
+        fetchFromTMDB('/discover/tv')
       ]);
 
       if (movies && movies.results && movies.results.length) {
         categoryHeroItems.home = movies.results[0];
-        const moviesHTML = movies.results.map(createCardHTML).join('');
-        document.getElementById('homeMoviesGrid').innerHTML = moviesHTML;
+        document.getElementById('homeMoviesGrid').innerHTML = movies.results.map(createCardHTML).join('');
       }
 
       if (discoverMovies && discoverMovies.results && discoverMovies.results.length) {
@@ -738,8 +1015,7 @@
 
       if (tvShows && tvShows.results && tvShows.results.length) {
         categoryHeroItems.tv = tvShows.results[0];
-        const tvHTML = tvShows.results.map(createCardHTML).join('');
-        document.getElementById('homeTvGrid').innerHTML = tvHTML;
+        document.getElementById('homeTvGrid').innerHTML = tvShows.results.map(createCardHTML).join('');
       }
 
       if (discoverTv && discoverTv.results) {
@@ -747,25 +1023,46 @@
         document.getElementById('tvGrid').innerHTML = discoverTv.results.map(createCardHTML).join('');
       }
 
-      if (anime && anime.results && anime.results.length) {
-        categoryHeroItems.anime = anime.results[0];
-        cacheData.anime = anime.results;
-        const animeHTML = anime.results.map(createCardHTML).join('');
-        document.getElementById('animeGrid').innerHTML = animeHTML;
-        document.getElementById('homeAnimeGrid').innerHTML = animeHTML;
-      } else {
-        // Fallback anime query if keyword fetch yields low results
-        const fallbackAnime = await fetchFromTMDB('/discover/tv?with_genres=16&with_original_language=ja');
-        if (fallbackAnime && fallbackAnime.results && fallbackAnime.results.length) {
-          categoryHeroItems.anime = fallbackAnime.results[0];
-          cacheData.anime = fallbackAnime.results;
-          const fallbackHTML = fallbackAnime.results.map(createCardHTML).join('');
-          document.getElementById('animeGrid').innerHTML = fallbackHTML;
-          document.getElementById('homeAnimeGrid').innerHTML = fallbackHTML;
+      // Fetch Anime via Tenrai API with fallback
+      try {
+        const tenraiRes = await fetch('https://api.tenrai.org/v1/top/anime?limit=20');
+        if (tenraiRes.ok) {
+          const tenraiJson = await tenraiRes.json();
+          if (tenraiJson.data && tenraiJson.data.length) {
+            const animeList = tenraiJson.data.map(item => ({
+              id: item.mal_id,
+              title: item.title_english || item.title || 'Anime Series',
+              poster_path: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || '',
+              backdrop_path: item.images?.jpg?.large_image_url || '',
+              vote_average: item.score || 8.5,
+              release_date: (item.aired?.string || '2024').substring(0, 4),
+              overview: item.synopsis ? item.synopsis.replace(/\[Written by MAL Rewrite\]/g, '') : 'No overview available.',
+              genres: item.genres ? item.genres.map(g => g.name) : [],
+              media_type: 'anime'
+            }));
+
+            categoryHeroItems.anime = animeList[0];
+            cacheData.anime = animeList;
+            const animeHTML = animeList.map(createCardHTML).join('');
+            document.getElementById('animeGrid').innerHTML = animeHTML;
+            document.getElementById('homeAnimeGrid').innerHTML = animeHTML;
+          }
+        } else {
+          throw new Error('Tenrai API request not OK');
+        }
+      } catch (err) {
+        console.warn('Tenrai Anime fetch error, using TMDB anime fallback:', err);
+        const tmdbAnime = await fetchFromTMDB('/discover/tv?with_genres=16&with_original_language=ja');
+        if (tmdbAnime && tmdbAnime.results) {
+          const animeList = tmdbAnime.results.map(i => ({ ...i, media_type: 'anime' }));
+          categoryHeroItems.anime = animeList[0];
+          cacheData.anime = animeList;
+          const animeHTML = animeList.map(createCardHTML).join('');
+          document.getElementById('animeGrid').innerHTML = animeHTML;
+          document.getElementById('homeAnimeGrid').innerHTML = animeHTML;
         }
       }
 
-      // Initialize Home Featured Display
       if (categoryHeroItems.home) {
         updateHeroDisplay(categoryHeroItems.home, 'Featured Masterpiece');
       }
