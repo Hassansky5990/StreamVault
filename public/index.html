@@ -252,6 +252,18 @@
         </div>
         <div id="homeTvGrid" class="horizontal-carousel"></div>
       </section>
+
+      <!-- Trending Anime Carousel -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-heading font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-dragon text-accent"></i>
+            Popular Anime
+          </h2>
+          <button onclick="switchTab('anime')" class="text-xs text-accent hover:underline font-semibold">View All &rarr;</button>
+        </div>
+        <div id="homeAnimeGrid" class="horizontal-carousel"></div>
+      </section>
     </div>
 
     <!-- MOVIES TAB VIEW WITH GENRE FILTERING -->
@@ -736,17 +748,20 @@
       }
 
       if (anime && anime.results && anime.results.length) {
-        // Explicitly set Anime featured hero item and dataset
         categoryHeroItems.anime = anime.results[0];
         cacheData.anime = anime.results;
-        document.getElementById('animeGrid').innerHTML = anime.results.map(createCardHTML).join('');
+        const animeHTML = anime.results.map(createCardHTML).join('');
+        document.getElementById('animeGrid').innerHTML = animeHTML;
+        document.getElementById('homeAnimeGrid').innerHTML = animeHTML;
       } else {
         // Fallback anime query if keyword fetch yields low results
         const fallbackAnime = await fetchFromTMDB('/discover/tv?with_genres=16&with_original_language=ja');
         if (fallbackAnime && fallbackAnime.results && fallbackAnime.results.length) {
           categoryHeroItems.anime = fallbackAnime.results[0];
           cacheData.anime = fallbackAnime.results;
-          document.getElementById('animeGrid').innerHTML = fallbackAnime.results.map(createCardHTML).join('');
+          const fallbackHTML = fallbackAnime.results.map(createCardHTML).join('');
+          document.getElementById('animeGrid').innerHTML = fallbackHTML;
+          document.getElementById('homeAnimeGrid').innerHTML = fallbackHTML;
         }
       }
 
