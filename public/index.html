@@ -38,9 +38,9 @@
             brand: {
               50: '#fff1f2',
               100: '#ffe4e6',
-              500: '#f43f5e',
-              600: '#e11d48',
-              700: '#be123c',
+              500: '#e11d48',
+              600: '#be123c',
+              700: '#9f1239',
               900: '#881337',
             },
             dark: {
@@ -48,7 +48,7 @@
               card: '#111520',
               glass: 'rgba(17, 21, 32, 0.75)',
             },
-            accent: '#f43f5e',
+            accent: '#e11d48',
           }
         }
       }
@@ -703,13 +703,13 @@
     window.onload = async function() {
       updateWatchlistBadge();
 
-      // Fetch Home & Category Media
+      // Fetch Home & Category Media with distinct queries
       const [movies, discoverMovies, tvShows, discoverTv, anime] = await Promise.all([
         fetchFromTMDB('/trending/movie/week'),
         fetchFromTMDB('/discover/movie'),
         fetchFromTMDB('/trending/tv/week'),
         fetchFromTMDB('/discover/tv'),
-        fetchFromTMDB('/discover/tv')
+        fetchFromTMDB('/discover/tv?with_keywords=210024|287501&with_original_language=ja')
       ]);
 
       if (movies && movies.results && movies.results.length) {
@@ -736,9 +736,18 @@
       }
 
       if (anime && anime.results && anime.results.length) {
+        // Explicitly set Anime featured hero item and dataset
         categoryHeroItems.anime = anime.results[0];
         cacheData.anime = anime.results;
         document.getElementById('animeGrid').innerHTML = anime.results.map(createCardHTML).join('');
+      } else {
+        // Fallback anime query if keyword fetch yields low results
+        const fallbackAnime = await fetchFromTMDB('/discover/tv?with_genres=16&with_original_language=ja');
+        if (fallbackAnime && fallbackAnime.results && fallbackAnime.results.length) {
+          categoryHeroItems.anime = fallbackAnime.results[0];
+          cacheData.anime = fallbackAnime.results;
+          document.getElementById('animeGrid').innerHTML = fallbackAnime.results.map(createCardHTML).join('');
+        }
       }
 
       // Initialize Home Featured Display
