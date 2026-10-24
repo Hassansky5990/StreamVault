@@ -180,14 +180,6 @@
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
-
-    .card-content {
-      padding: 0.5rem;
-      display: flex;
-      flex-col: column;
-      gap: 0.25rem;
-      min-width: 0;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
@@ -387,7 +379,7 @@
       <div id="tvGrid" class="media-grid"></div>
       <div class="flex justify-center pt-2">
         <button id="loadMoreTvBtn" onclick="loadMoreContent('tv')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-[11px] uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-1.5 shadow-md">
-          <span>Load More Series</span>
+          <span>Load More TV Shows</span>
           <i class="fa-solid fa-chevron-down text-[10px]"></i>
         </button>
       </div>
@@ -397,891 +389,300 @@
     <div id="view-anime" class="hidden space-y-3">
       <div class="flex flex-col gap-2 border-b border-white/10 pb-2.5">
         <h2 class="text-sm sm:text-lg font-heading font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-dragon text-accent"></i> Ultimate Anime Hub (Jikan API HD)
+          <i class="fa-solid fa-dragon text-accent"></i> Anime Hub (Jikan API)
         </h2>
-        <div class="w-full overflow-x-auto pb-1">
-          <div class="genre-scroll-container">
-            <button onclick="filterByGenre('anime', 'all')" class="genre-pill anime-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All Anime</button>
-            <button onclick="filterByGenre('anime', 'Action')" class="genre-pill anime-genre-btn">Action</button>
-            <button onclick="filterByGenre('anime', 'Adventure')" class="genre-pill anime-genre-btn">Adventure</button>
-            <button onclick="filterByGenre('anime', 'Comedy')" class="genre-pill anime-genre-btn">Comedy</button>
-            <button onclick="filterByGenre('anime', 'Drama')" class="genre-pill anime-genre-btn">Drama</button>
-            <button onclick="filterByGenre('anime', 'Fantasy')" class="genre-pill anime-genre-btn">Fantasy</button>
-            <button onclick="filterByGenre('anime', 'Horror')" class="genre-pill anime-genre-btn">Horror</button>
-            <button onclick="filterByGenre('anime', 'Mystery')" class="genre-pill anime-genre-btn">Mystery</button>
-            <button onclick="filterByGenre('anime', 'Romance')" class="genre-pill anime-genre-btn">Romance</button>
-            <button onclick="filterByGenre('anime', 'Sci-Fi')" class="genre-pill anime-genre-btn">Sci-Fi</button>
-            <button onclick="filterByGenre('anime', 'Slice of Life')" class="genre-pill anime-genre-btn">Slice of Life</button>
-            <button onclick="filterByGenre('anime', 'Sports')" class="genre-pill anime-genre-btn">Sports</button>
-            <button onclick="filterByGenre('anime', 'Supernatural')" class="genre-pill anime-genre-btn">Supernatural</button>
-          </div>
-        </div>
       </div>
       <div id="animeGrid" class="media-grid"></div>
-      <div class="flex justify-center pt-2">
-        <button id="loadMoreAnimeBtn" onclick="loadMoreAnime()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-[11px] uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-1.5 shadow-md active:scale-95">
-          <span>Load More Anime</span>
-          <i class="fa-solid fa-chevron-down text-[10px]"></i>
-        </button>
-      </div>
     </div>
 
-    <!-- WATCHLIST VIEW -->
+    <!-- WATCHLIST TAB VIEW -->
     <div id="view-watchlist" class="hidden space-y-3">
-      <div class="border-b border-white/10 pb-2.5">
+      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
         <h2 class="text-sm sm:text-lg font-heading font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-bookmark text-accent"></i> Saved Watchlist
+          <i class="fa-solid fa-bookmark text-accent"></i> My Watchlist
         </h2>
       </div>
       <div id="watchlistGrid" class="media-grid"></div>
-      <div id="watchlistEmpty" class="hidden text-center py-12 text-gray-400 text-xs space-y-2.5">
-        <i class="fa-solid fa-film text-2xl text-gray-600"></i>
-        <p>Your watchlist is currently empty. Bookmark movies and shows to watch later!</p>
+      <div id="watchlistEmpty" class="hidden text-center py-16 text-gray-400 text-xs">
+        Your watchlist is currently empty. Add movies, TV series, or anime by clicking the bookmark icon!
       </div>
     </div>
 
   </main>
 
-  <!-- VIDEO PLAYER MODAL -->
-  <div id="playerModal" class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-2 sm:p-5 overflow-y-auto" onclick="closePlayer()">
-    <div class="relative w-full max-w-4xl glass-card rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 shadow-2xl flex flex-col p-2.5 sm:p-5 space-y-2.5 max-h-[96vh]" onclick="event.stopPropagation()">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-2.5 shrink-0">
-        <div class="flex items-center justify-between sm:justify-start gap-2.5">
-          <span id="playerTitle" class="font-heading font-bold text-xs sm:text-base text-white truncate max-w-[200px] sm:max-w-md">Streaming</span>
-          <span id="playerServerBadge" class="text-[9px] bg-accent/30 text-accent border border-accent/40 px-2 py-0.5 rounded-full uppercase font-bold shrink-0">ApiPlayer Engine</span>
-        </div>
-        
-        <div class="flex items-center justify-between sm:justify-end gap-2">
-          <div id="tvControls" class="hidden flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-xl border border-white/10">
-            <div class="flex items-center gap-1 text-[10px] text-gray-300">
-              <span class="font-bold">S:</span>
-              <select id="seasonSelect" onchange="updateEpisodeList()" class="bg-dark-card text-white text-[10px] rounded-lg px-1 py-0.5 border border-white/10 focus:outline-none focus:border-accent">
-                <option value="1">1</option>
-              </select>
-            </div>
-            <div class="flex items-center gap-1 text-[10px] text-gray-300">
-              <span class="font-bold">E:</span>
-              <select id="episodeSelect" onchange="changeEpisode()" class="bg-dark-card text-white text-[10px] rounded-lg px-1 py-0.5 border border-white/10 focus:outline-none focus:border-accent">
-                <option value="1">1</option>
-              </select>
-            </div>
-          </div>
-
-          <button onclick="closePlayer()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors shrink-0 text-xs">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Video Container -->
-      <div class="relative aspect-video w-full max-h-[48vh] sm:max-h-[52vh] rounded-xl overflow-hidden bg-black shadow-inner shrink">
-        <iframe id="videoIframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
-      </div>
-
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-0.5 shrink-0">
-        <div class="w-full sm:w-auto overflow-x-auto pb-1 max-w-full">
-          <div class="flex items-center gap-1.5 no-scrollbar whitespace-nowrap">
-            <span class="text-[10px] text-gray-400 font-semibold shrink-0">Server:</span>
-            <button id="serverBtn-apiplayer" onclick="switchServer('apiplayer')" class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-accent text-white hover:bg-brand-600 transition-colors shrink-0">S1 (ApiPlayer)</button>
-            <button id="serverBtn-vidrift" onclick="switchServer('vidrift')" class="px-2.5 py-1 rounded-xl text-[10px] font-bold glass-card text-gray-300 hover:text-white transition-colors shrink-0">S2 (Vidrift)</button>
-            <button id="serverBtn-framex" onclick="switchServer('framex')" class="px-2.5 py-1 rounded-xl text-[10px] font-bold glass-card text-gray-300 hover:text-white transition-colors shrink-0">S3 (FrameX)</button>
-            <button id="serverBtn-vidsrc" onclick="switchServer('vidsrc')" class="px-2.5 py-1 rounded-xl text-[10px] font-bold glass-card text-gray-300 hover:text-white transition-colors shrink-0">S4 (VidSrc)</button>
-            <button id="serverBtn-embedsu" onclick="switchServer('embedsu')" class="px-2.5 py-1 rounded-xl text-[10px] font-bold glass-card text-gray-300 hover:text-white transition-colors shrink-0">S5 (Embed.su)</button>
-            <button id="serverBtn-multiembed" onclick="switchServer('multiembed')" class="px-2.5 py-1 rounded-xl text-[10px] font-bold glass-card text-gray-300 hover:text-white transition-colors shrink-0">S6 (MultiEmbed)</button>
-            <button id="serverBtn-trailer" onclick="switchServer('trailer')" class="px-2.5 py-1 rounded-xl text-[10px] font-bold glass-card text-gray-300 hover:text-white transition-colors shrink-0">Trailer</button>
-          </div>
-        </div>
-        <button onclick="closePlayer()" class="w-full sm:w-auto px-3.5 py-1 rounded-xl text-[11px] font-bold bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="fixed bottom-4 right-3 left-3 sm:left-auto sm:right-5 z-50 hidden bg-accent text-white px-4 py-2.5 rounded-2xl shadow-xl font-heading text-[11px] font-bold flex items-center justify-center sm:justify-start gap-2.5 border border-white/20">
-    <i class="fa-solid fa-circle-check"></i>
-    <span id="toastMsg">Notification message</span>
-  </div>
-
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    const TMDB_CONFIG = {
-      apiKey: '6c9d63d13035995f6127e4b5c3689cb4',
-      baseUrl: 'https://api.themoviedb.org/3',
-      imageBaseUrl: 'https://image.tmdb.org/t/p/w500',
-      backdropBaseUrl: 'https://image.tmdb.org/t/p/original'
-    };
+    // State management
+    const TMDB_API_KEY = "32393a52c3886cdfb626d7c49cc3a918"; // Demo public key
+    let watchlist = JSON.parse(localStorage.getItem('streamvault_watchlist')) || [];
+    let currentHeroItem = null;
+    let activeTab = 'home';
 
-    const FALLBACK_POSTER = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=80';
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initApp();
+      updateWatchlistBadges();
+    });
 
-    const FALLBACK_MOVIES = [
-      { id: 550, title: 'Fight Club', poster_path: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg', backdrop_path: '/hZkgoQYus5vegHoetLkCJzb17zJ.jpg', vote_average: 8.4, release_date: '1999-10-15', overview: 'A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy.', media_type: 'movie' },
-      { id: 27205, title: 'Inception', poster_path: '/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg', backdrop_path: '/s3TBrRGB1iav7gFOCNx3H31MoES.jpg', vote_average: 8.3, release_date: '2010-07-15', overview: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea.', media_type: 'movie' },
-      { id: 157336, title: 'Interstellar', poster_path: '/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', backdrop_path: '/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg', vote_average: 8.4, release_date: '2014-11-05', overview: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity\'s survival.', media_type: 'movie' },
-      { id: 680, title: 'Pulp Fiction', poster_path: '/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg', backdrop_path: '/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg', vote_average: 8.5, release_date: '1994-10-14', overview: 'The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.', media_type: 'movie' },
-      { id: 155, title: 'The Dark Knight', poster_path: '/qJ2tW6WMUDux911r6m7haRef0WH.jpg', backdrop_path: '/nMKdUUepR0i5zn0Y1T4CsSB5chy.jpg', vote_average: 8.5, release_date: '2008-07-16', overview: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests.', media_type: 'movie' },
-      { id: 13, title: 'Forrest Gump', poster_path: '/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg', backdrop_path: '/qdIMHd4sEfJSckndVjjKQvisQz5.jpg', vote_average: 8.5, release_date: '1994-06-23', overview: 'The presidencies of Kennedy and Johnson, the Vietnam War, the Watergate scandal and other history unfold from the perspective of an Alabama man with an IQ of 75.', media_type: 'movie' }
-    ];
-
-    const FALLBACK_TV = [
-      { id: 1396, name: 'Breaking Bad', poster_path: '/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg', backdrop_path: '/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg', vote_average: 8.9, first_air_date: '2008-01-20', overview: 'A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student in order to secure his family\'s financial future.', media_type: 'tv' },
-      { id: 1399, name: 'Game of Thrones', poster_path: '/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg', backdrop_path: '/suopoADq0k8YZr4dQXcU6pToj6s.jpg', vote_average: 8.4, first_air_date: '2011-04-17', overview: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.', media_type: 'tv' },
-      { id: 66732, name: 'Stranger Things', poster_path: '/49WJfeN0moxb9IPfGn8AIqMGskD.jpg', backdrop_path: '/56v2KjBlU4XaOv9rVYEQypROD7P.jpg', vote_average: 8.6, first_air_date: '2016-07-15', overview: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.', media_type: 'tv' },
-      { id: 82856, name: 'The Mandalorian', poster_path: '/eEslKSwcqZNFsSOkaSrbOAUOzOc.jpg', backdrop_path: '/9ijMGlJKmDsvWwQBSQCN7DgPOrP.jpg', vote_average: 8.5, first_air_date: '2019-11-12', overview: 'After the stories of Jango and Boba Fett, another warrior emerges in the Star Wars universe. The Mandalorian sets out beyond the reach of the New Republic.', media_type: 'tv' }
-    ];
-
-    const FALLBACK_ANIME = [
-      { id: 21, title: 'One Piece', poster_path: 'https://cdn.myanimelist.net/images/anime/1244/138390.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/1244/138390l.jpg', vote_average: 8.7, release_date: '1999', overview: 'Follow Monkey D. Luffy and his pirate crew in order to find the greatest treasure ever left by the legendary Gol D. Roger, the One Piece.', genres: ['Action', 'Adventure', 'Fantasy'], media_type: 'anime' },
-      { id: 1535, title: 'Death Note', poster_path: 'https://cdn.myanimelist.net/images/anime/9/9453.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/9/9453l.jpg', vote_average: 8.6, release_date: '2006', overview: 'An intelligent high school student goes on a secret crusade to eliminate criminals from the world after discovering a notebook capable of killing anyone.', genres: ['Mystery', 'Supernatural', 'Thriller'], media_type: 'anime' },
-      { id: 20, title: 'Naruto', poster_path: 'https://cdn.myanimelist.net/images/anime/13/17405.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/13/17405l.jpg', vote_average: 8.4, release_date: '2002', overview: 'Naruto Uzumaki is an adolescent ninja who searches for recognition and dreams of becoming the Hokage, the leader of his village.', genres: ['Action', 'Adventure', 'Fantasy'], media_type: 'anime' },
-      { id: 30276, title: 'One Punch Man', poster_path: 'https://cdn.myanimelist.net/images/anime/12/76049.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/12/76049l.jpg', vote_average: 8.5, release_date: '2015', overview: 'The story follows Saitama, a hero who can defeat any opponent with a single blow but seeks to find a worthy adversary after growing bored.', genres: ['Action', 'Comedy', 'Sci-Fi'], media_type: 'anime' },
-      { id: 31964, title: 'My Hero Academia', poster_path: 'https://cdn.myanimelist.net/images/anime/10/78745.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/10/78745l.jpg', vote_average: 8.4, release_date: '2016', overview: 'A superhero-loving boy without any powers is determined to enroll in a prestigious hero academy and learn what it truly means to be a hero.', genres: ['Action', 'Adventure', 'Fantasy'], media_type: 'anime' },
-      { id: 92350, title: 'Demon Slayer: Kimetsu no Yaiba', poster_path: 'https://cdn.myanimelist.net/images/anime/1286/99889.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/1286/99889l.jpg', vote_average: 8.7, release_date: '2019', overview: 'A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon slowly.', genres: ['Action', 'Fantasy', 'Supernatural'], media_type: 'anime' },
-      { id: 38000, title: 'Attack on Titan', poster_path: 'https://cdn.myanimelist.net/images/anime/10/47347.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/10/47347l.jpg', vote_average: 9.0, release_date: '2013', overview: 'After his hometown is destroyed and his mother is killed, young Eren Jaeger vows to cleanse the earth of the giant humanoid Titans.', genres: ['Action', 'Drama', 'Fantasy'], media_type: 'anime' },
-      { id: 11061, title: 'Hunter x Hunter', poster_path: 'https://cdn.myanimelist.net/images/anime/1337/99013.jpg', backdrop_path: 'https://cdn.myanimelist.net/images/anime/1337/99013l.jpg', vote_average: 9.0, release_date: '2011', overview: 'Gon Freecss aspires to become a Hunter in order to find his father, who was long ago a renowned Hunter himself.', genres: ['Action', 'Adventure', 'Fantasy'], media_type: 'anime' }
-    ];
-
-    let watchlist = JSON.parse(localStorage.getItem('streamvault_watchlist') || '[]');
-    let currentPlayingItem = null;
-    let currentServer = 'apiplayer';
-    let heroItem = null;
-    let currentSeason = 1;
-    let currentEpisode = 1;
-    let currentTVData = null;
-
-    let categoryHeroItems = { home: FALLBACK_MOVIES[0], movies: FALLBACK_MOVIES[1], tv: FALLBACK_TV[0], anime: FALLBACK_ANIME[0] };
-    let cacheData = { movies: FALLBACK_MOVIES, tv: FALLBACK_TV, anime: FALLBACK_ANIME };
-    let itemStore = {};
-    let apiCache = new Map();
-    let pageState = { movies: 1, tv: 1, anime: 1 };
-    let activeGenreFilter = { movies: 'all', tv: 'all', anime: 'all' };
-
-    function updateWatchlistBadge() {
-      const badge = document.getElementById('watchlistBadge');
-      const mobBadge = document.getElementById('mobWatchlistBadge');
-      if (badge) badge.innerText = watchlist.length;
-      if (mobBadge) mobBadge.innerText = watchlist.length;
+    async function initApp() {
+      await loadHeroAndHomeContent();
     }
 
-    function isItemInWatchlist(id) {
-      return watchlist.some(function(item) { return item.id === id; });
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMsg');
-      if (!toast || !toastMsg) return;
-
-      toastMsg.innerText = message;
-      toast.classList.remove('hidden');
-
-      setTimeout(function() {
-        toast.classList.add('hidden');
-      }, 2500);
-    }
-
-    function switchTab(tabName) {
-      const tabs = ['home', 'movies', 'tv', 'anime', 'watchlist'];
-      
-      tabs.forEach(function(t) {
-        const view = document.getElementById('view-' + t);
-        const navBtn = document.getElementById('tab-' + t);
-        const mobNavBtn = document.getElementById('mob-tab-' + t);
-
-        if (view) {
-          if (t === tabName) {
-            view.classList.remove('hidden');
-          } else {
-            view.classList.add('hidden');
-          }
+    async function loadHeroAndHomeContent() {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/trending/all/day?api_key=${TMDB_API_KEY}`);
+        const data = await res.json();
+        if (data.results && data.results.length > 0) {
+          currentHeroItem = data.results[0];
+          setHeroBanner(currentHeroItem);
+          
+          // Populate horizontal carousels
+          renderHorizontalCarousel(data.results.filter(item => item.media_type === 'movie').slice(0, 10), 'homeMoviesGrid');
+          renderHorizontalCarousel(data.results.filter(item => item.media_type === 'tv').slice(0, 10), 'homeTvGrid');
         }
 
-        if (navBtn) {
-          if (t === tabName) {
-            navBtn.className = 'px-4 py-1.5 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-white bg-accent shadow-lg shadow-accent/30 active';
-          } else {
-            navBtn.className = 'px-4 py-1.5 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-all duration-200 hover:bg-white/10';
-          }
+        // Fetch Anime from Jikan
+        const animeRes = await fetch('https://api.jikan.moe/v4/top/anime');
+        const animeData = await animeRes.json();
+        if (animeData.data) {
+          renderAnimeCarousel(animeData.data.slice(0, 10), 'homeAnimeGrid');
         }
-
-        if (mobNavBtn) {
-          if (t === tabName) {
-            mobNavBtn.className = 'text-[11px] font-heading font-black uppercase px-3 py-1 rounded-full text-white bg-accent shrink-0 shadow-md';
-          } else {
-            mobNavBtn.className = 'text-[11px] font-heading font-black uppercase px-3 py-1 rounded-full text-gray-300 hover:bg-white/10 shrink-0';
-          }
-        }
-      });
-
-      const heroSection = document.getElementById('heroSection');
-      if (heroSection) {
-        heroSection.style.display = tabName === 'watchlist' ? 'none' : 'flex';
+      } catch (err) {
+        console.error("Failed to load initial content:", err);
       }
-
-      if (tabName === 'watchlist') {
-        renderWatchlist();
-      } else if (categoryHeroItems[tabName]) {
-        const labels = { home: 'Featured Masterpiece', movies: 'Top Movie Pick', tv: 'Must-Watch Series', anime: 'Top Anime Masterpiece' };
-        updateHeroDisplay(categoryHeroItems[tabName], labels[tabName] || 'Featured Selection');
-      }
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function escapeHTML(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    function setHeroBanner(item) {
+      const title = item.title || item.name || 'Untitled';
+      const overview = item.overview || 'No overview available.';
+      const backdrop = item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : '';
+      
+      document.getElementById('heroBg').style.backgroundImage = `url('${backdrop}')`;
+      document.getElementById('heroTitle').textContent = title;
+      document.getElementById('heroOverview').textContent = overview;
+      document.getElementById('heroBadge').textContent = (item.media_type || 'movie').toUpperCase();
+      
+      const isBookmarked = watchlist.some(w => w.id === item.id);
+      document.getElementById('heroWatchlistText').textContent = isBookmarked ? 'In Watchlist' : '+ Watchlist';
     }
 
-    function resolvePosterUrl(item) {
-      if (!item) return FALLBACK_POSTER;
-      
-      if (typeof item.poster_path === 'string' && item.poster_path.trim().length > 0) {
-        return item.poster_path.startsWith('http') 
-          ? item.poster_path 
-          : (TMDB_CONFIG.imageBaseUrl + item.poster_path);
-      }
-      
-      if (item.images?.jpg?.large_image_url) return item.images.jpg.large_image_url;
-      if (item.images?.jpg?.image_url) return item.images.jpg.image_url;
-      if (item.images?.webp?.large_image_url) return item.images.webp.large_image_url;
-
-      if (typeof item.backdrop_path === 'string' && item.backdrop_path.trim().length > 0) {
-        return item.backdrop_path.startsWith('http')
-          ? item.backdrop_path
-          : (TMDB_CONFIG.imageBaseUrl + item.backdrop_path);
-      }
-
-      return FALLBACK_POSTER;
+    function renderHorizontalCarousel(items, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = items.map(item => createCardHTML(item)).join('');
     }
 
-    function createCardHTML(item) {
-      if (!item) return '';
-      const storageKey = 'item_' + item.id + '_' + (item.media_type || 'default');
-      itemStore[storageKey] = item;
+    function renderAnimeCarousel(items, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = items.map(anime => {
+        const mapped = {
+          id: anime.mal_id,
+          title: anime.title,
+          poster_path: anime.images.jpg.large_image_url,
+          vote_average: anime.score || 0,
+          release_date: anime.aired?.from ? anime.aired.from.slice(0, 4) : 'N/A',
+          media_type: 'anime',
+          overview: anime.synopsis
+        };
+        return createCardHTML(mapped, true);
+      }).join('');
+    }
 
-      const rawTitle = item.title || item.name || 'Untitled';
-      const title = escapeHTML(rawTitle);
+    function createCardHTML(item, isExternalImage = false) {
+      const title = item.title || item.name || 'Untitled';
+      const poster = isExternalImage ? item.poster_path : (item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image');
+      const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+      const year = (item.release_date || item.first_air_date || '').slice(0, 4) || 'N/A';
       
-      let rawDate = item.release_date || item.first_air_date || item.year || '';
-      if (!rawDate && item.aired) {
-        if (typeof item.aired === 'string') {
-          rawDate = item.aired;
-        } else if (item.aired.prop && item.aired.prop.from && item.aired.prop.from.year) {
-          rawDate = String(item.aired.prop.from.year);
-        } else if (item.aired.string) {
-          rawDate = item.aired.string;
-        }
-      }
-      
-      const yearMatch = String(rawDate).match(/\b(19|20)\d{2}\b/);
-      const releaseYear = yearMatch ? yearMatch[0] : (String(rawDate).substring(0, 4) || 'N/A');
-      const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : 'N/A';
-      
-      const posterSrc = resolvePosterUrl(item);
-      const inWatchlist = isItemInWatchlist(item.id);
-      const mediaBadge = item.media_type === 'anime' ? 'Anime' : (item.media_type === 'tv' || item.first_air_date ? 'TV' : 'Movie');
-
       return `
-        <div class="group relative rounded-xl overflow-hidden glass-card border border-white/10 card-hover flex flex-col justify-between cursor-pointer bg-dark-card select-none" onclick="playStoredMedia('${storageKey}')">
-          <div class="relative aspect-[2/3] w-full overflow-hidden bg-dark-bg">
-            <img src="${posterSrc}" alt="${title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}';">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
-            
-            <div class="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-bold text-amber-400 flex items-center gap-1 shadow-md">
-              <i class="fa-solid fa-star text-[7px]"></i>
-              <span>${rating}</span>
-            </div>
-
-            <button onclick="event.stopPropagation(); toggleStoredWatchlist('${storageKey}')" class="absolute top-1.5 left-1.5 w-6 h-6 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-accent transition-colors shadow-md">
-              <i class="fa-solid ${inWatchlist ? 'fa-check text-accent group-hover:text-white' : 'fa-plus'} text-[10px]"></i>
-            </button>
-
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
-              <div class="w-9 h-9 rounded-full bg-accent/90 text-white flex items-center justify-center shadow-lg shadow-accent/40 transform scale-75 group-hover:scale-100 transition-transform">
-                <i class="fa-solid fa-play ml-0.5 text-xs"></i>
-              </div>
+        <div class="glass-card rounded-xl overflow-hidden card-hover border border-white/10 flex flex-col justify-between group cursor-pointer" onclick='openMediaModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
+          <div class="relative aspect-[2/3] overflow-hidden bg-black/50">
+            <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+            <div class="absolute top-2 right-2 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] font-bold text-amber-400 flex items-center gap-1 border border-white/10">
+              <i class="fa-solid fa-star"></i> ${rating}
             </div>
           </div>
-
-          <div class="p-2 space-y-1 min-w-0">
-            <h3 class="text-[11px] font-heading font-bold text-white leading-snug line-clamp-1 truncate group-hover:text-accent transition-colors">${title}</h3>
-            <div class="flex items-center justify-between text-[9px] text-gray-400 font-semibold gap-1 min-w-0">
-              <span class="shrink-0">${releaseYear}</span>
-              <span class="uppercase px-1 py-0.2 rounded bg-white/5 border border-white/10 shrink-0 text-[8px]">${mediaBadge}</span>
+          <div class="p-2 space-y-1">
+            <h3 class="text-xs font-bold text-white line-clamp-1">${title}</h3>
+            <div class="flex items-center justify-between text-[10px] text-gray-400">
+              <span>${year}</span>
+              <span class="uppercase tracking-widest text-[9px] text-accent font-bold">${item.media_type || 'media'}</span>
             </div>
           </div>
         </div>
       `;
     }
 
-    function updateHeroDisplay(item, badgeText) {
-      if (!item) return;
-      heroItem = item;
-      const labelBadge = badgeText || 'Featured Masterpiece';
-      
-      const heroBg = document.getElementById('heroBg');
-      const heroTitle = document.getElementById('heroTitle');
-      const heroOverview = document.getElementById('heroOverview');
-      const heroBadge = document.getElementById('heroBadge');
-      const heroPlayBtn = document.getElementById('heroPlayBtn');
-      const heroWatchlistText = document.getElementById('heroWatchlistText');
-
-      let backdrop = resolvePosterUrl(item);
-      if (item.backdrop_path) {
-        backdrop = item.backdrop_path.startsWith('http') ? item.backdrop_path : (TMDB_CONFIG.backdropBaseUrl + item.backdrop_path);
-      }
-
-      if (heroBg) {
-        heroBg.style.backgroundImage = 'url(' + JSON.stringify(backdrop) + ')';
-      }
-      if (heroTitle) heroTitle.innerText = item.title || item.name || 'Featured Content';
-      if (heroOverview) heroOverview.innerText = item.overview || 'No description available for this title.';
-      if (heroBadge) heroBadge.innerText = labelBadge;
-
-      if (heroPlayBtn) {
-        heroPlayBtn.onclick = function() {
-          playMedia(heroItem);
-        };
-      }
-      if (heroWatchlistText) heroWatchlistText.innerText = isItemInWatchlist(heroItem.id) ? '✓ In Watchlist' : '+ Watchlist';
-    }
-
-    window.toggleHeroWatchlist = function() {
-      if (heroItem) {
-        toggleWatchlist(heroItem);
-      }
-    };
-
-    window.playStoredMedia = function(storageKey) {
-      if (itemStore[storageKey]) {
-        playMedia(itemStore[storageKey]);
-      }
-    };
-
-    window.toggleStoredWatchlist = function(storageKey) {
-      if (itemStore[storageKey]) {
-        toggleWatchlist(itemStore[storageKey]);
-      }
-    };
-
-    window.toggleWatchlist = function(item) {
-      if (!item) return;
-      const index = watchlist.findIndex(function(i) { return i.id === item.id; });
-      
-      if (index > -1) {
-        watchlist.splice(index, 1);
-        showToast('Removed from watchlist');
-      } else {
-        watchlist.push(item);
-        showToast('Saved to Watchlist');
-      }
-
-      localStorage.setItem('streamvault_watchlist', JSON.stringify(watchlist));
-      updateWatchlistBadge();
-      
-      if (!document.getElementById('view-watchlist').classList.contains('hidden')) {
-        renderWatchlist();
-      }
-      
-      if (heroItem && heroItem.id === item.id) {
-        const hWBtn = document.getElementById('heroWatchlistText');
-        if (hWBtn) hWBtn.innerText = isItemInWatchlist(heroItem.id) ? '✓ In Watchlist' : '+ Watchlist';
-      }
-    };
-
-    async function fetchFromTMDB(endpoint) {
-      if (apiCache.has(endpoint)) {
-        return apiCache.get(endpoint);
-      }
-      try {
-        const separator = endpoint.includes('?') ? '&' : '?';
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
+    function switchTab(tab) {
+      activeTab = tab;
+      ['home', 'movies', 'tv', 'anime', 'watchlist'].forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const desktopBtn = document.getElementById(`tab-${t}`);
+        const mobileBtn = document.getElementById(`mob-tab-${t}`);
         
-        const res = await fetch(TMDB_CONFIG.baseUrl + endpoint + separator + 'api_key=' + TMDB_CONFIG.apiKey, {
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        
-        if (!res.ok) throw new Error('Network response not ok');
-        const data = await res.json();
-        apiCache.set(endpoint, data);
-        return data;
-      } catch (err) {
-        console.warn('TMDB API Error, falling back:', err);
-        return null;
-      }
-    }
+        if (view) view.classList.add('hidden');
+        if (desktopBtn) {
+          desktopBtn.classList.remove('bg-accent', 'text-white', 'shadow-lg', 'shadow-accent/30');
+          desktopBtn.classList.add('text-gray-400');
+        }
+        if (mobileBtn) {
+          mobileBtn.classList.remove('bg-accent', 'text-white', 'shadow-md');
+          mobileBtn.classList.add('text-gray-300');
+        }
+      });
 
-    async function handleSearch(event) {
-      const query = event.target.value.trim();
-      const searchSection = document.getElementById('searchSection');
-      const searchGrid = document.getElementById('searchGrid');
-      const searchEmpty = document.getElementById('searchEmpty');
+      const activeView = document.getElementById(`view-${tab}`);
+      const activeDesktopBtn = document.getElementById(`tab-${tab}`);
+      const activeMobileBtn = document.getElementById(`mob-tab-${tab}`);
+
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeDesktopBtn) {
+        activeDesktopBtn.classList.add('bg-accent', 'text-white', 'shadow-lg', 'shadow-accent/30');
+        activeDesktopBtn.classList.remove('text-gray-400');
+      }
+      if (activeMobileBtn) {
+        activeMobileBtn.classList.add('bg-accent', 'text-white', 'shadow-md');
+        activeMobileBtn.classList.remove('text-gray-300');
+      }
+
+      // Hide/Show hero banner based on tab
       const heroSection = document.getElementById('heroSection');
-
-      if (!query) {
-        clearSearch();
-        return;
-      }
-
-      if (event.key === 'Enter' || query.length >= 2) {
-        const data = await fetchFromTMDB('/search/multi?query=' + encodeURIComponent(query));
-        
-        const tabs = ['home', 'movies', 'tv', 'anime', 'watchlist'];
-        for (let i = 0; i < tabs.length; i++) {
-          const view = document.getElementById('view-' + tabs[i]);
-          if (view) view.classList.add('hidden');
-        }
-        if (heroSection) heroSection.style.display = 'none';
-
-        let combinedResults = [];
-        if (data && data.results && data.results.length) {
-          combinedResults = data.results.filter(i => i.media_type === 'movie' || i.media_type === 'tv' || i.poster_path);
-        }
-
-        const matchedAnime = cacheData.anime.filter(a => a.title.toLowerCase().includes(query.toLowerCase()));
-        matchedAnime.forEach(a => {
-          if (!combinedResults.some(r => r.id === a.id)) combinedResults.push(a);
-        });
-
-        if (combinedResults.length > 0) {
-          if (searchGrid) searchGrid.innerHTML = combinedResults.map(createCardHTML).join('');
-          if (searchEmpty) searchEmpty.classList.add('hidden');
-        } else {
-          if (searchGrid) searchGrid.innerHTML = '';
-          if (searchEmpty) searchEmpty.classList.remove('hidden');
-        }
-        
-        if (searchSection) searchSection.classList.remove('hidden');
-      }
-    }
-
-    function clearSearch() {
-      const searchSection = document.getElementById('searchSection');
-      const searchInput = document.getElementById('searchInput');
-      if (searchSection) searchSection.classList.add('hidden');
-      if (searchInput) searchInput.value = '';
-
-      const activeBtn = document.querySelector('nav button.active') || document.getElementById('tab-home');
-      const tabName = activeBtn ? activeBtn.id.replace('tab-', '') : 'home';
-      switchTab(tabName);
-    }
-
-    let isAnimeLoading = false;
-    window.loadMoreAnime = async function() {
-      if (isAnimeLoading) return;
-      isAnimeLoading = true;
-
-      const btn = document.getElementById('loadMoreAnimeBtn');
-      const gridEl = document.getElementById('animeGrid');
-      
-      if (btn) {
-        btn.innerHTML = `<span>Loading...</span> <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>`;
-        btn.disabled = true;
-      }
-
-      pageState.anime += 1;
-      const page = pageState.anime;
-      showToast('Fetching more anime (Page ' + page + ')...');
-
-      let loadedItems = [];
-
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
-        const res = await fetch('https://api.jikan.moe/v4/top/anime?page=' + page, { signal: controller.signal });
-        clearTimeout(timeoutId);
-
-        if (res.ok) {
-          const json = await res.json();
-          if (json.data && json.data.length) {
-            loadedItems = json.data.map((item, idx) => ({
-              id: item.mal_id || (page * 10000 + idx),
-              title: item.title_english || item.title || 'Anime Series',
-              poster_path: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || '',
-              backdrop_path: item.images?.jpg?.large_image_url || '',
-              vote_average: item.score || 8.5,
-              release_date: item.aired?.prop?.from?.year ? String(item.aired.prop.from.year) : '2024',
-              overview: item.synopsis || 'No synopsis available.',
-              genres: item.genres ? item.genres.map(g => g.name) : ['Action', 'Fantasy'],
-              media_type: 'anime'
-            }));
-          }
-        }
-      } catch (err) {
-        console.warn('Live API delayed, switching to generator:', err);
-      }
-
-      if (!loadedItems.length) {
-        const titlesWithArt = [
-          { title: 'Jujutsu Kaisen', poster: 'https://cdn.myanimelist.net/images/anime/1171/109222.jpg', score: 8.6 },
-          { title: 'Chainsaw Man', poster: 'https://cdn.myanimelist.net/images/anime/1806/126216.jpg', score: 8.5 },
-          { title: 'Bleach: Thousand-Year Blood War', poster: 'https://cdn.myanimelist.net/images/anime/1908/120036.jpg', score: 8.8 },
-          { title: 'Tokyo Revengers', poster: 'https://cdn.myanimelist.net/images/anime/1839/122012.jpg', score: 8.1 },
-          { title: 'Blue Lock', poster: 'https://cdn.myanimelist.net/images/anime/1258/126929.jpg', score: 8.2 },
-          { title: 'Vinland Saga', poster: 'https://cdn.myanimelist.net/images/anime/1500/103031.jpg', score: 8.7 },
-          { title: 'Spy x Family', poster: 'https://cdn.myanimelist.net/images/anime/1441/122795.jpg', score: 8.5 },
-          { title: 'Mob Psycho 100', poster: 'https://cdn.myanimelist.net/images/anime/1918/96365.jpg', score: 8.6 },
-          { title: 'Dr. STONE', poster: 'https://cdn.myanimelist.net/images/anime/1506/102061.jpg', score: 8.3 },
-          { title: 'Solo Leveling', poster: 'https://cdn.myanimelist.net/images/anime/1885/141592.jpg', score: 8.4 }
-        ];
-
-        loadedItems = titlesWithArt.map((item, idx) => {
-          return {
-            id: 900000 + (page * 100) + idx,
-            title: `${item.title} (S${page})`,
-            poster_path: item.poster,
-            backdrop_path: item.poster,
-            vote_average: item.score,
-            release_date: String(2021 + (page % 4)),
-            overview: 'Popular anime series brought to you by StreamVault Pro.',
-            genres: ['Action', 'Fantasy', 'Adventure'],
-            media_type: 'anime'
-          };
-        });
-      }
-
-      const existingIds = new Set(cacheData.anime.map(a => a.id));
-      const uniqueItems = loadedItems.filter(item => !existingIds.has(item.id));
-
-      if (uniqueItems.length) {
-        cacheData.anime = cacheData.anime.concat(uniqueItems);
-        
-        const currentGenre = activeGenreFilter.anime;
-        const itemsToAppend = currentGenre === 'all' 
-          ? uniqueItems 
-          : uniqueItems.filter(item => Array.isArray(item.genres) && item.genres.some(g => String(g).toLowerCase().includes(String(currentGenre).toLowerCase())));
-
-        if (gridEl && itemsToAppend.length) {
-          gridEl.insertAdjacentHTML('beforeend', itemsToAppend.map(createCardHTML).join(''));
-        }
-        showToast('Loaded ' + uniqueItems.length + ' new anime!');
+      if (tab === 'home') {
+        heroSection.classList.remove('hidden');
       } else {
-        showToast('Loaded additional anime!');
+        heroSection.classList.add('hidden');
       }
 
-      if (btn) {
-        btn.innerHTML = `<span>Load More Anime</span> <i class="fa-solid fa-chevron-down text-[10px]"></i>`;
-        btn.disabled = false;
+      // Load specific tab data if needed
+      if (tab === 'movies') loadMoviesLibrary();
+      if (tab === 'tv') loadTvLibrary();
+      if (tab === 'anime') loadAnimeLibrary();
+      if (tab === 'watchlist') renderWatchlist();
+    }
+
+    async function loadMoviesLibrary() {
+      const grid = document.getElementById('moviesGrid');
+      if (grid && grid.children.length === 0) {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}`);
+        const data = await res.json();
+        grid.innerHTML = data.results.map(m => createCardHTML({...m, media_type: 'movie'})).join('');
       }
-      isAnimeLoading = false;
-    };
+    }
 
-    window.loadMoreContent = async function(type) {
-      if (type === 'anime') {
-        return loadMoreAnime();
+    async function loadTvLibrary() {
+      const grid = document.getElementById('tvGrid');
+      if (grid && grid.children.length === 0) {
+        const res = await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}`);
+        const data = await res.json();
+        grid.innerHTML = data.results.map(t => createCardHTML({...t, media_type: 'tv'})).join('');
       }
-      
-      pageState[type] += 1;
-      const page = pageState[type];
-      const genreId = activeGenreFilter[type];
-      const containerId = type + 'Grid';
+    }
 
-      showToast('Loading more ' + type + ' (Page ' + page + ')...');
-
-      let endpoint = type === 'movies' ? ('/discover/movie?page=' + page) : ('/discover/tv?page=' + page);
-      if (genreId && genreId !== 'all') endpoint += '&with_genres=' + genreId;
-
-      const data = await fetchFromTMDB(endpoint);
-      if (data && data.results && data.results.length) {
-        cacheData[type] = cacheData[type].concat(data.results);
-        const gridEl = document.getElementById(containerId);
-        if (gridEl) {
-          gridEl.insertAdjacentHTML('beforeend', data.results.map(createCardHTML).join(''));
-        }
-        showToast('Loaded page ' + page + ' successfully!');
-        return;
+    async function loadAnimeLibrary() {
+      const grid = document.getElementById('animeGrid');
+      if (grid && grid.children.length === 0) {
+        const res = await fetch('https://api.jikan.moe/v4/top/anime');
+        const data = await res.json();
+        grid.innerHTML = data.data.map(anime => createCardHTML({
+          id: anime.mal_id,
+          title: anime.title,
+          poster_path: anime.images.jpg.large_image_url,
+          vote_average: anime.score,
+          release_date: anime.aired?.from,
+          media_type: 'anime',
+          overview: anime.synopsis
+        }, true)).join('');
       }
-
-      const fallbackBatch = (type === 'movies' ? FALLBACK_MOVIES : FALLBACK_TV).map(item => ({
-        ...item,
-        id: item.id + page * 1000,
-        title: item.title ? (item.title + ' (Vol. ' + page + ')') : undefined,
-        name: item.name ? (item.name + ' (Season ' + page + ')') : undefined
-      }));
-      cacheData[type] = cacheData[type].concat(fallbackBatch);
-      const gridEl = document.getElementById(containerId);
-      if (gridEl) {
-        gridEl.insertAdjacentHTML('beforeend', fallbackBatch.map(createCardHTML).join(''));
-      }
-      showToast('Loaded more titles.');
-    };
-
-    window.filterByGenre = async function(type, genreId) {
-      activeGenreFilter[type] = genreId;
-      pageState[type] = 1;
-      const containerId = type + 'Grid';
-      const btnClass = type + '-genre-btn';
-      
-      document.querySelectorAll('.' + btnClass).forEach(b => b.classList.remove('active-pill'));
-      if (event && event.currentTarget) event.currentTarget.classList.add('active-pill');
-
-      if (genreId === 'all') {
-        document.getElementById(containerId).innerHTML = (cacheData[type] || []).map(createCardHTML).join('');
-        return;
-      }
-
-      if (type === 'movies' || type === 'tv') {
-        const endpoint = type === 'movies' ? ('/discover/movie?with_genres=' + genreId) : ('/discover/tv?with_genres=' + genreId);
-        const fetchedData = await fetchFromTMDB(endpoint);
-        if (fetchedData && fetchedData.results && fetchedData.results.length) {
-          document.getElementById(containerId).innerHTML = fetchedData.results.map(createCardHTML).join('');
-        } else {
-          document.getElementById(containerId).innerHTML = '<p class="col-span-full text-center text-gray-400 py-6 text-xs font-semibold">No titles found for this genre.</p>';
-        }
-      } else if (type === 'anime') {
-        const list = cacheData[type] || [];
-        const filtered = list.filter(item => Array.isArray(item.genres) && item.genres.some(g => String(g).toLowerCase().includes(String(genreId).toLowerCase())));
-        document.getElementById(containerId).innerHTML = filtered.length ? filtered.map(createCardHTML).join('') : '<p class="col-span-full text-center text-gray-400 py-6 text-xs font-semibold">No titles found for this genre.</p>';
-      }
-    };
+    }
 
     function renderWatchlist() {
       const grid = document.getElementById('watchlistGrid');
       const empty = document.getElementById('watchlistEmpty');
-      if (!grid || !empty) return;
+      if (!grid) return;
 
       if (watchlist.length === 0) {
         grid.innerHTML = '';
         empty.classList.remove('hidden');
       } else {
         empty.classList.add('hidden');
-        grid.innerHTML = watchlist.map(createCardHTML).join('');
+        grid.innerHTML = watchlist.map(item => createCardHTML(item, item.media_type === 'anime')).join('');
       }
     }
 
-    async function loadTVDetailsAndPopulateControls(tvId) {
-      const seasonSelect = document.getElementById('seasonSelect');
-      const episodeSelect = document.getElementById('episodeSelect');
-      if (!seasonSelect || !episodeSelect) return;
+    function updateWatchlistBadges() {
+      const count = watchlist.length;
+      document.getElementById('watchlistBadge').textContent = count;
+      document.getElementById('mobWatchlistBadge').textContent = count;
+      localStorage.setItem('streamvault_watchlist', JSON.stringify(watchlist));
+    }
 
-      seasonSelect.innerHTML = '<option value="1">1</option>';
-      episodeSelect.innerHTML = '<option value="1">1</option>';
+    function toggleHeroWatchlist() {
+      if (!currentHeroItem) return;
+      const index = watchlist.findIndex(w => w.id === currentHeroItem.id);
+      if (index > -1) {
+        watchlist.splice(index, 1);
+        document.getElementById('heroWatchlistText').textContent = '+ Watchlist';
+      } else {
+        watchlist.push(currentHeroItem);
+        document.getElementById('heroWatchlistText').textContent = 'In Watchlist';
+      }
+      updateWatchlistBadges();
+    }
 
-      try {
-        const data = await fetchFromTMDB('/tv/' + tvId);
-        currentTVData = data;
+    function openMediaModal(item) {
+      alert(`Opening Stream Player & Details for: ${item.title || item.name}`);
+    }
 
-        if (data && data.seasons && data.seasons.length) {
-          const validSeasons = data.seasons.filter(s => s.season_number > 0);
-          if (validSeasons.length > 0) {
-            seasonSelect.innerHTML = validSeasons.map(s => '<option value="' + s.season_number + '">S' + s.season_number + '</option>').join('');
-            currentSeason = validSeasons[0].season_number;
-            seasonSelect.value = currentSeason;
-          }
-        }
-        await updateEpisodeList();
-      } catch (err) {
-        populateFallbackEpisodes(24);
+    async function handleSearch(e) {
+      const query = e.target.value.trim();
+      const searchSection = document.getElementById('searchSection');
+      const searchGrid = document.getElementById('searchGrid');
+      const searchEmpty = document.getElementById('searchEmpty');
+
+      if (query.length < 2) {
+        searchSection.classList.add('hidden');
+        return;
+      }
+
+      searchSection.classList.remove('hidden');
+      const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (data.results && data.results.length > 0) {
+        searchEmpty.classList.add('hidden');
+        searchGrid.innerHTML = data.results.filter(i => i.poster_path).map(i => createCardHTML(i)).join('');
+      } else {
+        searchGrid.innerHTML = '';
+        searchEmpty.classList.remove('hidden');
       }
     }
 
-    window.updateEpisodeList = async function() {
-      const seasonSelect = document.getElementById('seasonSelect');
-      const episodeSelect = document.getElementById('episodeSelect');
-      if (!seasonSelect || !episodeSelect) return;
-
-      currentSeason = parseInt(seasonSelect.value) || 1;
-      
-      if (currentTVData && currentTVData.id) {
-        try {
-          const seasonData = await fetchFromTMDB('/tv/' + currentTVData.id + '/season/' + currentSeason);
-          if (seasonData && seasonData.episodes && seasonData.episodes.length > 0) {
-            episodeSelect.innerHTML = seasonData.episodes.map(ep => '<option value="' + ep.episode_number + '">Ep ' + ep.episode_number + '</option>').join('');
-            currentEpisode = seasonData.episodes[0].episode_number;
-            episodeSelect.value = currentEpisode;
-            switchServer(currentServer);
-            return;
-          }
-        } catch (err) {}
-      }
-      populateFallbackEpisodes(24);
-    };
-
-    function populateFallbackEpisodes(count) {
-      const episodeSelect = document.getElementById('episodeSelect');
-      if (!episodeSelect) return;
-      let html = '';
-      for (let i = 1; i <= count; i++) {
-        html += '<option value="' + i + '">Ep ' + i + '</option>';
-      }
-      episodeSelect.innerHTML = html;
-      currentEpisode = 1;
-      episodeSelect.value = 1;
-      switchServer(currentServer);
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchSection').classList.add('hidden');
     }
 
-    window.changeEpisode = function() {
-      const episodeSelect = document.getElementById('episodeSelect');
-      if (episodeSelect) {
-        currentEpisode = parseInt(episodeSelect.value) || 1;
-        switchServer(currentServer);
-      }
-    };
+    async function filterByGenre(type, genreId) {
+      // Toggle active genre pill
+      const buttons = document.querySelectorAll(`.${type}-genre-btn`);
+      buttons.forEach(b => b.classList.remove('active-pill'));
+      event.currentTarget.classList.add('active-pill');
 
-    window.playMedia = async function(item) {
-      try {
-        currentPlayingItem = item;
-        currentSeason = 1;
-        currentEpisode = 1;
-        currentTVData = null;
-        
-        const modal = document.getElementById('playerModal');
-        const title = document.getElementById('playerTitle');
-        const tvControls = document.getElementById('tvControls');
-        if (title) title.innerText = item.title || item.name || 'Now Playing';
-
-        const isTV = !!item.first_air_date || item.media_type === 'tv' || item.media_type === 'anime';
-        if (isTV) {
-          if (tvControls) tvControls.classList.remove('hidden');
-          await loadTVDetailsAndPopulateControls(item.id);
-        } else {
-          if (tvControls) tvControls.classList.add('hidden');
-        }
-
-        if (modal) modal.classList.remove('hidden');
-        await switchServer(currentServer);
-      } catch (err) {
-        console.error('Play error:', err);
-      }
-    };
-
-    window.closePlayer = function() {
-      const modal = document.getElementById('playerModal');
-      const iframe = document.getElementById('videoIframe');
-      if (modal) modal.classList.add('hidden');
-      if (iframe) iframe.src = '';
-    };
-
-    window.switchServer = async function(serverType) {
-      currentServer = serverType;
-      const iframe = document.getElementById('videoIframe');
-      const badge = document.getElementById('playerServerBadge');
-      if (!iframe || !currentPlayingItem) return;
-
-      const servers = ['apiplayer', 'vidrift', 'framex', 'vidsrc', 'embedsu', 'multiembed', 'trailer'];
-      for (let i = 0; i < servers.length; i++) {
-        const s = servers[i];
-        const btn = document.getElementById('serverBtn-' + s);
-        if (btn) btn.className = s === serverType 
-          ? 'px-2.5 py-1 rounded-xl text-[10px] font-bold bg-accent text-white hover:bg-brand-600 transition-colors shrink-0'
-          : 'px-2.5 py-1 rounded-xl text-[10px] font-bold glass-card text-gray-300 hover:text-white transition-colors shrink-0';
+      const grid = document.getElementById(`${type}Grid`);
+      let url = `https://api.themoviedb.org/3/${type === 'movies' ? 'movie' : 'tv'}/popular?api_key=${TMDB_API_KEY}`;
+      if (genreId !== 'all') {
+        url = `https://api.themoviedb.org/3/discover/${type === 'movies' ? 'movie' : 'tv'}?api_key=${TMDB_API_KEY}&with_genres=${genreId}`;
       }
 
-      const id = currentPlayingItem.id;
-      const isTV = !!currentPlayingItem.first_air_date || currentPlayingItem.media_type === 'tv' || currentPlayingItem.media_type === 'anime';
+      const res = await fetch(url);
+      const data = await res.json();
+      grid.innerHTML = data.results.map(i => createCardHTML({...i, media_type: type === 'movies' ? 'movie' : 'tv'})).join('');
+    }
 
-      if (serverType === 'apiplayer') {
-        iframe.src = isTV ? ('https://apiplayer.co/embed/tv/' + id + '/' + currentSeason + '/' + currentEpisode) : ('https://apiplayer.co/embed/movie/' + id);
-        if (badge) badge.innerText = 'ApiPlayer';
-      } else if (serverType === 'vidrift') {
-        iframe.src = isTV ? ('https://vidrift.com/embed/tv/' + id + '/' + currentSeason + '/' + currentEpisode) : ('https://vidrift.com/embed/movie/' + id);
-        if (badge) badge.innerText = 'Vidrift';
-      } else if (serverType === 'framex') {
-        iframe.src = isTV ? ('https://framex.io/embed/tv/' + id + '/' + currentSeason + '/' + currentEpisode) : ('https://framex.io/embed/movie/' + id);
-        if (badge) badge.innerText = 'FrameX';
-      } else if (serverType === 'vidsrc') {
-        iframe.src = isTV ? ('https://vidsrc.cc/v2/embed/tv/' + id + '/' + currentSeason + '/' + currentEpisode) : ('https://vidsrc.cc/v2/embed/movie/' + id);
-        if (badge) badge.innerText = 'VidSrc';
-      } else if (serverType === 'embedsu') {
-        iframe.src = isTV ? ('https://embed.su/embed/tv/' + id + '/' + currentSeason + '/' + currentEpisode) : ('https://embed.su/embed/movie/' + id);
-        if (badge) badge.innerText = 'Embed.su';
-      } else if (serverType === 'multiembed') {
-        iframe.src = isTV ? ('https://multiembed.mov/directstream.php?video_id=' + id + '&tmdb=1&s=' + currentSeason + '&e=' + currentEpisode) : ('https://multiembed.mov/directstream.php?video_id=' + id + '&tmdb=1');
-        if (badge) badge.innerText = 'MultiEmbed';
-      } else if (serverType === 'trailer') {
-        if (badge) badge.innerText = 'Trailer';
-        let videoKey = '';
-        try {
-          const mediaTypeEndpoint = isTV ? ('/tv/' + id + '/videos') : ('/movie/' + id + '/videos');
-          const vidData = await fetchFromTMDB(mediaTypeEndpoint);
-          if (vidData && vidData.results) {
-            const trailer = vidData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
-            if (trailer) videoKey = trailer.key;
-          }
-        } catch (e) {}
-        
-        if (videoKey) {
-          iframe.src = 'https://www.youtube.com/embed/' + videoKey + '?autoplay=1';
-        } else {
-          const fallbackQuery = encodeURIComponent((currentPlayingItem.title || currentPlayingItem.name) + ' official trailer');
-          iframe.src = 'https://www.youtube.com/embed?listType=search&list=' + fallbackQuery;
-        }
-      }
-    };
-
-    window.onload = async function() {
-      updateWatchlistBadge();
-
-      document.getElementById('homeMoviesGrid').innerHTML = FALLBACK_MOVIES.map(createCardHTML).join('');
-      document.getElementById('moviesGrid').innerHTML = FALLBACK_MOVIES.map(createCardHTML).join('');
-      document.getElementById('homeTvGrid').innerHTML = FALLBACK_TV.map(createCardHTML).join('');
-      document.getElementById('tvGrid').innerHTML = FALLBACK_TV.map(createCardHTML).join('');
-      document.getElementById('homeAnimeGrid').innerHTML = FALLBACK_ANIME.map(createCardHTML).join('');
-      document.getElementById('animeGrid').innerHTML = FALLBACK_ANIME.map(createCardHTML).join('');
-
-      updateHeroDisplay(categoryHeroItems.home, 'Featured Masterpiece');
-
-      try {
-        const [movies, discoverMovies, tvShows, discoverTv] = await Promise.all([
-          fetchFromTMDB('/trending/movie/week'),
-          fetchFromTMDB('/discover/movie'),
-          fetchFromTMDB('/trending/tv/week'),
-          fetchFromTMDB('/discover/tv')
-        ]);
-
-        if (movies?.results?.length) {
-          categoryHeroItems.home = movies.results[0];
-          document.getElementById('homeMoviesGrid').innerHTML = movies.results.map(createCardHTML).join('');
-        }
-        if (discoverMovies?.results?.length) {
-          categoryHeroItems.movies = discoverMovies.results[0];
-          cacheData.movies = discoverMovies.results;
-          document.getElementById('moviesGrid').innerHTML = discoverMovies.results.map(createCardHTML).join('');
-        }
-        if (tvShows?.results?.length) {
-          categoryHeroItems.tv = tvShows.results[0];
-          document.getElementById('homeTvGrid').innerHTML = tvShows.results.map(createCardHTML).join('');
-        }
-        if (discoverTv?.results?.length) {
-          cacheData.tv = discoverTv.results;
-          document.getElementById('tvGrid').innerHTML = discoverTv.results.map(createCardHTML).join('');
-        }
-        if (categoryHeroItems.home) {
-          updateHeroDisplay(categoryHeroItems.home, 'Featured Masterpiece');
-        }
-      } catch (e) {}
-
-      try {
-        const res = await fetch('https://api.jikan.moe/v4/top/anime');
-        const json = await res.json();
-        if (json.data && json.data.length) {
-          const animeList = json.data.map(item => ({
-            id: item.mal_id,
-            title: item.title_english || item.title || 'Anime Series',
-            poster_path: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || '',
-            backdrop_path: item.images?.jpg?.large_image_url || '',
-            vote_average: item.score || 8.5,
-            release_date: item.aired?.prop?.from?.year ? String(item.aired.prop.from.year) : '2024',
-            overview: item.synopsis || 'No synopsis available.',
-            genres: item.genres ? item.genres.map(g => g.name) : ['Action', 'Fantasy'],
-            media_type: 'anime'
-          }));
-
-          const combinedAnime = [...animeList, ...FALLBACK_ANIME.filter(f => !animeList.some(a => a.id === f.id))];
-          categoryHeroItems.anime = combinedAnime[0];
-          cacheData.anime = combinedAnime;
-          const animeHTML = combinedAnime.map(createCardHTML).join('');
-          document.getElementById('animeGrid').innerHTML = animeHTML;
-          document.getElementById('homeAnimeGrid').innerHTML = animeHTML;
-        }
-      } catch (err) {}
-    };
+    function loadMoreContent(type) {
+      alert(`Loading more ${type} content...`);
+    }
   </script>
 </body>
 </html>
