@@ -482,15 +482,13 @@
             <div class="genre-scroll-container" id="animeGenreContainer">
               <button onclick="filterAnimeByGenre('all', event)" class="genre-pill anime-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All Anime</button>
               <button onclick="filterAnimeByGenre('10759', event)" class="genre-pill anime-genre-btn">Action & Adventure</button>
-              <button onclick="filterAnimeByGenre('10765', event)" class="genre-pill anime-genre-btn">Sci-Fi & Mecha</button>
+              <button onclick="filterAnimeByGenre('10765', event)" class="genre-pill anime-genre-btn">Sci-Fi & Fantasy</button>
               <button onclick="filterAnimeByGenre('35', event)" class="genre-pill anime-genre-btn">Comedy</button>
               <button onclick="filterAnimeByGenre('10749', event)" class="genre-pill anime-genre-btn">Romance & Drama</button>
               <button onclick="filterAnimeByGenre('9648', event)" class="genre-pill anime-genre-btn">Mystery & Supernatural</button>
               <button onclick="filterAnimeByGenre('14', event)" class="genre-pill anime-genre-btn">Fantasy & Magic</button>
-              <button onclick="filterAnimeByGenre('53', event)" class="genre-pill anime-genre-btn">Thriller</button>
-              <button onclick="filterAnimeByGenre('27', event)" class="genre-pill anime-genre-btn">Horror</button>
+              <button onclick="filterAnimeByGenre('53', event)" class="genre-pill anime-genre-btn">Thriller & Dark</button>
               <button onclick="filterAnimeByGenre('18', event)" class="genre-pill anime-genre-btn">Slice of Life</button>
-              <button onclick="filterAnimeByGenre('10764', event)" class="genre-pill anime-genre-btn">Sports & Gaming</button>
             </div>
           </div>
           <button onclick="scrollCarousel('animeGenreContainer', 200)" class="genre-nav-btn"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
@@ -528,6 +526,10 @@
     let watchlist = JSON.parse(localStorage.getItem('streamvault_watchlist')) || [];
     let currentHeroItem = null;
     let activeTab = 'home';
+    
+    // Master Anime Cache for robust client-side filtering
+    let animeCache = [];
+    let animeLoadedPages = 1;
 
     // Carousel & Genre Scroll Helper
     function scrollCarousel(containerId, distance) {
@@ -597,17 +599,64 @@
     async function loadHomeAnime() {
       const container = document.getElementById('homeAnimeGrid');
       try {
-        const res = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc`);
-        const data = await res.json();
-        if (data && data.results && data.results.length > 0) {
-          const animeItems = data.results.filter(item => item.poster_path).map(item => ({...item, media_type: 'anime'}));
-          renderHorizontalCarousel(animeItems.slice(0, 10), 'homeAnimeGrid');
+        if (animeCache.length === 0) {
+          await fetchMasterAnimeCache();
+        }
+        if (animeCache.length > 0) {
+          renderHorizontalCarousel(animeCache.slice(0, 10), 'homeAnimeGrid');
         } else {
           container.innerHTML = '<div class="text-[11px] text-red-400 py-3">No anime series found.</div>';
         }
       } catch (err) {
         console.error("Failed to load TMDB Anime:", err);
         container.innerHTML = '<div class="text-[11px] text-red-400 py-3">Failed to load anime data.</div>';
+      }
+    }
+
+    // Fetch a massive robust pool of anime (TV + Movies) for instant filtering
+    async function fetchMasterAnimeCache() {
+      try {
+        const [tvRes1, tvRes2, movieRes1] = await Promise.all([
+          fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=1`),
+          fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=2`),
+          fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=1`)
+        ]);
+
+        const tvData1 = await tvRes1.json();
+        const tvData2 = await tvRes2.json();
+        const movieData1 = await movieRes1.json();
+
+        let rawList = [
+          ...(tvData1.results || []),
+          ...(tvData2.results || []),
+          ...(movieData1.results || [])
+        ];
+
+        // Deduplicate and filter strictly for valid posters and anime characteristics
+        const seenIds = new Set();
+        animeCache = rawList.filter(item => {
+          if (!item.poster_path || seenIds.has(item.id)) return false;
+          seenIds.add(item.id);
+          const isJapanese = item.original_language === 'ja' || (item.origin_country && item.origin_country.includes('JP'));
+          const hasAnimation = item.genre_ids && item.genre_ids.includes(16);
+          return isJapanese || hasAnimation;
+        }).map(item => ({
+          ...item,
+          media_type: item.title ? 'movie' : 'anime'
+        }));
+
+        // Fallback popular anime items if TMDB returns light results
+        if (animeCache.length < 5) {
+          animeCache = [
+            { id: 1429, name: "Attack on Titan", poster_path: "/aiy3kN83rA4X6g83b7o28w.jpg", vote_average: 8.7, first_air_date: "2013-04-07", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "After his hometown is destroyed and his mother is killed, young Eren Jaeger vows to cleanse the earth of the giant humanoid Titans." },
+            { id: 37854, name: "One Piece", poster_path: "/cTv2NK0EdOvnNs2huSioPjF6m20.jpg", vote_average: 8.7, first_air_date: "1999-10-20", genre_ids: [16, 10759, 35], original_language: "ja", media_type: "anime", overview: "Follow Monkey D. Luffy and his pirate crew in order to find the greatest treasure ever left by the legendary Gold Roger." },
+            { id: 85937, name: "Demon Slayer: Kimetsu no Yaiba", poster_path: "/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg", vote_average: 8.7, first_air_date: "2019-04-06", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon." },
+            { id: 95557, name: "Jujutsu Kaisen", poster_path: "/hUzeosd33nzE5MCNsZxCGEKXaQd.jpg", vote_average: 8.6, first_air_date: "2020-10-03", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "A boy swallows a cursed talisman - the finger of a demon - and becomes cursed himself." },
+            { id: 31910, name: "Naruto", poster_path: "/vauxtHWaCmXm8b08pWqHqW9E38o.jpg", vote_average: 8.4, first_air_date: "2002-10-03", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "Naruto Uzumaki is a adolescent ninja who searches for recognition and dreams of becoming the Hokage." }
+          ];
+        }
+      } catch (e) {
+        console.error("Cache fetch error:", e);
       }
     }
 
@@ -770,25 +819,56 @@
 
     async function loadAnimeLibrary() {
       const grid = document.getElementById('animeGrid');
-      if (grid && grid.children.length <= 1) {
-        pageState.anime.page = 1;
-        try {
-          const res = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=1`);
-          const data = await res.json();
-          if (data && data.results && data.results.length > 0) {
-            const animeList = data.results.filter(a => a.poster_path);
-            grid.innerHTML = animeList.map(anime => createCardHTML({...anime, media_type: 'anime'})).join('');
-          } else {
-            grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load Anime Hub.</div>';
-          }
-        } catch (e) {
-          console.error("Error loading anime library:", e);
-          grid.innerHTML = '<div class="text-xs text-red-400 py-6">Network error loading Anime.</div>';
+      if (grid) {
+        grid.innerHTML = '<div class="text-xs text-gray-400 py-6">Loading Anime Hub...</div>';
+        if (animeCache.length === 0) {
+          await fetchMasterAnimeCache();
+        }
+        if (animeCache.length > 0) {
+          grid.innerHTML = animeCache.map(anime => createCardHTML(anime)).join('');
+        } else {
+          grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load Anime Hub.</div>';
         }
       }
     }
 
     async function loadMore(type) {
+      if (type === 'anime') {
+        animeLoadedPages += 1;
+        const btn = document.getElementById('loadMoreAnimeBtn');
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-[10px]"></i> Loading...';
+        try {
+          const res = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=${animeLoadedPages}`);
+          const data = await res.json();
+          if (data && data.results) {
+            const newItems = data.results.filter(i => i.poster_path).map(i => ({ ...i, media_type: 'anime' }));
+            
+            // Deduplicate items before adding to cache
+            const existingIds = new Set(animeCache.map(a => a.id));
+            newItems.forEach(item => {
+              if (!existingIds.has(item.id)) {
+                animeCache.push(item);
+              }
+            });
+
+            // Maintain current genre filter if one is active
+            if (pageState.anime.currentGenre !== 'all') {
+              filterAnimeByGenre(pageState.anime.currentGenre);
+            } else {
+              const grid = document.getElementById('animeGrid');
+              if (grid) {
+                grid.innerHTML = animeCache.map(i => createCardHTML(i)).join('');
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Load more anime error:", err);
+        } finally {
+          if (btn) btn.innerHTML = `<i class="fa-solid fa-arrows-rotate text-[10px]"></i><span>Load More Anime</span>`;
+        }
+        return;
+      }
+
       const state = pageState[type];
       state.page += 1;
 
@@ -805,9 +885,14 @@
           ? `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&page=${state.page}`
           : `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${state.currentGenre}&page=${state.page}`;
       } else if (type === 'anime') {
+        let genreQuery = state.currentGenre;
+        if (genreQuery === '14' || genreQuery === '27' || genreQuery === '53') {
+          // Map TV equivalents or multi-genres
+          genreQuery = genreQuery === '14' ? '10765' : '9648';
+        }
         url = state.currentGenre === 'all'
           ? `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=${state.page}`
-          : `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16,${state.currentGenre}&with_original_language=ja&sort_by=popularity.desc&page=${state.page}`;
+          : `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16,${genreQuery}&with_original_language=ja&sort_by=popularity.desc&page=${state.page}`;
       }
 
       try {
@@ -820,7 +905,10 @@
           } else if (type === 'tv') {
             items = data.results.filter(i => i.poster_path && !(i.genre_ids && i.genre_ids.includes(16)) && i.original_language !== 'ja');
           } else {
-            items = data.results.filter(i => i.poster_path);
+            items = data.results.filter(i => {
+              const isJapanese = i.original_language === 'ja' || (i.origin_country && i.origin_country.includes('JP'));
+              return i.poster_path && isJapanese;
+            });
           }
 
           const grid = document.getElementById(`${type}Grid`);
@@ -1161,35 +1249,42 @@
     }
 
     async function filterAnimeByGenre(genreId, evt) {
-      pageState.anime.page = 1;
       pageState.anime.currentGenre = genreId;
 
-      const buttons = document.querySelectorAll('.anime-genre-btn');
-      buttons.forEach(b => b.classList.remove('active-pill'));
       if (evt && evt.currentTarget) {
+        const buttons = document.querySelectorAll('.anime-genre-btn');
+        buttons.forEach(b => b.classList.remove('active-pill'));
         evt.currentTarget.classList.add('active-pill');
       }
 
       const grid = document.getElementById('animeGrid');
-      grid.innerHTML = '<div class="text-xs text-gray-400 py-6">Loading anime...</div>';
+      if (!grid) return;
 
-      let url = `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=1`;
-      if (genreId !== 'all') {
-        url = `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16,${genreId}&with_original_language=ja&sort_by=popularity.desc&page=1`;
+      if (animeCache.length === 0) {
+        grid.innerHTML = '<div class="text-xs text-gray-400 py-6">Filtering anime...</div>';
+        await fetchMasterAnimeCache();
       }
 
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.results && data.results.length > 0) {
-          const animeList = data.results.filter(i => i.poster_path);
-          grid.innerHTML = animeList.map(i => createCardHTML({...i, media_type: 'anime'})).join('');
-        } else {
-          grid.innerHTML = '<div class="text-xs text-gray-400 py-6">No anime found for this category.</div>';
-        }
-      } catch (e) {
-        console.error("Anime filter error:", e);
-        grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load anime.</div>';
+      let filteredList = animeCache;
+      if (genreId !== 'all') {
+        const targetId = Number(genreId);
+        filteredList = animeCache.filter(item => {
+          if (!item.genre_ids) return false;
+          // Match exact genre or related sub-genres
+          if (targetId === 10759) { // Action & Adventure
+            return item.genre_ids.includes(16) || item.genre_ids.includes(10759) || item.genre_ids.includes(28) || item.genre_ids.includes(12);
+          }
+          if (targetId === 10765) { // Sci-Fi & Fantasy
+            return item.genre_ids.includes(16) || item.genre_ids.includes(10765) || item.genre_ids.includes(14) || item.genre_ids.includes(878);
+          }
+          return item.genre_ids.includes(targetId);
+        });
+      }
+
+      if (filteredList.length > 0) {
+        grid.innerHTML = filteredList.map(i => createCardHTML(i)).join('');
+      } else {
+        grid.innerHTML = '<div class="text-xs text-gray-400 py-6 text-center w-full col-span-full">No anime found for this category yet. Click "Load More Anime" below to fetch more titles!</div>';
       }
     }
   </script>
