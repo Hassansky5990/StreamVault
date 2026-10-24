@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -854,7 +855,12 @@
         }
         const res = await fetch(url);
         const data = await res.json();
-        const shows = data.results || [];
+        // Filter out anime / Japanese animation from standard TV shows
+        let shows = (data.results || []).filter(item => {
+          const isJapanese = item.original_language === 'ja';
+          const isAnimation = item.genre_ids && item.genre_ids.includes(16);
+          return !(isJapanese || isAnimation);
+        });
 
         if (!append) grid.innerHTML = '';
         shows.forEach(s => {
@@ -874,12 +880,13 @@
     async function loadAnimeHub() {
       const grid = document.getElementById('animeGrid');
       if (!grid) return;
-      grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6 col-span-full text-center">Loading Anime Hub...</div>';
+      grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6 col-span-full text-center">Loading Anime Universe...</div>';
 
       try {
-        const res = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&sort_by=popularity.desc&page=${pageState.anime.page}`);
+        // Fetch Japanese animation and anime explicitly
+        const res = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=${pageState.anime.page}`);
         const data = await res.json();
-        animeCache = data.results || [];
+        animeCache = (data.results || []).filter(item => item.original_language === 'ja' || (item.genre_ids && item.genre_ids.includes(16)));
 
         renderAnimeGrid(animeCache);
       } catch (err) {
