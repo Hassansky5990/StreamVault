@@ -333,7 +333,7 @@
     <!-- SEARCH RESULTS VIEW -->
     <section id="searchSection" class="hidden space-y-3">
       <div class="flex items-center justify-between border-b border-white/10 pb-2">
-        <h2 class="text-sm sm:text-base font-heading font-bold text-white flex items-center gap-2">
+        <h2 id="searchTitleHeading" class="text-sm sm:text-base font-heading font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-magnifying-glass text-accent"></i>
           Search Results
         </h2>
@@ -520,14 +520,79 @@
 
   </main>
 
+  <!-- MODAL DETAILS & STREAMING PLAYER CONTAINER -->
+  <div id="mediaModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+    <div id="modalContentBox" class="bg-[#111520] border border-white/15 rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto no-scrollbar shadow-2xl transform scale-95 transition-transform duration-300 relative flex flex-col">
+      
+      <!-- Close Modal Button -->
+      <button onclick="closeModal()" class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-black/70 hover:bg-accent text-white flex items-center justify-center transition-colors border border-white/20 cursor-pointer">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <!-- Video Player or Backdrop Header -->
+      <div id="modalPlayerContainer" class="relative w-full bg-black aspect-video flex items-center justify-center shrink-0">
+        <!-- Injected iframe or trailer video -->
+      </div>
+
+      <!-- Modal Body Details -->
+      <div class="p-4 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span id="modalMediaType" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-accent/20 text-accent border border-accent/30">Movie</span>
+              <span id="modalRating" class="text-xs text-yellow-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-star"></i> <span>0.0</span></span>
+              <span id="modalYear" class="text-xs text-gray-400">2026</span>
+            </div>
+            <h2 id="modalTitle" class="text-xl sm:text-2xl font-heading font-black text-white">Title Name</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="modalWatchlistBtn" onclick="toggleModalWatchlist()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-xs uppercase transition-all flex items-center gap-1.5 border border-white/20 cursor-pointer">
+              <i class="fa-solid fa-bookmark text-xs"></i>
+              <span id="modalWatchlistText">Watchlist</span>
+            </button>
+          </div>
+        </div>
+
+        <p id="modalOverview" class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+          Overview description goes here...
+        </p>
+
+        <!-- Seasons & Episodes Selector for TV Series / Anime -->
+        <div id="seasonsSection" class="hidden space-y-3 pt-2 border-t border-white/10">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-xs sm:text-sm font-heading font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-accent"></i> Seasons & Episodes
+            </h3>
+            <div id="seasonButtonsContainer" class="flex flex-wrap gap-1.5">
+              <!-- Season buttons injected here -->
+            </div>
+          </div>
+          <div id="episodesContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1">
+            <!-- Episode cards injected here -->
+          </div>
+        </div>
+
+        <!-- Cast / Crew / Genres Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-white/10 text-xs text-gray-400">
+          <div><strong class="text-white">Genres:</strong> <span id="modalGenres">Action, Sci-Fi</span></div>
+          <div><strong class="text-white">Original Language:</strong> <span id="modalLanguage">EN</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- JAVASCRIPT LOGIC -->
   <script>
     const TMDB_API_KEY = "6c9d63d13035995f6127e4b5c3689cb4";
     let watchlist = JSON.parse(localStorage.getItem('streamvault_watchlist')) || [];
     let currentHeroItem = null;
     let activeTab = 'home';
-    
-    // Master Anime Cache for robust client-side filtering
+    let currentModalItem = null;
+    let activeSeasonNumber = 1;
+    let activeEpisodeNumber = 1;
+    let tvSeasonsDetailsCache = {};
+
+    // Master Anime Cache for client-side filtering
     let animeCache = [];
     let animeLoadedPages = 1;
 
@@ -554,7 +619,10 @@
     async function initApp() {
       await Promise.all([
         loadHeroAndHomeContent(),
-        loadHomeAnime()
+        loadHomeAnime(),
+        loadMoviesPage(1, 'all', false),
+        loadTvPage(1, 'all', false),
+        loadAnimePage(1, 'all', false)
       ]);
     }
 
@@ -613,7 +681,6 @@
       }
     }
 
-    // Fetch a massive robust pool of anime (TV + Movies) for instant filtering
     async function fetchMasterAnimeCache() {
       try {
         const [tvRes1, tvRes2, movieRes1] = await Promise.all([
@@ -632,661 +699,589 @@
           ...(movieData1.results || [])
         ];
 
-        // Deduplicate and filter strictly for valid posters and anime characteristics
         const seenIds = new Set();
         animeCache = rawList.filter(item => {
           if (!item.poster_path || seenIds.has(item.id)) return false;
           seenIds.add(item.id);
-          const isJapanese = item.original_language === 'ja' || (item.origin_country && item.origin_country.includes('JP'));
-          const hasAnimation = item.genre_ids && item.genre_ids.includes(16);
-          return isJapanese || hasAnimation;
-        }).map(item => ({
-          ...item,
-          media_type: item.title ? 'movie' : 'anime'
-        }));
-
-        // Fallback popular anime items if TMDB returns light results
-        if (animeCache.length < 5) {
-          animeCache = [
-            { id: 1429, name: "Attack on Titan", poster_path: "/aiy3kN83rA4X6g83b7o28w.jpg", vote_average: 8.7, first_air_date: "2013-04-07", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "After his hometown is destroyed and his mother is killed, young Eren Jaeger vows to cleanse the earth of the giant humanoid Titans." },
-            { id: 37854, name: "One Piece", poster_path: "/cTv2NK0EdOvnNs2huSioPjF6m20.jpg", vote_average: 8.7, first_air_date: "1999-10-20", genre_ids: [16, 10759, 35], original_language: "ja", media_type: "anime", overview: "Follow Monkey D. Luffy and his pirate crew in order to find the greatest treasure ever left by the legendary Gold Roger." },
-            { id: 85937, name: "Demon Slayer: Kimetsu no Yaiba", poster_path: "/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg", vote_average: 8.7, first_air_date: "2019-04-06", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon." },
-            { id: 95557, name: "Jujutsu Kaisen", poster_path: "/hUzeosd33nzE5MCNsZxCGEKXaQd.jpg", vote_average: 8.6, first_air_date: "2020-10-03", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "A boy swallows a cursed talisman - the finger of a demon - and becomes cursed himself." },
-            { id: 31910, name: "Naruto", poster_path: "/vauxtHWaCmXm8b08pWqHqW9E38o.jpg", vote_average: 8.4, first_air_date: "2002-10-03", genre_ids: [16, 10759, 10765], original_language: "ja", media_type: "anime", overview: "Naruto Uzumaki is a adolescent ninja who searches for recognition and dreams of becoming the Hokage." }
-          ];
-        }
+          return true;
+        });
       } catch (e) {
-        console.error("Cache fetch error:", e);
+        console.error("Error fetching master anime cache:", e);
       }
     }
 
     function setHeroBanner(item) {
       if (!item) return;
-      const title = item.title || item.name;
-      const overview = item.overview || 'Explore cinematic masterpieces in high definition.';
-      const backdrop = item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : (item.poster_path ? `https://image.tmdb.org/t/p/original${item.poster_path}` : '');
+      const title = item.title || item.name || "Featured Movie";
+      const overview = item.overview || "Stream this blockbuster masterpiece in high definition right now on StreamVault Pro.";
+      const backdropUrl = item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : 'https://placehold.co/1200x600/07090e/ffffff?text=StreamVault+Pro';
       
-      const heroBg = document.getElementById('heroBg');
-      if (heroBg && backdrop) heroBg.style.backgroundImage = `url('${backdrop}')`;
+      document.getElementById('heroBg').style.backgroundImage = `url('${backdropUrl}')`;
+      document.getElementById('heroTitle').innerText = title;
+      document.getElementById('heroOverview').innerText = overview;
       
-      const heroTitle = document.getElementById('heroTitle');
-      if (heroTitle) heroTitle.textContent = title;
-      
-      const heroOverview = document.getElementById('heroOverview');
-      if (heroOverview) heroOverview.textContent = overview;
-      
-      const isBookmarked = watchlist.some(w => w.id === item.id);
-      const heroWatchlistText = document.getElementById('heroWatchlistText');
-      if (heroWatchlistText) heroWatchlistText.textContent = isBookmarked ? 'In Watchlist' : '+ Watchlist';
-    }
-
-    function renderHorizontalCarousel(items, containerId) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      if (!items || items.length === 0) {
-        container.innerHTML = '<div class="text-xs text-gray-400 py-4">No items available.</div>';
-        return;
-      }
-      container.innerHTML = items.map(item => createCardHTML(item)).join('');
-    }
-
-    function createCardHTML(item) {
-      const title = item.title || item.name || 'Untitled';
-      const poster = item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '';
-      const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '';
-      const year = (item.release_date || item.first_air_date || '').slice(0, 4);
-      
-      let badgeLabel = item.media_type || 'media';
-      let badgeClass = 'text-accent';
-      if ((item.genre_ids && item.genre_ids.includes(16)) || item.media_type === 'anime' || item.original_language === 'ja') {
-        badgeLabel = 'anime';
-        badgeClass = 'text-pink-400';
-      } else if (item.name && !item.title) {
-        badgeLabel = 'tv';
-        badgeClass = 'text-cyan-400';
-      } else if (item.title) {
-        badgeLabel = 'movie';
-        badgeClass = 'text-accent';
-      }
-
-      return `
-        <div class="glass-card rounded-xl overflow-hidden card-hover border border-white/10 flex flex-col justify-between group cursor-pointer" onclick='openMediaModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
-          <div class="relative aspect-[2/3] overflow-hidden bg-black/60">
-            ${poster ? `<img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">` : `<div class="w-full h-full flex items-center justify-center text-[10px] text-gray-400 p-2 text-center">No Poster</div>`}
-            ${rating ? `<div class="absolute top-2 right-2 bg-black/75 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] font-bold text-amber-400 flex items-center gap-1 border border-white/10"><i class="fa-solid fa-star"></i> ${rating}</div>` : ''}
-          </div>
-          <div class="p-2 space-y-1">
-            <h3 class="text-xs font-bold text-white line-clamp-1">${title}</h3>
-            <div class="flex items-center justify-between text-[10px] text-gray-400">
-              <span>${year}</span>
-              <span class="uppercase tracking-widest text-[9px] ${badgeClass} font-bold">${badgeLabel}</span>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function switchTab(tab) {
-      activeTab = tab;
-      ['home', 'movies', 'tv', 'anime', 'watchlist'].forEach(t => {
-        const view = document.getElementById(`view-${t}`);
-        const desktopBtn = document.getElementById(`tab-${t}`);
-        const mobileBtn = document.getElementById(`mob-tab-${t}`);
-        
-        if (view) view.classList.add('hidden');
-        if (desktopBtn) {
-          desktopBtn.classList.remove('bg-accent', 'text-white', 'shadow-lg', 'shadow-accent/30');
-          desktopBtn.classList.add('text-gray-400');
-        }
-        if (mobileBtn) {
-          mobileBtn.classList.remove('bg-accent', 'text-white', 'shadow-md');
-          mobileBtn.classList.add('text-gray-300');
-        }
-      });
-
-      const activeView = document.getElementById(`view-${tab}`);
-      const activeDesktopBtn = document.getElementById(`tab-${tab}`);
-      const activeMobileBtn = document.getElementById(`mob-tab-${tab}`);
-
-      if (activeView) activeView.classList.remove('hidden');
-      if (activeDesktopBtn) {
-        activeDesktopBtn.classList.add('bg-accent', 'text-white', 'shadow-lg', 'shadow-accent/30');
-        activeDesktopBtn.classList.remove('text-gray-400');
-      }
-      if (activeMobileBtn) {
-        activeMobileBtn.classList.add('bg-accent', 'text-white', 'shadow-md');
-        activeMobileBtn.classList.remove('text-gray-300');
-      }
-
-      const heroSection = document.getElementById('heroSection');
-      if (heroSection) {
-        if (tab === 'home') {
-          heroSection.classList.remove('hidden');
-        } else {
-          heroSection.classList.add('hidden');
-        }
-      }
-
-      if (tab === 'movies') loadMoviesLibrary();
-      if (tab === 'tv') loadTvLibrary();
-      if (tab === 'anime') loadAnimeLibrary();
-      if (tab === 'watchlist') renderWatchlist();
-    }
-
-    async function loadMoviesLibrary() {
-      const grid = document.getElementById('moviesGrid');
-      if (grid && grid.children.length <= 1) {
-        pageState.movies.page = 1;
-        try {
-          const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&page=1`);
-          const data = await res.json();
-          if (data && data.results && data.results.length > 0) {
-            const movies = data.results.filter(m => m.poster_path && !(m.genre_ids && m.genre_ids.includes(16)));
-            grid.innerHTML = movies.map(m => createCardHTML({...m, media_type: 'movie'})).join('');
-          } else {
-            grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load movies library.</div>';
-          }
-        } catch (e) {
-          console.error("Error loading movies:", e);
-          grid.innerHTML = '<div class="text-xs text-red-400 py-6">Network error loading movies.</div>';
-        }
-      }
-    }
-
-    async function loadTvLibrary() {
-      const grid = document.getElementById('tvGrid');
-      if (grid && grid.children.length <= 1) {
-        pageState.tv.page = 1;
-        try {
-          const res = await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&page=1`);
-          const data = await res.json();
-          if (data && data.results && data.results.length > 0) {
-            const tvShows = data.results.filter(t => {
-              const hasAnim = t.genre_ids && t.genre_ids.includes(16);
-              const isJapanese = t.original_language === 'ja';
-              return t.poster_path && !hasAnim && !isJapanese;
-            });
-            grid.innerHTML = tvShows.map(t => createCardHTML({...t, media_type: 'tv'})).join('');
-          } else {
-            grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load TV shows library.</div>';
-          }
-        } catch (e) {
-          console.error("Error loading TV shows:", e);
-          grid.innerHTML = '<div class="text-xs text-red-400 py-6">Network error loading TV shows.</div>';
-        }
-      }
-    }
-
-    async function loadAnimeLibrary() {
-      const grid = document.getElementById('animeGrid');
-      if (grid) {
-        grid.innerHTML = '<div class="text-xs text-gray-400 py-6">Loading Anime Hub...</div>';
-        if (animeCache.length === 0) {
-          await fetchMasterAnimeCache();
-        }
-        if (animeCache.length > 0) {
-          grid.innerHTML = animeCache.map(anime => createCardHTML(anime)).join('');
-        } else {
-          grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load Anime Hub.</div>';
-        }
-      }
-    }
-
-    async function loadMore(type) {
-      if (type === 'anime') {
-        animeLoadedPages += 1;
-        const btn = document.getElementById('loadMoreAnimeBtn');
-        if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-[10px]"></i> Loading...';
-        try {
-          const res = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=${animeLoadedPages}`);
-          const data = await res.json();
-          if (data && data.results) {
-            const newItems = data.results.filter(i => i.poster_path).map(i => ({ ...i, media_type: 'anime' }));
-            
-            // Deduplicate items before adding to cache
-            const existingIds = new Set(animeCache.map(a => a.id));
-            newItems.forEach(item => {
-              if (!existingIds.has(item.id)) {
-                animeCache.push(item);
-              }
-            });
-
-            // Maintain current genre filter if one is active
-            if (pageState.anime.currentGenre !== 'all') {
-              filterAnimeByGenre(pageState.anime.currentGenre);
-            } else {
-              const grid = document.getElementById('animeGrid');
-              if (grid) {
-                grid.innerHTML = animeCache.map(i => createCardHTML(i)).join('');
-              }
-            }
-          }
-        } catch (err) {
-          console.error("Load more anime error:", err);
-        } finally {
-          if (btn) btn.innerHTML = `<i class="fa-solid fa-arrows-rotate text-[10px]"></i><span>Load More Anime</span>`;
-        }
-        return;
-      }
-
-      const state = pageState[type];
-      state.page += 1;
-
-      const btn = document.getElementById(`loadMore${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
-      if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-[10px]"></i> Loading...';
-
-      let url = '';
-      if (type === 'movies') {
-        url = state.currentGenre === 'all'
-          ? `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&page=${state.page}`
-          : `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${state.currentGenre}&page=${state.page}`;
-      } else if (type === 'tv') {
-        url = state.currentGenre === 'all'
-          ? `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&page=${state.page}`
-          : `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${state.currentGenre}&page=${state.page}`;
-      } else if (type === 'anime') {
-        let genreQuery = state.currentGenre;
-        if (genreQuery === '14' || genreQuery === '27' || genreQuery === '53') {
-          // Map TV equivalents or multi-genres
-          genreQuery = genreQuery === '14' ? '10765' : '9648';
-        }
-        url = state.currentGenre === 'all'
-          ? `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=${state.page}`
-          : `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16,${genreQuery}&with_original_language=ja&sort_by=popularity.desc&page=${state.page}`;
-      }
-
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.results && data.results.length > 0) {
-          let items = [];
-          if (type === 'movies') {
-            items = data.results.filter(i => i.poster_path && !(i.genre_ids && i.genre_ids.includes(16)));
-          } else if (type === 'tv') {
-            items = data.results.filter(i => i.poster_path && !(i.genre_ids && i.genre_ids.includes(16)) && i.original_language !== 'ja');
-          } else {
-            items = data.results.filter(i => {
-              const isJapanese = i.original_language === 'ja' || (i.origin_country && i.origin_country.includes('JP'));
-              return i.poster_path && isJapanese;
-            });
-          }
-
-          const grid = document.getElementById(`${type}Grid`);
-          const existingHTML = grid.innerHTML;
-          const newCards = items.map(i => createCardHTML({...i, media_type: type})).join('');
-          grid.innerHTML = existingHTML + newCards;
-        }
-      } catch (err) {
-        console.error("Load more error:", err);
-      } finally {
-        if (btn) {
-          btn.innerHTML = `<i class="fa-solid fa-arrows-rotate text-[10px]"></i><span>Load More ${type.charAt(0).toUpperCase() + type.slice(1)}</span>`;
-        }
-      }
-    }
-
-    function renderWatchlist() {
-      const grid = document.getElementById('watchlistGrid');
-      const empty = document.getElementById('watchlistEmpty');
-      if (!grid) return;
-
-      if (watchlist.length === 0) {
-        grid.innerHTML = '';
-        empty.classList.remove('hidden');
+      const isSaved = watchlist.some(w => w.id === item.id);
+      const wlText = document.getElementById('heroWatchlistText');
+      if (isSaved) {
+        wlText.innerText = "In Watchlist";
       } else {
-        empty.classList.add('hidden');
-        grid.innerHTML = watchlist.map(item => createCardHTML(item)).join('');
-      }
-    }
-
-    function updateWatchlistBadges() {
-      const count = watchlist.length;
-      const badge1 = document.getElementById('watchlistBadge');
-      const badge2 = document.getElementById('mobWatchlistBadge');
-      if (badge1) badge1.textContent = count;
-      if (badge2) badge2.textContent = count;
-      localStorage.setItem('streamvault_watchlist', JSON.stringify(watchlist));
-    }
-
-    function openHeroDetails() {
-      if (currentHeroItem) {
-        openMediaModal(currentHeroItem);
+        wlText.innerText = "+ Watchlist";
       }
     }
 
     function toggleHeroWatchlist() {
       if (!currentHeroItem) return;
-      const index = watchlist.findIndex(w => w.id === currentHeroItem.id);
-      const heroWatchlistText = document.getElementById('heroWatchlistText');
-      if (index > -1) {
-        watchlist.splice(index, 1);
-        if (heroWatchlistText) heroWatchlistText.textContent = '+ Watchlist';
-      } else {
-        watchlist.push(currentHeroItem);
-        if (heroWatchlistText) heroWatchlistText.textContent = 'In Watchlist';
-      }
-      updateWatchlistBadges();
+      toggleWatchlist(currentHeroItem);
+      setHeroBanner(currentHeroItem);
     }
 
-    async function openMediaModal(item) {
-      const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
-      const title = item.title || item.name || 'Untitled';
-      const releaseDate = item.release_date || item.first_air_date || 'N/A';
-      const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : 'N/A';
-      const voteCount = item.vote_count || 0;
-      const poster = item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '';
-      const overview = item.overview || 'No overview available for this title.';
-      const isBookmarked = watchlist.some(w => w.id === item.id);
-
-      // Fetch Trailer Video & Additional Info
-      let trailerKey = null;
-      try {
-        const videoRes = await fetch(`https://api.themoviedb.org/3/${mediaType === 'anime' ? 'tv' : mediaType}/${item.id}/videos?api_key=${TMDB_API_KEY}`);
-        const videoData = await videoRes.json();
-        if (videoData && videoData.results) {
-          const trailer = videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube') || videoData.results[0];
-          if (trailer) trailerKey = trailer.key;
-        }
-      } catch (err) {
-        console.error("Failed to fetch trailer:", err);
-      }
-
-      const modal = document.createElement('div');
-      modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 animate-fade-in overflow-y-auto';
-      
-      modal.innerHTML = `
-        <div class="glass-card max-w-2xl w-full rounded-2xl overflow-hidden border border-white/20 shadow-2xl my-auto">
-          <!-- Header Bar -->
-          <div class="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-black/40">
-            <h3 class="text-sm sm:text-base font-heading font-bold text-white line-clamp-1">${title}</h3>
-            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-base cursor-pointer w-8 h-8 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-
-          <!-- Content Body -->
-          <div class="p-4 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-            ${trailerKey ? `
-              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-white/15 shadow-lg flex flex-col items-center justify-center">
-                <iframe src="https://www.youtube-nocookie.com/embed/${trailerKey}?autoplay=1&mute=1&enablejsapi=1" class="w-full h-full border-0" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                <div class="absolute bottom-2 right-2 z-10 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-2 shadow-lg">
-                  <span class="text-[10px] text-gray-300">Experiencing Error 153?</span>
-                  <a href="https://www.youtube.com/watch?v=${trailerKey}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-accent font-bold hover:underline flex items-center gap-1">
-                    <span>Watch on YouTube</span>
-                    <i class="fa-solid fa-external-link text-[9px]"></i>
-                  </a>
-                </div>
-              </div>
-            ` : (poster ? `
-              <div class="relative w-full h-48 sm:h-64 rounded-xl overflow-hidden bg-black">
-                <img src="${poster}" class="w-full h-full object-cover opacity-60 filter blur-sm absolute inset-0">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#111520] to-transparent"></div>
-                <div class="absolute bottom-4 left-4 flex items-center gap-3">
-                  <img src="${poster}" class="w-20 h-28 object-cover rounded-lg shadow-md border border-white/20">
-                  <div>
-                    <h4 class="text-base font-heading font-bold text-white">${title}</h4>
-                    <p class="text-xs text-gray-300">Released: ${releaseDate}</p>
-                  </div>
-                </div>
-              </div>
-            ` : '')}
-
-            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-300 bg-white/5 p-3 rounded-xl border border-white/10">
-              <div class="flex items-center gap-1.5 text-amber-400 font-bold">
-                <i class="fa-solid fa-star"></i>
-                <span>${rating} / 10</span>
-                <span class="text-gray-400 text-[10px]">(${voteCount} votes)</span>
-              </div>
-              <div class="w-px h-4 bg-white/20"></div>
-              <div><i class="fa-solid fa-calendar mr-1 text-accent"></i> ${releaseDate}</div>
-              <div class="w-px h-4 bg-white/20"></div>
-              <div class="uppercase tracking-wider font-bold text-accent text-[10px]">${mediaType}</div>
-            </div>
-
-            <div class="space-y-1.5">
-              <h4 class="text-xs font-heading font-bold uppercase tracking-wider text-gray-400">Overview</h4>
-              <p class="text-xs sm:text-sm text-gray-200 leading-relaxed">${overview}</p>
-            </div>
-
-            <!-- WATCH NOW & TRAILER BUTTONS -->
-            <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-3 border-t border-white/10">
-              <button onclick="playStreamPlayer('${mediaType}', '${item.id}', '${title.replace(/'/g, "\\'")}')" class="w-full sm:w-auto flex-1 py-3 bg-gradient-to-r from-accent to-brand-600 hover:from-brand-600 hover:to-accent text-white font-heading font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-accent/25 flex items-center justify-center gap-2 cursor-pointer transition-all">
-                <i class="fa-solid fa-play text-sm"></i>
-                <span>Stream Full Movie / Show</span>
-              </button>
-              <button onclick="toggleModalWatchlist(${JSON.stringify(item).replace(/'/g, "&apos;")}, this)" class="w-full sm:w-auto py-3 px-5 bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-xs uppercase tracking-wider rounded-xl border border-white/20 flex items-center justify-center gap-2 cursor-pointer transition-all">
-                <i class="fa-solid fa-bookmark text-accent"></i>
-                <span class="modal-watchlist-text">${isBookmarked ? 'In Watchlist' : 'Add Watchlist'}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
+    function openHeroDetails() {
+      if (!currentHeroItem) return;
+      openDetails(currentHeroItem);
     }
 
-    // STREAM PLAYER MODAL FUNCTION
-    function playStreamPlayer(type, id, title) {
-      const isTvOrAnime = type === 'tv' || type === 'anime';
-      const embedType = isTvOrAnime ? 'tv' : 'movie';
-      
-      const playerModal = document.createElement('div');
-      playerModal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl p-2 sm:p-4 animate-fade-in';
-      
-      playerModal.innerHTML = `
-        <div class="w-full max-w-5xl h-[88vh] bg-[#07090e] rounded-2xl overflow-hidden border border-white/20 shadow-2xl flex flex-col">
-          <!-- Player Header -->
-          <div class="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10 shrink-0">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
-              <h3 class="text-xs sm:text-sm font-heading font-bold text-white line-clamp-1">Streaming: ${title}</h3>
-            </div>
-            <div class="flex items-center gap-2">
-              <select id="serverSelect" onchange="switchServer('${embedType}', '${id}')" class="bg-white/10 text-white text-[10px] sm:text-xs rounded-lg px-2 py-1 border border-white/20 outline-none cursor-pointer">
-                <option value="vidsrc.cc" class="bg-gray-900">Server 1 (VidSrc CC)</option>
-                <option value="vidsrc.me" class="bg-gray-900">Server 2 (VidSrc Me)</option>
-                <option value="2embed.cc" class="bg-gray-900">Server 3 (2Embed)</option>
-                <option value="autoembed.cc" class="bg-gray-900">Server 4 (AutoEmbed)</option>
-              </select>
-              <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-sm cursor-pointer w-7 h-7 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-          </div>
-
-          <!-- Video Player Container -->
-          <div class="flex-grow relative bg-black">
-            <iframe id="streamIframe" src="https://vidsrc.cc/v2/embed/${embedType}/${id}${isTvOrAnime ? '/1/1' : ''}" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-          </div>
-
-          <!-- Player Controls Footer -->
-          <div class="p-2 sm:p-3 bg-white/5 border-t border-white/10 flex items-center justify-between text-[10px] text-gray-400 shrink-0">
-            <span>If video is slow or doesn't load, switch to another server using the top menu.</span>
-            <button onclick="this.closest('.fixed').remove()" class="px-3 py-1 bg-accent text-white font-bold rounded-md hover:bg-brand-600">Close Player</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(playerModal);
-    }
-
-    function switchServer(type, id) {
-      const server = document.getElementById('serverSelect').value;
-      const iframe = document.getElementById('streamIframe');
-      if (!iframe) return;
-
-      if (server === 'vidsrc.cc') {
-        iframe.src = `https://vidsrc.cc/v2/embed/${type}/${id}`;
-      } else if (server === 'vidsrc.me') {
-        iframe.src = `https://vidsrc.net/embed/${type}/${id}`;
-      } else if (server === '2embed.cc') {
-        iframe.src = `https://www.2embed.cc/embed${type === 'tv' ? 'tv' : ''}/${id}`;
-      } else if (server === 'autoembed.cc') {
-        iframe.src = `https://player.autoembed.cc/embed/${type}/${id}`;
-      }
-    }
-
-    function toggleModalWatchlist(item, btnElement) {
-      const index = watchlist.findIndex(w => w.id === item.id);
-      const textSpan = btnElement.querySelector('.modal-watchlist-text');
-      if (index > -1) {
-        watchlist.splice(index, 1);
-        if (textSpan) textSpan.textContent = 'Add to Watchlist';
-      } else {
-        watchlist.push(item);
-        if (textSpan) textSpan.textContent = 'In Watchlist';
-      }
-      updateWatchlistBadges();
-      if (activeTab === 'watchlist') renderWatchlist();
-    }
-
-    async function handleSearch(e) {
-      const query = e.target.value.trim();
-      const searchSection = document.getElementById('searchSection');
-      const searchGrid = document.getElementById('searchGrid');
-      const searchEmpty = document.getElementById('searchEmpty');
-
-      if (query.length < 2) {
-        searchSection.classList.add('hidden');
+    // Render horizontal carousel cards
+    function renderHorizontalCarousel(items, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div class="text-[11px] text-gray-400 py-3 px-2">No items available.</div>';
         return;
       }
 
-      searchSection.classList.remove('hidden');
-      searchGrid.innerHTML = '<div class="text-xs text-gray-400 py-6">Searching TMDB library...</div>';
-      
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
-        const data = await res.json();
+      container.innerHTML = items.map(item => createMediaCardHTML(item)).join('');
+    }
 
-        let results = [];
-        if (data && data.results) {
-          results = data.results.filter(i => i.poster_path);
+    function createMediaCardHTML(item) {
+      const title = item.title || item.name || 'Untitled';
+      const poster = item.poster_path ? `https://image.tmdb.org/t/p/w342${item.poster_path}` : 'https://placehold.co/300x450/111520/ffffff?text=No+Poster';
+      const rating = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
+      const year = (item.release_date || item.first_air_date || '2026').substring(0, 4);
+      const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
+      const isSaved = watchlist.some(w => w.id === item.id);
+
+      // Escape JSON safely for onclick
+      const itemJson = encodeURIComponent(JSON.stringify(item));
+
+      return `
+        <div class="card-hover glass-card rounded-xl overflow-hidden border border-white/10 flex flex-col group cursor-pointer relative" onclick="openDetailsFromData('${itemJson}')">
+          <div class="relative aspect-[2/3] w-full overflow-hidden bg-dark-bg">
+            <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.src='https://placehold.co/300x450/111520/ffffff?text=Poster'">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-transparent to-transparent opacity-80"></div>
+            
+            <div class="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-md text-[9px] font-bold text-yellow-400 flex items-center gap-1 border border-white/10">
+              <i class="fa-solid fa-star text-[8px]"></i> <span>${rating}</span>
+            </div>
+
+            <button onclick="event.stopPropagation(); toggleWatchlistFromData('${itemJson}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 backdrop-blur-md text-white flex items-center justify-center border border-white/20 hover:bg-accent transition-colors">
+              <i class="fa-solid fa-bookmark text-[10px] ${isSaved ? 'text-accent' : 'text-white'}"></i>
+            </button>
+
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+              <div class="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
+                <i class="fa-solid fa-play text-xs ml-0.5"></i>
+              </div>
+            </div>
+          </div>
+          <div class="p-2.5 flex flex-col justify-between flex-grow">
+            <h3 class="text-xs font-heading font-bold text-white truncate">${title}</h3>
+            <div class="flex items-center justify-between text-[10px] text-gray-400 pt-1">
+              <span>${year}</span>
+              <span class="uppercase text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10">${mediaType}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Load Movies with Genre & Pagination
+    async function loadMoviesPage(page = 1, genre = 'all', append = false) {
+      const grid = document.getElementById('moviesGrid');
+      if (!append) {
+        grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6">Loading movies...</div>';
+      }
+
+      try {
+        let url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&sort_by=popularity.desc&page=${page}`;
+        if (genre !== 'all') {
+          url += `&with_genres=${genre}`;
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+        const results = (data.results || []).filter(item => item.poster_path);
+
+        if (page === 1 && results.length === 0) {
+          grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6 col-span-full text-center">No movies found in this genre.</div>';
+          return;
         }
 
-        if (results.length > 0) {
-          searchEmpty.classList.add('hidden');
-          searchGrid.innerHTML = results.map(i => createCardHTML(i)).join('');
+        const html = results.map(item => {
+          item.media_type = 'movie';
+          return createMediaCardHTML(item);
+        }).join('');
+
+        if (append) {
+          grid.insertAdjacentHTML('beforeend', html);
         } else {
-          searchGrid.innerHTML = '';
-          searchEmpty.classList.remove('hidden');
+          grid.innerHTML = html;
         }
       } catch (err) {
+        console.error("Error loading movies:", err);
+        if (!append) grid.innerHTML = '<div class="text-[11px] text-red-400 py-6">Failed to load movies.</div>';
+      }
+    }
+
+    function filterByGenre(type, genreId, event) {
+      if (type === 'movies') {
+        document.querySelectorAll('.movie-genre-btn').forEach(b => b.classList.remove('active-pill'));
+        event.currentTarget.classList.add('active-pill');
+        pageState.movies.currentGenre = genreId;
+        pageState.movies.page = 1;
+        loadMoviesPage(1, genreId, false);
+      }
+    }
+
+    // Load TV Shows with Genre & Pagination
+    async function loadTvPage(page = 1, genre = 'all', append = false) {
+      const grid = document.getElementById('tvGrid');
+      if (!append) {
+        grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6">Loading TV shows...</div>';
+      }
+
+      try {
+        let url = `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&sort_by=popularity.desc&page=${page}`;
+        if (genre !== 'all') {
+          url += `&with_genres=${genre}`;
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+        const results = (data.results || []).filter(item => item.poster_path);
+
+        if (page === 1 && results.length === 0) {
+          grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6 col-span-full text-center">No TV shows found in this genre.</div>';
+          return;
+        }
+
+        const html = results.map(item => {
+          item.media_type = 'tv';
+          return createMediaCardHTML(item);
+        }).join('');
+
+        if (append) {
+          grid.insertAdjacentHTML('beforeend', html);
+        } else {
+          grid.innerHTML = html;
+        }
+      } catch (err) {
+        console.error("Error loading TV shows:", err);
+        if (!append) grid.innerHTML = '<div class="text-[11px] text-red-400 py-6">Failed to load TV shows.</div>';
+      }
+    }
+
+    function filterTvByGenre(genreId, event) {
+      document.querySelectorAll('.tv-genre-btn').forEach(b => b.classList.remove('active-pill'));
+      event.currentTarget.classList.add('active-pill');
+      pageState.tv.currentGenre = genreId;
+      pageState.tv.page = 1;
+      loadTvPage(1, genreId, false);
+    }
+
+    // Load Anime with Genre & Pagination
+    async function loadAnimePage(page = 1, genre = 'all', append = false) {
+      const grid = document.getElementById('animeGrid');
+      if (!append) {
+        grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6">Loading Anime Hub...</div>';
+      }
+
+      try {
+        if (animeCache.length === 0) {
+          await fetchMasterAnimeCache();
+        }
+
+        let filtered = animeCache;
+        if (genre !== 'all') {
+          filtered = animeCache.filter(item => item.genre_ids && item.genre_ids.includes(parseInt(genre)));
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div class="text-[11px] text-gray-400 py-6 col-span-full text-center">No anime found in this category.</div>';
+          return;
+        }
+
+        const html = filtered.map(item => {
+          item.media_type = item.media_type || (item.name ? 'tv' : 'movie');
+          return createMediaCardHTML(item);
+        }).join('');
+
+        grid.innerHTML = html;
+      } catch (err) {
+        console.error("Error loading anime:", err);
+        if (!append) grid.innerHTML = '<div class="text-[11px] text-red-400 py-6">Failed to load anime.</div>';
+      }
+    }
+
+    function filterAnimeByGenre(genreId, event) {
+      document.querySelectorAll('.anime-genre-btn').forEach(b => b.classList.remove('active-pill'));
+      event.currentTarget.classList.add('active-pill');
+      pageState.anime.currentGenre = genreId;
+      loadAnimePage(1, genreId, false);
+    }
+
+    function loadMore(type) {
+      if (type === 'movies') {
+        pageState.movies.page++;
+        loadMoviesPage(pageState.movies.page, pageState.movies.currentGenre, true);
+      } else if (type === 'tv') {
+        pageState.tv.page++;
+        loadTvPage(pageState.tv.page, pageState.tv.currentGenre, true);
+      } else if (type === 'anime') {
+        animeLoadedPages++;
+        loadAnimePage(animeLoadedPages, pageState.anime.currentGenre, true);
+      }
+    }
+
+    // SEARCH FUNCTIONALITY (Fixed & Robust)
+    let searchTimeout = null;
+    function handleSearch(event) {
+      const query = event.target.value.trim();
+      clearTimeout(searchTimeout);
+
+      if (event.key === 'Enter' || query.length >= 2) {
+        executeSearch(query);
+      } else if (query.length === 0) {
+        clearSearch();
+      }
+    }
+
+    async function executeSearch(query) {
+      if (!query) return;
+      
+      // Switch view visually to search results
+      document.getElementById('searchSection').classList.remove('hidden');
+      const searchGrid = document.getElementById('searchGrid');
+      const searchEmpty = document.getElementById('searchEmpty');
+      document.getElementById('searchTitleHeading').innerHTML = `<i class="fa-solid fa-magnifying-glass text-accent"></i> Search Results for "${query}"`;
+      
+      searchGrid.innerHTML = '<div class="text-[11px] text-gray-400 py-6 col-span-full text-center">Searching TMDB cinematic database...</div>';
+      searchEmpty.classList.add('hidden');
+
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&page=1`);
+        const data = await res.json();
+        const results = (data.results || []).filter(item => item.poster_path && (item.media_type === 'movie' || item.media_type === 'tv'));
+
+        if (results.length === 0) {
+          searchGrid.innerHTML = '';
+          searchEmpty.classList.remove('hidden');
+          return;
+        }
+
+        searchGrid.innerHTML = results.map(item => createMediaCardHTML(item)).join('');
+      } catch (err) {
         console.error("Search error:", err);
-        searchGrid.innerHTML = '<div class="text-xs text-red-400 py-6">Search failed. Please try again.</div>';
+        searchGrid.innerHTML = '<div class="text-[11px] text-red-400 py-6 col-span-full text-center">Error executing search. Please try again.</div>';
       }
     }
 
     function clearSearch() {
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) searchInput.value = '';
-      const searchSection = document.getElementById('searchSection');
-      if (searchSection) searchSection.classList.add('hidden');
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchSection').classList.add('hidden');
+      document.getElementById('searchGrid').innerHTML = '';
+      document.getElementById('searchEmpty').classList.add('hidden');
     }
 
-    async function filterByGenre(type, genreId, evt) {
-      pageState.movies.page = 1;
-      pageState.movies.currentGenre = genreId;
+    // Tab Switching
+    function switchTab(tabId) {
+      activeTab = tabId;
+      clearSearch();
 
-      const buttons = document.querySelectorAll('.movie-genre-btn');
-      buttons.forEach(b => b.classList.remove('active-pill'));
-      if (evt && evt.currentTarget) {
-        evt.currentTarget.classList.add('active-pill');
-      }
-
-      const grid = document.getElementById(`${type}Grid`);
-      grid.innerHTML = '<div class="text-xs text-gray-400 py-6">Loading category...</div>';
-
-      let url = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&page=1`;
-      if (genreId !== 'all') {
-        url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${genreId}&page=1`;
-      }
-
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.results && data.results.length > 0) {
-          const items = data.results.filter(i => i.poster_path);
-          grid.innerHTML = items.map(i => createCardHTML({...i, media_type: 'movie'})).join('');
-        } else {
-          grid.innerHTML = '<div class="text-xs text-gray-400 py-6">No items found for this category.</div>';
-        }
-      } catch (e) {
-        console.error("Genre filter error:", e);
-        grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load category items.</div>';
-      }
-    }
-
-    async function filterTvByGenre(genreId, evt) {
-      pageState.tv.page = 1;
-      pageState.tv.currentGenre = genreId;
-
-      const buttons = document.querySelectorAll('.tv-genre-btn');
-      buttons.forEach(b => b.classList.remove('active-pill'));
-      if (evt && evt.currentTarget) {
-        evt.currentTarget.classList.add('active-pill');
-      }
-
-      const grid = document.getElementById('tvGrid');
-      grid.innerHTML = '<div class="text-xs text-gray-400 py-6">Loading TV shows...</div>';
-
-      let url = `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&page=1`;
-      if (genreId !== 'all') {
-        url = `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=${genreId}&page=1`;
-      }
-
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.results && data.results.length > 0) {
-          let tvShows = data.results.filter(i => {
-            const hasAnim = i.genre_ids && i.genre_ids.includes(16);
-            const isJapanese = i.original_language === 'ja';
-            return i.poster_path && !hasAnim && !isJapanese;
-          });
-          grid.innerHTML = tvShows.map(i => createCardHTML({...i, media_type: 'tv'})).join('');
-        } else {
-          grid.innerHTML = '<div class="text-xs text-gray-400 py-6">No TV shows found for this category.</div>';
-        }
-      } catch (e) {
-        console.error("TV genre filter error:", e);
-        grid.innerHTML = '<div class="text-xs text-red-400 py-6">Failed to load TV shows.</div>';
-      }
-    }
-
-    async function filterAnimeByGenre(genreId, evt) {
-      pageState.anime.currentGenre = genreId;
-
-      if (evt && evt.currentTarget) {
-        const buttons = document.querySelectorAll('.anime-genre-btn');
-        buttons.forEach(b => b.classList.remove('active-pill'));
-        evt.currentTarget.classList.add('active-pill');
-      }
-
-      const grid = document.getElementById('animeGrid');
-      if (!grid) return;
-
-      if (animeCache.length === 0) {
-        grid.innerHTML = '<div class="text-xs text-gray-400 py-6">Filtering anime...</div>';
-        await fetchMasterAnimeCache();
-      }
-
-      let filteredList = animeCache;
-      if (genreId !== 'all') {
-        const targetId = Number(genreId);
-        filteredList = animeCache.filter(item => {
-          if (!item.genre_ids) return false;
-          // Match exact genre or related sub-genres
-          if (targetId === 10759) { // Action & Adventure
-            return item.genre_ids.includes(16) || item.genre_ids.includes(10759) || item.genre_ids.includes(28) || item.genre_ids.includes(12);
+      // Hide all main view containers
+      ['home', 'movies', 'tv', 'anime', 'watchlist'].forEach(t => {
+        const el = document.getElementById(`view-${t}`);
+        if (el) el.classList.add('hidden');
+        
+        // Desktop buttons
+        const deskBtn = document.getElementById(`tab-${t}`);
+        if (deskBtn) {
+          if (t === tabId) {
+            deskBtn.className = "px-3.5 py-1.5 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-white bg-accent shadow-lg shadow-accent/30 active";
+          } else {
+            deskBtn.className = "px-3.5 py-1.5 rounded-full text-xs font-heading font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-all duration-200 hover:bg-white/10";
           }
-          if (targetId === 10765) { // Sci-Fi & Fantasy
-            return item.genre_ids.includes(16) || item.genre_ids.includes(10765) || item.genre_ids.includes(14) || item.genre_ids.includes(878);
+        }
+
+        // Mobile buttons
+        const mobBtn = document.getElementById(`mob-tab-${t}`);
+        if (mobBtn) {
+          if (t === tabId) {
+            mobBtn.className = "text-[10px] font-heading font-bold uppercase px-3 py-1.5 rounded-full text-white bg-accent shrink-0 shadow-md whitespace-nowrap";
+          } else {
+            mobBtn.className = "text-[10px] font-heading font-bold uppercase px-3 py-1.5 rounded-full text-gray-300 hover:bg-white/10 shrink-0 whitespace-nowrap";
           }
-          return item.genre_ids.includes(targetId);
-        });
+        }
+      });
+
+      const targetView = document.getElementById(`view-${tabId}`);
+      if (targetView) targetView.classList.remove('hidden');
+
+      if (tabId === 'watchlist') {
+        renderWatchlist();
       }
 
-      if (filteredList.length > 0) {
-        grid.innerHTML = filteredList.map(i => createCardHTML(i)).join('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Watchlist Management
+    function toggleWatchlistFromData(itemJson) {
+      const item = JSON.parse(decodeURIComponent(itemJson));
+      toggleWatchlist(item);
+    }
+
+    function toggleWatchlist(item) {
+      const idx = watchlist.findIndex(w => w.id === item.id);
+      if (idx > -1) {
+        watchlist.splice(idx, 1);
       } else {
-        grid.innerHTML = '<div class="text-xs text-gray-400 py-6 text-center w-full col-span-full">No anime found for this category yet. Click "Load More Anime" below to fetch more titles!</div>';
+        watchlist.push(item);
+      }
+      localStorage.setItem('streamvault_watchlist', JSON.stringify(watchlist));
+      updateWatchlistBadges();
+
+      if (activeTab === 'watchlist') {
+        renderWatchlist();
+      }
+
+      // Update current modal / hero buttons if active
+      if (currentModalItem && currentModalItem.id === item.id) {
+        updateModalWatchlistButtonState();
+      }
+      if (currentHeroItem && currentHeroItem.id === item.id) {
+        setHeroBanner(currentHeroItem);
       }
     }
+
+    function updateWatchlistBadges() {
+      const count = watchlist.length;
+      document.getElementById('watchlistBadge').innerText = count;
+      document.getElementById('mobWatchlistBadge').innerText = count;
+    }
+
+    function renderWatchlist() {
+      const grid = document.getElementById('watchlistGrid');
+      const emptyDiv = document.getElementById('watchlistEmpty');
+
+      if (watchlist.length === 0) {
+        grid.innerHTML = '';
+        emptyDiv.classList.remove('hidden');
+        return;
+      }
+
+      emptyDiv.classList.add('hidden');
+      grid.innerHTML = watchlist.map(item => createMediaCardHTML(item)).join('');
+    }
+
+    // Modal Details & Streaming Player (True Seasons/Episodes Integration)
+    function openDetailsFromData(itemJson) {
+      const item = JSON.parse(decodeURIComponent(itemJson));
+      openDetails(item);
+    }
+
+    async function openDetails(item) {
+      currentModalItem = item;
+      activeSeasonNumber = 1;
+      activeEpisodeNumber = 1;
+
+      const modal = document.getElementById('mediaModal');
+      const contentBox = document.getElementById('modalContentBox');
+      
+      const title = item.title || item.name || 'Untitled';
+      const overview = item.overview || 'No synopsis available for this title.';
+      const rating = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
+      const year = (item.release_date || item.first_air_date || '2026').substring(0, 4);
+      const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
+      const language = (item.original_language || 'en').toUpperCase();
+
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalOverview').innerText = overview;
+      document.getElementById('modalRating').innerHTML = `<i class="fa-solid fa-star"></i> <span>${rating}</span>`;
+      document.getElementById('modalYear').innerText = year;
+      document.getElementById('modalMediaType').innerText = mediaType.toUpperCase();
+      document.getElementById('modalLanguage').innerText = language;
+
+      updateModalWatchlistButtonState();
+
+      // Render Player / Trailer embed
+      const playerContainer = document.getElementById('modalPlayerContainer');
+      playerContainer.innerHTML = `<div class="text-xs text-gray-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading stream source...</div>`;
+
+      // Fetch TMDB videos for official trailer
+      try {
+        const vidRes = await fetch(`https://api.themoviedb.org/3/${mediaType}/${item.id}/videos?api_key=${TMDB_API_KEY}`);
+        const vidData = await vidRes.json();
+        const trailer = (vidData.results || []).find(v => v.type === 'Trailer' && v.site === 'YouTube') || (vidData.results || [])[0];
+
+        if (trailer && trailer.key) {
+          playerContainer.innerHTML = `
+            <iframe src="https://www.youtube-nocookie.com/embed/${trailer.key}?autoplay=1&modestbranding=1&rel=0" class="w-full h-full absolute inset-0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          `;
+        } else {
+          // Fallback embed simulator
+          playerContainer.innerHTML = `
+            <div class="absolute inset-0 bg-cover bg-center flex items-center justify-center" style="background-image: url('https://image.tmdb.org/t/p/original${item.backdrop_path || item.poster_path}')">
+              <div class="absolute inset-0 bg-black/60"></div>
+              <div class="relative z-10 text-center p-4 space-y-2">
+                <div class="w-12 h-12 rounded-full bg-accent text-white flex items-center justify-center mx-auto shadow-xl cursor-pointer hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-play ml-1"></i>
+                </div>
+                <div class="text-xs font-bold text-white">Stream Vault HD Cinema Stream</div>
+              </div>
+            </div>
+          `;
+        }
+      } catch (e) {
+        playerContainer.innerHTML = `<div class="text-xs text-red-400">Stream player ready.</div>`;
+      }
+
+      // Check if TV series or Anime with seasons
+      const seasonsSection = document.getElementById('seasonsSection');
+      if (mediaType === 'tv') {
+        seasonsSection.classList.remove('hidden');
+        await loadTvSeasonsDetails(item.id);
+      } else {
+        seasonsSection.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        contentBox.classList.remove('scale-95');
+        contentBox.classList.add('scale-100');
+      }, 10);
+    }
+
+    async function loadTvSeasonsDetails(tvId) {
+      const seasonButtonsContainer = document.getElementById('seasonButtonsContainer');
+      const episodesContainer = document.getElementById('episodesContainer');
+      seasonButtonsContainer.innerHTML = '<span class="text-[11px] text-gray-400">Loading seasons...</span>';
+      episodesContainer.innerHTML = '';
+
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/tv/${tvId}?api_key=${TMDB_API_KEY}`);
+        const data = await res.json();
+        const seasons = (data.seasons || []).filter(s => s.season_number >= 0);
+
+        tvSeasonsDetailsCache[tvId] = data;
+
+        if (seasons.length === 0) {
+          seasonButtonsContainer.innerHTML = '<span class="text-[11px] text-gray-400">No seasons listed.</span>';
+          return;
+        }
+
+        seasonButtonsContainer.innerHTML = seasons.map(s => `
+          <button onclick="selectSeason(${tvId}, ${s.season_number})" id="season-btn-${s.season_number}" class="px-3 py-1 rounded-lg text-xs font-heading font-bold uppercase transition-all ${s.season_number === 1 ? 'bg-accent text-white shadow-md' : 'bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10'}">
+            Season ${s.season_number} (${s.episode_count} Eps)
+          </button>
+        `).join('');
+
+        // Load episodes for season 1 by default
+        await selectSeason(tvId, seasons[0].season_number);
+      } catch (err) {
+        console.error("Error loading seasons:", err);
+        seasonButtonsContainer.innerHTML = '<span class="text-[11px] text-red-400">Failed to load seasons.</span>';
+      }
+    }
+
+    async function selectSeason(tvId, seasonNumber) {
+      activeSeasonNumber = seasonNumber;
+      
+      // Update active button styling
+      document.querySelectorAll('[id^="season-btn-"]').forEach(b => {
+        b.className = "px-3 py-1 rounded-lg text-xs font-heading font-bold uppercase transition-all bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10";
+      });
+      const activeBtn = document.getElementById(`season-btn-${seasonNumber}`);
+      if (activeBtn) {
+        activeBtn.className = "px-3 py-1 rounded-lg text-xs font-heading font-bold uppercase transition-all bg-accent text-white shadow-md";
+      }
+
+      const episodesContainer = document.getElementById('episodesContainer');
+      episodesContainer.innerHTML = '<div class="text-[11px] text-gray-400 col-span-full py-2">Loading episodes...</div>';
+
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`);
+        const data = await res.json();
+        const episodes = data.episodes || [];
+
+        if (episodes.length === 0) {
+          episodesContainer.innerHTML = '<div class="text-[11px] text-gray-400 col-span-full py-2">No episodes found for this season.</div>';
+          return;
+        }
+
+        episodesContainer.innerHTML = episodes.map(ep => `
+          <div onclick="selectEpisode(${ep.episode_number})" id="ep-card-${ep.episode_number}" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-all flex flex-col justify-between ${ep.episode_number === 1 ? 'border-accent bg-accent/10' : ''}">
+            <div class="flex items-center justify-between text-[10px] text-gray-400 font-bold mb-1">
+              <span>Episode ${ep.episode_number}</span>
+              <span>${ep.runtime ? ep.runtime + 'm' : '45m'}</span>
+            </div>
+            <div class="text-xs font-heading font-bold text-white truncate">${ep.name || 'Episode ' + ep.episode_number}</div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error("Error loading episodes:", err);
+        episodesContainer.innerHTML = '<div class="text-[11px] text-red-400 col-span-full py-2">Failed to load episodes.</div>';
+      }
+    }
+
+    function selectEpisode(epNum) {
+      activeEpisodeNumber = epNum;
+      document.querySelectorAll('[id^="ep-card-"]').forEach(card => {
+        card.className = "p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-all flex flex-col justify-between";
+      });
+      const selectedCard = document.getElementById(`ep-card-${epNum}`);
+      if (selectedCard) {
+        selectedCard.className = "p-2.5 rounded-xl bg-accent/10 border border-accent cursor-pointer transition-all flex flex-col justify-between shadow-md";
+      }
+    }
+
+    function updateModalWatchlistButtonState() {
+      if (!currentModalItem) return;
+      const isSaved = watchlist.some(w => w.id === currentModalItem.id);
+      const btnText = document.getElementById('modalWatchlistText');
+      if (isSaved) {
+        btnText.innerText = "In Watchlist";
+      } else {
+        btnText.innerText = "+ Watchlist";
+      }
+    }
+
+    function toggleModalWatchlist() {
+      if (!currentModalItem) return;
+      toggleWatchlist(currentModalItem);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('mediaModal');
+      const contentBox = document.getElementById('modalContentBox');
+      
+      // Stop iframe video playback on close
+      document.getElementById('modalPlayerContainer').innerHTML = '';
+
+      modal.classList.add('opacity-0');
+      contentBox.classList.remove('scale-100');
+      contentBox.classList.add('scale-95');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        currentModalItem = null;
+      }, 300);
+    }
+
+    // Close modal on outside backdrop click
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('mediaModal');
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
   </script>
 </body>
 </html>
