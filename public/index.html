@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -12,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://api.themoviedb.org">
   <link rel="preconnect" href="https://image.tmdb.org">
-  <link rel="preconnect" href="https://vidlink.pro">
+  <link rel="preconnect" href="https://vidnest.fun">
   <link rel="preconnect" href="https://vidsrc.xyz">
   <link rel="preconnect" href="https://embed.su">
 
@@ -569,10 +570,10 @@
             <h2 id="modalTitle" class="text-lg sm:text-2xl font-heading font-black text-white">Title Name</h2>
             
             <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto">
-              <!-- Compact Server Dropdown Selector (Only Vidpro, FrameX, VidRift, and Trailer) -->
+              <!-- Compact Server Dropdown Selector -->
               <div class="relative flex-1 sm:flex-none">
                 <select id="serverSelectDropdown" onchange="setPlayerMode(this.value)" class="w-full bg-[#111520] border border-white/20 text-white text-xs font-bold font-heading rounded-xl px-3 py-1.5 pr-8 appearance-none focus:outline-none focus:border-accent cursor-pointer shadow-md">
-                  <option value="main">Vidpro (Server 1)</option>
+                  <option value="main">Vidnest (Server 1)</option>
                   <option value="alt">FrameX (Server 2)</option>
                   <option value="third">VidRift (Server 3)</option>
                   <option value="trailer">Trailer Preview</option>
@@ -1109,7 +1110,8 @@
     async function openModal(item) {
       currentModalItem = item;
       currentPlayerMode = 'main';
-      updatePlayerModeButtonsUI();
+      const dropdown = document.getElementById('serverSelectDropdown');
+      if (dropdown) dropdown.value = 'main';
 
       const modal = document.getElementById('mediaModal');
       const box = document.getElementById('modalContentBox');
@@ -1300,17 +1302,9 @@
 
     function setPlayerMode(mode) {
       currentPlayerMode = mode;
-      updatePlayerModeButtonsUI();
       if (currentModalItem) {
         const type = currentModalItem.media_type || (currentModalItem.first_air_date ? 'tv' : 'movie');
         loadPlayer(currentModalItem, type, activeSeasonNumber, activeEpisodeNumber);
-      }
-    }
-
-    function updatePlayerModeButtonsUI() {
-      const serverDropdown = document.getElementById('serverSelectDropdown');
-      if (serverDropdown) {
-        serverDropdown.value = currentPlayerMode;
       }
     }
 
@@ -1329,9 +1323,9 @@
           `;
         } else {
           playerContainer.innerHTML = `
-            <div class="flex flex-col items-center justify-center text-gray-400 text-xs p-4 text-center">
+            <div class="flex flex-col items-center justify-center text-gray-400 text-xs p-4 text-center h-full">
               <i class="fa-solid fa-triangle-exclamation text-accent text-2xl mb-2"></i>
-              <span>No official trailer preview found for this title. Please switch to Vidpro, FrameX, or VidRift to stream.</span>
+              <span>No official trailer preview found for this title. Please switch to Vidnest, FrameX, or VidRift to stream.</span>
             </div>
           `;
         }
@@ -1353,11 +1347,11 @@
           embedUrl = `https://embed.su/embed/tv/${tmdbId}/${s}/${e}`;
         }
       } else {
-        // Vidpro Provider (VidLink - Default Server 1)
+        // Vidnest Provider (Vidnest.fun - Default Server 1)
         if (type === 'movie') {
-          embedUrl = `https://vidlink.pro/movie/${tmdbId}`;
+          embedUrl = `https://vidnest.fun/movie/${tmdbId}`;
         } else {
-          embedUrl = `https://vidlink.pro/tv/${tmdbId}/${s}/${e}`;
+          embedUrl = `https://vidnest.fun/tv/${tmdbId}/${s}/${e}`;
         }
       }
 
