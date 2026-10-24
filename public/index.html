@@ -112,9 +112,9 @@
     }
 
     .genre-pill.active-pill {
-      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
-      color: #ffffff;
-      border-color: rgba(244, 63, 94, 0.5);
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+      color: #ffffff !important;
+      border-color: rgba(244, 63, 94, 0.5) !important;
       box-shadow: 0 3px 10px rgba(225, 29, 72, 0.35);
     }
 
@@ -188,6 +188,64 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    /* Carousel navigation arrow styling */
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 30;
+      width: 36px;
+      height: 36px;
+      border-radius: 9999px;
+      background: rgba(7, 9, 14, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .carousel-nav-btn:hover {
+      background: #e11d48;
+      border-color: #e11d48;
+      scale: 1.1;
+    }
+    .carousel-nav-btn.left-btn {
+      left: -12px;
+    }
+    .carousel-nav-btn.right-btn {
+      right: -12px;
+    }
+
+    /* Genre nav arrows */
+    .genre-nav-btn {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .genre-nav-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9999px;
+        background: rgba(17, 21, 32, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #9ca3af;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+      }
+      .genre-nav-btn:hover {
+        color: #ffffff;
+        background: #e11d48;
+        border-color: #e11d48;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
@@ -260,7 +318,7 @@
         </p>
         
         <div class="flex items-center gap-2 pt-0.5">
-          <button id="heroPlayBtn" class="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-accent hover:bg-brand-600 text-white font-heading font-bold text-[11px] sm:text-xs tracking-wider uppercase transition-all duration-200 shadow-md shadow-accent/30 flex items-center justify-center gap-1.5 cursor-pointer">
+          <button id="heroPlayBtn" onclick="openHeroDetails()" class="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-accent hover:bg-brand-600 text-white font-heading font-bold text-[11px] sm:text-xs tracking-wider uppercase transition-all duration-200 shadow-md shadow-accent/30 flex items-center justify-center gap-1.5 cursor-pointer">
             <i class="fa-solid fa-play text-[10px]"></i>
             <span>Watch Now</span>
           </button>
@@ -295,8 +353,12 @@
           </h2>
           <button onclick="switchTab('movies')" class="text-[11px] text-accent hover:underline font-semibold cursor-pointer">View All &rarr;</button>
         </div>
-        <div id="homeMoviesGrid" class="horizontal-carousel">
-          <div class="text-[11px] text-gray-400 py-4 px-2">Loading movies...</div>
+        <div class="relative group/carousel">
+          <button onclick="scrollCarousel('homeMoviesGrid', -350)" class="carousel-nav-btn left-btn hidden md:flex opacity-0 group-hover/carousel:opacity-100"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+          <div id="homeMoviesGrid" class="horizontal-carousel">
+            <div class="text-[11px] text-gray-400 py-4 px-2">Loading movies...</div>
+          </div>
+          <button onclick="scrollCarousel('homeMoviesGrid', 350)" class="carousel-nav-btn right-btn hidden md:flex opacity-0 group-hover/carousel:opacity-100"><i class="fa-solid fa-chevron-right text-xs"></i></button>
         </div>
       </section>
 
@@ -308,8 +370,12 @@
           </h2>
           <button onclick="switchTab('tv')" class="text-[11px] text-accent hover:underline font-semibold cursor-pointer">View All &rarr;</button>
         </div>
-        <div id="homeTvGrid" class="horizontal-carousel">
-          <div class="text-[11px] text-gray-400 py-4 px-2">Loading TV shows...</div>
+        <div class="relative group/carousel">
+          <button onclick="scrollCarousel('homeTvGrid', -350)" class="carousel-nav-btn left-btn hidden md:flex opacity-0 group-hover/carousel:opacity-100"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+          <div id="homeTvGrid" class="horizontal-carousel">
+            <div class="text-[11px] text-gray-400 py-4 px-2">Loading TV shows...</div>
+          </div>
+          <button onclick="scrollCarousel('homeTvGrid', 350)" class="carousel-nav-btn right-btn hidden md:flex opacity-0 group-hover/carousel:opacity-100"><i class="fa-solid fa-chevron-right text-xs"></i></button>
         </div>
       </section>
 
@@ -321,8 +387,12 @@
           </h2>
           <button onclick="switchTab('anime')" class="text-[11px] text-accent hover:underline font-semibold cursor-pointer">View All &rarr;</button>
         </div>
-        <div id="homeAnimeGrid" class="horizontal-carousel">
-          <div class="text-[11px] text-gray-400 py-4 px-2">Loading anime...</div>
+        <div class="relative group/carousel">
+          <button onclick="scrollCarousel('homeAnimeGrid', -350)" class="carousel-nav-btn left-btn hidden md:flex opacity-0 group-hover/carousel:opacity-100"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+          <div id="homeAnimeGrid" class="horizontal-carousel">
+            <div class="text-[11px] text-gray-400 py-4 px-2">Loading anime...</div>
+          </div>
+          <button onclick="scrollCarousel('homeAnimeGrid', 350)" class="carousel-nav-btn right-btn hidden md:flex opacity-0 group-hover/carousel:opacity-100"><i class="fa-solid fa-chevron-right text-xs"></i></button>
         </div>
       </section>
     </div>
@@ -333,22 +403,26 @@
         <h2 class="text-sm sm:text-lg font-heading font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-film text-accent"></i> Movie Library
         </h2>
-        <div class="w-full overflow-x-auto pb-1">
-          <div class="genre-scroll-container">
-            <button onclick="filterByGenre('movies', 'all', event)" class="genre-pill movie-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All</button>
-            <button onclick="filterByGenre('movies', '28', event)" class="genre-pill movie-genre-btn">Action</button>
-            <button onclick="filterByGenre('movies', '12', event)" class="genre-pill movie-genre-btn">Adventure</button>
-            <button onclick="filterByGenre('movies', '16', event)" class="genre-pill movie-genre-btn">Animation</button>
-            <button onclick="filterByGenre('movies', '35', event)" class="genre-pill movie-genre-btn">Comedy</button>
-            <button onclick="filterByGenre('movies', '80', event)" class="genre-pill movie-genre-btn">Crime</button>
-            <button onclick="filterByGenre('movies', '18', event)" class="genre-pill movie-genre-btn">Drama</button>
-            <button onclick="filterByGenre('movies', '14', event)" class="genre-pill movie-genre-btn">Fantasy</button>
-            <button onclick="filterByGenre('movies', '27', event)" class="genre-pill movie-genre-btn">Horror</button>
-            <button onclick="filterByGenre('movies', '9648', event)" class="genre-pill movie-genre-btn">Mystery</button>
-            <button onclick="filterByGenre('movies', '10749', event)" class="genre-pill movie-genre-btn">Romance</button>
-            <button onclick="filterByGenre('movies', '878', event)" class="genre-pill movie-genre-btn">Sci-Fi</button>
-            <button onclick="filterByGenre('movies', '53', event)" class="genre-pill movie-genre-btn">Thriller</button>
+        <div class="flex items-center gap-1 w-full">
+          <button onclick="scrollCarousel('movieGenreContainer', -200)" class="genre-nav-btn"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+          <div class="w-full overflow-x-auto pb-1">
+            <div class="genre-scroll-container" id="movieGenreContainer">
+              <button onclick="filterByGenre('movies', 'all', event)" class="genre-pill movie-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All</button>
+              <button onclick="filterByGenre('movies', '28', event)" class="genre-pill movie-genre-btn">Action</button>
+              <button onclick="filterByGenre('movies', '12', event)" class="genre-pill movie-genre-btn">Adventure</button>
+              <button onclick="filterByGenre('movies', '16', event)" class="genre-pill movie-genre-btn">Animation</button>
+              <button onclick="filterByGenre('movies', '35', event)" class="genre-pill movie-genre-btn">Comedy</button>
+              <button onclick="filterByGenre('movies', '80', event)" class="genre-pill movie-genre-btn">Crime</button>
+              <button onclick="filterByGenre('movies', '18', event)" class="genre-pill movie-genre-btn">Drama</button>
+              <button onclick="filterByGenre('movies', '14', event)" class="genre-pill movie-genre-btn">Fantasy</button>
+              <button onclick="filterByGenre('movies', '27', event)" class="genre-pill movie-genre-btn">Horror</button>
+              <button onclick="filterByGenre('movies', '9648', event)" class="genre-pill movie-genre-btn">Mystery</button>
+              <button onclick="filterByGenre('movies', '10749', event)" class="genre-pill movie-genre-btn">Romance</button>
+              <button onclick="filterByGenre('movies', '878', event)" class="genre-pill movie-genre-btn">Sci-Fi</button>
+              <button onclick="filterByGenre('movies', '53', event)" class="genre-pill movie-genre-btn">Thriller</button>
+            </div>
           </div>
+          <button onclick="scrollCarousel('movieGenreContainer', 200)" class="genre-nav-btn"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
         </div>
       </div>
       <div id="moviesGrid" class="media-grid">
@@ -368,17 +442,21 @@
         <h2 class="text-sm sm:text-lg font-heading font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-tv text-accent"></i> TV Shows Library
         </h2>
-        <div class="w-full overflow-x-auto pb-1">
-          <div class="genre-scroll-container">
-            <button onclick="filterTvByGenre('all', event)" class="genre-pill tv-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All TV</button>
-            <button onclick="filterTvByGenre('10759', event)" class="genre-pill tv-genre-btn">Action & Adventure</button>
-            <button onclick="filterTvByGenre('35', event)" class="genre-pill tv-genre-btn">Comedy</button>
-            <button onclick="filterTvByGenre('80', event)" class="genre-pill tv-genre-btn">Crime</button>
-            <button onclick="filterTvByGenre('18', event)" class="genre-pill tv-genre-btn">Drama</button>
-            <button onclick="filterTvByGenre('9648', event)" class="genre-pill tv-genre-btn">Mystery</button>
-            <button onclick="filterTvByGenre('10765', event)" class="genre-pill tv-genre-btn">Sci-Fi & Fantasy</button>
-            <button onclick="filterTvByGenre('10764', event)" class="genre-pill tv-genre-btn">Reality</button>
+        <div class="flex items-center gap-1 w-full">
+          <button onclick="scrollCarousel('tvGenreContainer', -200)" class="genre-nav-btn"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+          <div class="w-full overflow-x-auto pb-1">
+            <div class="genre-scroll-container" id="tvGenreContainer">
+              <button onclick="filterTvByGenre('all', event)" class="genre-pill tv-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All TV</button>
+              <button onclick="filterTvByGenre('10759', event)" class="genre-pill tv-genre-btn">Action & Adventure</button>
+              <button onclick="filterTvByGenre('35', event)" class="genre-pill tv-genre-btn">Comedy</button>
+              <button onclick="filterTvByGenre('80', event)" class="genre-pill tv-genre-btn">Crime</button>
+              <button onclick="filterTvByGenre('18', event)" class="genre-pill tv-genre-btn">Drama</button>
+              <button onclick="filterTvByGenre('9648', event)" class="genre-pill tv-genre-btn">Mystery</button>
+              <button onclick="filterTvByGenre('10765', event)" class="genre-pill tv-genre-btn">Sci-Fi & Fantasy</button>
+              <button onclick="filterTvByGenre('10764', event)" class="genre-pill tv-genre-btn">Reality</button>
+            </div>
           </div>
+          <button onclick="scrollCarousel('tvGenreContainer', 200)" class="genre-nav-btn"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
         </div>
       </div>
       <div id="tvGrid" class="media-grid">
@@ -398,15 +476,24 @@
         <h2 class="text-sm sm:text-lg font-heading font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-dragon text-accent"></i> Anime Hub
         </h2>
-        <div class="w-full overflow-x-auto pb-1">
-          <div class="genre-scroll-container">
-            <button onclick="filterAnimeByGenre('all', event)" class="genre-pill anime-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All Anime</button>
-            <button onclick="filterAnimeByGenre('10759', event)" class="genre-pill anime-genre-btn">Action & Adventure</button>
-            <button onclick="filterAnimeByGenre('10765', event)" class="genre-pill anime-genre-btn">Sci-Fi & Fantasy</button>
-            <button onclick="filterAnimeByGenre('35', event)" class="genre-pill anime-genre-btn">Comedy</button>
-            <button onclick="filterAnimeByGenre('18', event)" class="genre-pill anime-genre-btn">Drama & Romance</button>
-            <button onclick="filterAnimeByGenre('9648', event)" class="genre-pill anime-genre-btn">Mystery & Supernatural</button>
+        <div class="flex items-center gap-1 w-full">
+          <button onclick="scrollCarousel('animeGenreContainer', -200)" class="genre-nav-btn"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+          <div class="w-full overflow-x-auto pb-1">
+            <div class="genre-scroll-container" id="animeGenreContainer">
+              <button onclick="filterAnimeByGenre('all', event)" class="genre-pill anime-genre-btn active-pill"><i class="fa-solid fa-border-all text-[9px]"></i> All Anime</button>
+              <button onclick="filterAnimeByGenre('10759', event)" class="genre-pill anime-genre-btn">Action & Adventure</button>
+              <button onclick="filterAnimeByGenre('10765', event)" class="genre-pill anime-genre-btn">Sci-Fi & Mecha</button>
+              <button onclick="filterAnimeByGenre('35', event)" class="genre-pill anime-genre-btn">Comedy</button>
+              <button onclick="filterAnimeByGenre('10749', event)" class="genre-pill anime-genre-btn">Romance & Drama</button>
+              <button onclick="filterAnimeByGenre('9648', event)" class="genre-pill anime-genre-btn">Mystery & Supernatural</button>
+              <button onclick="filterAnimeByGenre('14', event)" class="genre-pill anime-genre-btn">Fantasy & Magic</button>
+              <button onclick="filterAnimeByGenre('53', event)" class="genre-pill anime-genre-btn">Thriller</button>
+              <button onclick="filterAnimeByGenre('27', event)" class="genre-pill anime-genre-btn">Horror</button>
+              <button onclick="filterAnimeByGenre('18', event)" class="genre-pill anime-genre-btn">Slice of Life</button>
+              <button onclick="filterAnimeByGenre('10764', event)" class="genre-pill anime-genre-btn">Sports & Gaming</button>
+            </div>
           </div>
+          <button onclick="scrollCarousel('animeGenreContainer', 200)" class="genre-nav-btn"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
         </div>
       </div>
       <div id="animeGrid" class="media-grid">
@@ -442,6 +529,14 @@
     let currentHeroItem = null;
     let activeTab = 'home';
 
+    // Carousel & Genre Scroll Helper
+    function scrollCarousel(containerId, distance) {
+      const container = document.getElementById(containerId);
+      if (container) {
+        container.scrollBy({ left: distance, behavior: 'smooth' });
+      }
+    }
+
     // Pagination and Genre state trackers
     const pageState = {
       movies: { page: 1, currentGenre: 'all' },
@@ -470,18 +565,20 @@
           currentHeroItem = validResults.find(item => item.backdrop_path) || validResults[0];
           setHeroBanner(currentHeroItem);
           
-          // Pure Movies: Must have title and NOT be animation (genre_id 16)
+          // Pure Movies
           const movies = validResults.filter(item => {
             const isMovie = item.media_type === 'movie' || (item.title && !item.name);
             const isAnim = item.genre_ids && item.genre_ids.includes(16);
-            return isMovie && !isAnim;
+            const isJap = item.original_language === 'ja';
+            return isMovie && !isAnim && !isJap;
           });
           
-          // Pure TV Shows: Must have name, NOT be movie, and STRICTLY NOT contain animation genre (16)
+          // Pure TV Shows
           const tv = validResults.filter(item => {
             const isTv = item.media_type === 'tv' || (item.name && !item.title);
             const isAnim = item.genre_ids && item.genre_ids.includes(16);
-            return isTv && !isAnim;
+            const isJap = item.original_language === 'ja';
+            return isTv && !isAnim && !isJap;
           });
           
           renderHorizontalCarousel(movies.slice(0, 10), 'homeMoviesGrid');
@@ -551,12 +648,16 @@
       const year = (item.release_date || item.first_air_date || '').slice(0, 4);
       
       let badgeLabel = item.media_type || 'media';
-      if ((item.genre_ids && item.genre_ids.includes(16)) || item.media_type === 'anime') {
+      let badgeClass = 'text-accent';
+      if ((item.genre_ids && item.genre_ids.includes(16)) || item.media_type === 'anime' || item.original_language === 'ja') {
         badgeLabel = 'anime';
+        badgeClass = 'text-pink-400';
       } else if (item.name && !item.title) {
         badgeLabel = 'tv';
+        badgeClass = 'text-cyan-400';
       } else if (item.title) {
         badgeLabel = 'movie';
+        badgeClass = 'text-accent';
       }
 
       return `
@@ -569,7 +670,7 @@
             <h3 class="text-xs font-bold text-white line-clamp-1">${title}</h3>
             <div class="flex items-center justify-between text-[10px] text-gray-400">
               <span>${year}</span>
-              <span class="uppercase tracking-widest text-[9px] text-accent font-bold">${badgeLabel}</span>
+              <span class="uppercase tracking-widest text-[9px] ${badgeClass} font-bold">${badgeLabel}</span>
             </div>
           </div>
         </div>
@@ -759,6 +860,12 @@
       localStorage.setItem('streamvault_watchlist', JSON.stringify(watchlist));
     }
 
+    function openHeroDetails() {
+      if (currentHeroItem) {
+        openMediaModal(currentHeroItem);
+      }
+    }
+
     function toggleHeroWatchlist() {
       if (!currentHeroItem) return;
       const index = watchlist.findIndex(w => w.id === currentHeroItem.id);
@@ -773,25 +880,171 @@
       updateWatchlistBadges();
     }
 
-    function openMediaModal(item) {
+    async function openMediaModal(item) {
+      const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
+      const title = item.title || item.name || 'Untitled';
+      const releaseDate = item.release_date || item.first_air_date || 'N/A';
+      const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : 'N/A';
+      const voteCount = item.vote_count || 0;
+      const poster = item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '';
+      const overview = item.overview || 'No overview available for this title.';
+      const isBookmarked = watchlist.some(w => w.id === item.id);
+
+      // Fetch Trailer Video & Additional Info
+      let trailerKey = null;
+      try {
+        const videoRes = await fetch(`https://api.themoviedb.org/3/${mediaType === 'anime' ? 'tv' : mediaType}/${item.id}/videos?api_key=${TMDB_API_KEY}`);
+        const videoData = await videoRes.json();
+        if (videoData && videoData.results) {
+          const trailer = videoData.results.find(v => v.type === 'Trailer' && v.site === 'YouTube') || videoData.results[0];
+          if (trailer) trailerKey = trailer.key;
+        }
+      } catch (err) {
+        console.error("Failed to fetch trailer:", err);
+      }
+
       const modal = document.createElement('div');
-      modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in';
+      modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 animate-fade-in overflow-y-auto';
+      
       modal.innerHTML = `
-        <div class="glass-card max-w-md w-full rounded-2xl p-6 border border-white/20 space-y-4 shadow-2xl">
-          <div class="flex items-center justify-between">
-            <h3 class="text-base font-heading font-bold text-white">${item.title || item.name}</h3>
-            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-sm cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        <div class="glass-card max-w-2xl w-full rounded-2xl overflow-hidden border border-white/20 shadow-2xl my-auto">
+          <!-- Header Bar -->
+          <div class="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-black/40">
+            <h3 class="text-sm sm:text-base font-heading font-bold text-white line-clamp-1">${title}</h3>
+            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-base cursor-pointer w-8 h-8 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10"><i class="fa-solid fa-xmark"></i></button>
           </div>
-          <p class="text-xs text-gray-300 leading-relaxed">${item.overview || 'No additional details available for this title.'}</p>
-          <div class="flex items-center gap-3 pt-2">
-            <button onclick="this.closest('.fixed').remove();" class="flex-1 py-2 bg-accent hover:bg-brand-600 text-white font-heading font-bold text-xs uppercase tracking-wider rounded-xl shadow-md cursor-pointer">
-              <i class="fa-solid fa-play mr-1"></i> Stream Now
-            </button>
-            <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-xs rounded-xl cursor-pointer">Close</button>
+
+          <!-- Content Body -->
+          <div class="p-4 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            ${trailerKey ? `
+              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-white/15 shadow-lg flex flex-col items-center justify-center">
+                <iframe src="https://www.youtube-nocookie.com/embed/${trailerKey}?autoplay=1&mute=1&enablejsapi=1" class="w-full h-full border-0" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="absolute bottom-2 right-2 z-10 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-2 shadow-lg">
+                  <span class="text-[10px] text-gray-300">Experiencing Error 153?</span>
+                  <a href="https://www.youtube.com/watch?v=${trailerKey}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-accent font-bold hover:underline flex items-center gap-1">
+                    <span>Watch on YouTube</span>
+                    <i class="fa-solid fa-external-link text-[9px]"></i>
+                  </a>
+                </div>
+              </div>
+            ` : (poster ? `
+              <div class="relative w-full h-48 sm:h-64 rounded-xl overflow-hidden bg-black">
+                <img src="${poster}" class="w-full h-full object-cover opacity-60 filter blur-sm absolute inset-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#111520] to-transparent"></div>
+                <div class="absolute bottom-4 left-4 flex items-center gap-3">
+                  <img src="${poster}" class="w-20 h-28 object-cover rounded-lg shadow-md border border-white/20">
+                  <div>
+                    <h4 class="text-base font-heading font-bold text-white">${title}</h4>
+                    <p class="text-xs text-gray-300">Released: ${releaseDate}</p>
+                  </div>
+                </div>
+              </div>
+            ` : '')}
+
+            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-300 bg-white/5 p-3 rounded-xl border border-white/10">
+              <div class="flex items-center gap-1.5 text-amber-400 font-bold">
+                <i class="fa-solid fa-star"></i>
+                <span>${rating} / 10</span>
+                <span class="text-gray-400 text-[10px]">(${voteCount} votes)</span>
+              </div>
+              <div class="w-px h-4 bg-white/20"></div>
+              <div><i class="fa-solid fa-calendar mr-1 text-accent"></i> ${releaseDate}</div>
+              <div class="w-px h-4 bg-white/20"></div>
+              <div class="uppercase tracking-wider font-bold text-accent text-[10px]">${mediaType}</div>
+            </div>
+
+            <div class="space-y-1.5">
+              <h4 class="text-xs font-heading font-bold uppercase tracking-wider text-gray-400">Overview</h4>
+              <p class="text-xs sm:text-sm text-gray-200 leading-relaxed">${overview}</p>
+            </div>
+
+            <!-- WATCH NOW & TRAILER BUTTONS -->
+            <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-3 border-t border-white/10">
+              <button onclick="playStreamPlayer('${mediaType}', '${item.id}', '${title.replace(/'/g, "\\'")}')" class="w-full sm:w-auto flex-1 py-3 bg-gradient-to-r from-accent to-brand-600 hover:from-brand-600 hover:to-accent text-white font-heading font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-accent/25 flex items-center justify-center gap-2 cursor-pointer transition-all">
+                <i class="fa-solid fa-play text-sm"></i>
+                <span>Stream Full Movie / Show</span>
+              </button>
+              <button onclick="toggleModalWatchlist(${JSON.stringify(item).replace(/'/g, "&apos;")}, this)" class="w-full sm:w-auto py-3 px-5 bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-xs uppercase tracking-wider rounded-xl border border-white/20 flex items-center justify-center gap-2 cursor-pointer transition-all">
+                <i class="fa-solid fa-bookmark text-accent"></i>
+                <span class="modal-watchlist-text">${isBookmarked ? 'In Watchlist' : 'Add Watchlist'}</span>
+              </button>
+            </div>
           </div>
         </div>
       `;
       document.body.appendChild(modal);
+    }
+
+    // STREAM PLAYER MODAL FUNCTION
+    function playStreamPlayer(type, id, title) {
+      const isTvOrAnime = type === 'tv' || type === 'anime';
+      const embedType = isTvOrAnime ? 'tv' : 'movie';
+      
+      const playerModal = document.createElement('div');
+      playerModal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl p-2 sm:p-4 animate-fade-in';
+      
+      playerModal.innerHTML = `
+        <div class="w-full max-w-5xl h-[88vh] bg-[#07090e] rounded-2xl overflow-hidden border border-white/20 shadow-2xl flex flex-col">
+          <!-- Player Header -->
+          <div class="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10 shrink-0">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+              <h3 class="text-xs sm:text-sm font-heading font-bold text-white line-clamp-1">Streaming: ${title}</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="serverSelect" onchange="switchServer('${embedType}', '${id}')" class="bg-white/10 text-white text-[10px] sm:text-xs rounded-lg px-2 py-1 border border-white/20 outline-none cursor-pointer">
+                <option value="vidsrc.cc" class="bg-gray-900">Server 1 (VidSrc CC)</option>
+                <option value="vidsrc.me" class="bg-gray-900">Server 2 (VidSrc Me)</option>
+                <option value="2embed.cc" class="bg-gray-900">Server 3 (2Embed)</option>
+                <option value="autoembed.cc" class="bg-gray-900">Server 4 (AutoEmbed)</option>
+              </select>
+              <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-sm cursor-pointer w-7 h-7 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+          </div>
+
+          <!-- Video Player Container -->
+          <div class="flex-grow relative bg-black">
+            <iframe id="streamIframe" src="https://vidsrc.cc/v2/embed/${embedType}/${id}${isTvOrAnime ? '/1/1' : ''}" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          </div>
+
+          <!-- Player Controls Footer -->
+          <div class="p-2 sm:p-3 bg-white/5 border-t border-white/10 flex items-center justify-between text-[10px] text-gray-400 shrink-0">
+            <span>If video is slow or doesn't load, switch to another server using the top menu.</span>
+            <button onclick="this.closest('.fixed').remove()" class="px-3 py-1 bg-accent text-white font-bold rounded-md hover:bg-brand-600">Close Player</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(playerModal);
+    }
+
+    function switchServer(type, id) {
+      const server = document.getElementById('serverSelect').value;
+      const iframe = document.getElementById('streamIframe');
+      if (!iframe) return;
+
+      if (server === 'vidsrc.cc') {
+        iframe.src = `https://vidsrc.cc/v2/embed/${type}/${id}`;
+      } else if (server === 'vidsrc.me') {
+        iframe.src = `https://vidsrc.net/embed/${type}/${id}`;
+      } else if (server === '2embed.cc') {
+        iframe.src = `https://www.2embed.cc/embed${type === 'tv' ? 'tv' : ''}/${id}`;
+      } else if (server === 'autoembed.cc') {
+        iframe.src = `https://player.autoembed.cc/embed/${type}/${id}`;
+      }
+    }
+
+    function toggleModalWatchlist(item, btnElement) {
+      const index = watchlist.findIndex(w => w.id === item.id);
+      const textSpan = btnElement.querySelector('.modal-watchlist-text');
+      if (index > -1) {
+        watchlist.splice(index, 1);
+        if (textSpan) textSpan.textContent = 'Add to Watchlist';
+      } else {
+        watchlist.push(item);
+        if (textSpan) textSpan.textContent = 'In Watchlist';
+      }
+      updateWatchlistBadges();
+      if (activeTab === 'watchlist') renderWatchlist();
     }
 
     async function handleSearch(e) {
@@ -841,7 +1094,7 @@
       pageState.movies.page = 1;
       pageState.movies.currentGenre = genreId;
 
-      const buttons = document.querySelectorAll(`.${type}-genre-btn`);
+      const buttons = document.querySelectorAll('.movie-genre-btn');
       buttons.forEach(b => b.classList.remove('active-pill'));
       if (evt && evt.currentTarget) {
         evt.currentTarget.classList.add('active-pill');
@@ -932,7 +1185,7 @@
           const animeList = data.results.filter(i => i.poster_path);
           grid.innerHTML = animeList.map(i => createCardHTML({...i, media_type: 'anime'})).join('');
         } else {
-          grid.innerHTML = '<div class="text-xs text-gray-400 py-6">No anime found.</div>';
+          grid.innerHTML = '<div class="text-xs text-gray-400 py-6">No anime found for this category.</div>';
         }
       } catch (e) {
         console.error("Anime filter error:", e);
