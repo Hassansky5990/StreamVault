@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -181,14 +182,12 @@
       -webkit-backdrop-filter: blur(14px);
     }
 
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    .skeleton {
-      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
+    .card-content {
+      padding: 0.5rem;
+      display: flex;
+      flex-col: column;
+      gap: 0.25rem;
+      min-width: 0;
     }
   </style>
 </head>
@@ -421,7 +420,7 @@
       </div>
       <div id="animeGrid" class="media-grid"></div>
       <div class="flex justify-center pt-2">
-        <button id="loadMoreAnimeBtn" onclick="loadMoreContent('anime')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-[11px] uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-1.5 shadow-md">
+        <button id="loadMoreAnimeBtn" onclick="loadMoreAnime()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-heading font-bold text-[11px] uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-1.5 shadow-md active:scale-95">
           <span>Load More Anime</span>
           <i class="fa-solid fa-chevron-down text-[10px]"></i>
         </button>
@@ -508,9 +507,11 @@
     const TMDB_CONFIG = {
       apiKey: '6c9d63d13035995f6127e4b5c3689cb4',
       baseUrl: 'https://api.themoviedb.org/3',
-      imageBaseUrl: 'https://image.tmdb.org/t/p/original',
+      imageBaseUrl: 'https://image.tmdb.org/t/p/w500',
       backdropBaseUrl: 'https://image.tmdb.org/t/p/original'
     };
+
+    const FALLBACK_POSTER = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=80';
 
     const FALLBACK_MOVIES = [
       { id: 550, title: 'Fight Club', poster_path: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg', backdrop_path: '/hZkgoQYus5vegHoetLkCJzb17zJ.jpg', vote_average: 8.4, release_date: '1999-10-15', overview: 'A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy.', media_type: 'movie' },
@@ -636,6 +637,28 @@
         .replace(/'/g, '&#39;');
     }
 
+    function resolvePosterUrl(item) {
+      if (!item) return FALLBACK_POSTER;
+      
+      if (typeof item.poster_path === 'string' && item.poster_path.trim().length > 0) {
+        return item.poster_path.startsWith('http') 
+          ? item.poster_path 
+          : (TMDB_CONFIG.imageBaseUrl + item.poster_path);
+      }
+      
+      if (item.images?.jpg?.large_image_url) return item.images.jpg.large_image_url;
+      if (item.images?.jpg?.image_url) return item.images.jpg.image_url;
+      if (item.images?.webp?.large_image_url) return item.images.webp.large_image_url;
+
+      if (typeof item.backdrop_path === 'string' && item.backdrop_path.trim().length > 0) {
+        return item.backdrop_path.startsWith('http')
+          ? item.backdrop_path
+          : (TMDB_CONFIG.imageBaseUrl + item.backdrop_path);
+      }
+
+      return FALLBACK_POSTER;
+    }
+
     function createCardHTML(item) {
       if (!item) return '';
       const storageKey = 'item_' + item.id + '_' + (item.media_type || 'default');
@@ -643,23 +666,30 @@
 
       const rawTitle = item.title || item.name || 'Untitled';
       const title = escapeHTML(rawTitle);
-      const releaseYear = (item.release_date || item.first_air_date || '').substring(0, 4) || 'N/A';
+      
+      let rawDate = item.release_date || item.first_air_date || item.year || '';
+      if (!rawDate && item.aired) {
+        if (typeof item.aired === 'string') {
+          rawDate = item.aired;
+        } else if (item.aired.prop && item.aired.prop.from && item.aired.prop.from.year) {
+          rawDate = String(item.aired.prop.from.year);
+        } else if (item.aired.string) {
+          rawDate = item.aired.string;
+        }
+      }
+      
+      const yearMatch = String(rawDate).match(/\b(19|20)\d{2}\b/);
+      const releaseYear = yearMatch ? yearMatch[0] : (String(rawDate).substring(0, 4) || 'N/A');
       const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : 'N/A';
       
-      let posterSrc = 'https://placehold.co/400x600/111520/f43f5e?text=No+Poster';
-      if (item.poster_path) {
-        posterSrc = item.poster_path.startsWith('http') 
-          ? item.poster_path 
-          : (TMDB_CONFIG.imageBaseUrl + item.poster_path);
-      }
-
+      const posterSrc = resolvePosterUrl(item);
       const inWatchlist = isItemInWatchlist(item.id);
-      const mediaBadge = item.media_type === 'anime' ? 'Anime' : (item.media_type || (item.first_air_date ? 'TV' : 'Movie'));
+      const mediaBadge = item.media_type === 'anime' ? 'Anime' : (item.media_type === 'tv' || item.first_air_date ? 'TV' : 'Movie');
 
       return `
         <div class="group relative rounded-xl overflow-hidden glass-card border border-white/10 card-hover flex flex-col justify-between cursor-pointer bg-dark-card select-none" onclick="playStoredMedia('${storageKey}')">
           <div class="relative aspect-[2/3] w-full overflow-hidden bg-dark-bg">
-            <img src="${posterSrc}" alt="${title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x600/111520/f43f5e?text=StreamVault';">
+            <img src="${posterSrc}" alt="${title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_POSTER}';">
             <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
             
             <div class="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-bold text-amber-400 flex items-center gap-1 shadow-md">
@@ -678,11 +708,11 @@
             </div>
           </div>
 
-          <div class="p-2 space-y-0.5">
-            <h3 class="text-[11px] font-heading font-bold text-white truncate group-hover:text-accent transition-colors">${title}</h3>
-            <div class="flex items-center justify-between text-[9px] text-gray-400 font-semibold">
-              <span>${releaseYear}</span>
-              <span class="uppercase px-1 py-0.2 rounded bg-white/5 border border-white/10">${mediaBadge}</span>
+          <div class="p-2 space-y-1 min-w-0">
+            <h3 class="text-[11px] font-heading font-bold text-white leading-snug line-clamp-1 truncate group-hover:text-accent transition-colors">${title}</h3>
+            <div class="flex items-center justify-between text-[9px] text-gray-400 font-semibold gap-1 min-w-0">
+              <span class="shrink-0">${releaseYear}</span>
+              <span class="uppercase px-1 py-0.2 rounded bg-white/5 border border-white/10 shrink-0 text-[8px]">${mediaBadge}</span>
             </div>
           </div>
         </div>
@@ -701,14 +731,12 @@
       const heroPlayBtn = document.getElementById('heroPlayBtn');
       const heroWatchlistText = document.getElementById('heroWatchlistText');
 
-      let backdrop = '';
+      let backdrop = resolvePosterUrl(item);
       if (item.backdrop_path) {
         backdrop = item.backdrop_path.startsWith('http') ? item.backdrop_path : (TMDB_CONFIG.backdropBaseUrl + item.backdrop_path);
-      } else if (item.poster_path) {
-        backdrop = item.poster_path;
       }
 
-      if (heroBg && backdrop) {
+      if (heroBg) {
         heroBg.style.backgroundImage = 'url(' + JSON.stringify(backdrop) + ')';
       }
       if (heroTitle) heroTitle.innerText = item.title || item.name || 'Featured Content';
@@ -845,8 +873,111 @@
       switchTab(tabName);
     }
 
-    // ROBUST LOAD MORE SYSTEM
+    let isAnimeLoading = false;
+    window.loadMoreAnime = async function() {
+      if (isAnimeLoading) return;
+      isAnimeLoading = true;
+
+      const btn = document.getElementById('loadMoreAnimeBtn');
+      const gridEl = document.getElementById('animeGrid');
+      
+      if (btn) {
+        btn.innerHTML = `<span>Loading...</span> <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>`;
+        btn.disabled = true;
+      }
+
+      pageState.anime += 1;
+      const page = pageState.anime;
+      showToast('Fetching more anime (Page ' + page + ')...');
+
+      let loadedItems = [];
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch('https://api.jikan.moe/v4/top/anime?page=' + page, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data && json.data.length) {
+            loadedItems = json.data.map((item, idx) => ({
+              id: item.mal_id || (page * 10000 + idx),
+              title: item.title_english || item.title || 'Anime Series',
+              poster_path: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || '',
+              backdrop_path: item.images?.jpg?.large_image_url || '',
+              vote_average: item.score || 8.5,
+              release_date: item.aired?.prop?.from?.year ? String(item.aired.prop.from.year) : '2024',
+              overview: item.synopsis || 'No synopsis available.',
+              genres: item.genres ? item.genres.map(g => g.name) : ['Action', 'Fantasy'],
+              media_type: 'anime'
+            }));
+          }
+        }
+      } catch (err) {
+        console.warn('Live API delayed, switching to generator:', err);
+      }
+
+      if (!loadedItems.length) {
+        const titlesWithArt = [
+          { title: 'Jujutsu Kaisen', poster: 'https://cdn.myanimelist.net/images/anime/1171/109222.jpg', score: 8.6 },
+          { title: 'Chainsaw Man', poster: 'https://cdn.myanimelist.net/images/anime/1806/126216.jpg', score: 8.5 },
+          { title: 'Bleach: Thousand-Year Blood War', poster: 'https://cdn.myanimelist.net/images/anime/1908/120036.jpg', score: 8.8 },
+          { title: 'Tokyo Revengers', poster: 'https://cdn.myanimelist.net/images/anime/1839/122012.jpg', score: 8.1 },
+          { title: 'Blue Lock', poster: 'https://cdn.myanimelist.net/images/anime/1258/126929.jpg', score: 8.2 },
+          { title: 'Vinland Saga', poster: 'https://cdn.myanimelist.net/images/anime/1500/103031.jpg', score: 8.7 },
+          { title: 'Spy x Family', poster: 'https://cdn.myanimelist.net/images/anime/1441/122795.jpg', score: 8.5 },
+          { title: 'Mob Psycho 100', poster: 'https://cdn.myanimelist.net/images/anime/1918/96365.jpg', score: 8.6 },
+          { title: 'Dr. STONE', poster: 'https://cdn.myanimelist.net/images/anime/1506/102061.jpg', score: 8.3 },
+          { title: 'Solo Leveling', poster: 'https://cdn.myanimelist.net/images/anime/1885/141592.jpg', score: 8.4 }
+        ];
+
+        loadedItems = titlesWithArt.map((item, idx) => {
+          return {
+            id: 900000 + (page * 100) + idx,
+            title: `${item.title} (S${page})`,
+            poster_path: item.poster,
+            backdrop_path: item.poster,
+            vote_average: item.score,
+            release_date: String(2021 + (page % 4)),
+            overview: 'Popular anime series brought to you by StreamVault Pro.',
+            genres: ['Action', 'Fantasy', 'Adventure'],
+            media_type: 'anime'
+          };
+        });
+      }
+
+      const existingIds = new Set(cacheData.anime.map(a => a.id));
+      const uniqueItems = loadedItems.filter(item => !existingIds.has(item.id));
+
+      if (uniqueItems.length) {
+        cacheData.anime = cacheData.anime.concat(uniqueItems);
+        
+        const currentGenre = activeGenreFilter.anime;
+        const itemsToAppend = currentGenre === 'all' 
+          ? uniqueItems 
+          : uniqueItems.filter(item => Array.isArray(item.genres) && item.genres.some(g => String(g).toLowerCase().includes(String(currentGenre).toLowerCase())));
+
+        if (gridEl && itemsToAppend.length) {
+          gridEl.insertAdjacentHTML('beforeend', itemsToAppend.map(createCardHTML).join(''));
+        }
+        showToast('Loaded ' + uniqueItems.length + ' new anime!');
+      } else {
+        showToast('Loaded additional anime!');
+      }
+
+      if (btn) {
+        btn.innerHTML = `<span>Load More Anime</span> <i class="fa-solid fa-chevron-down text-[10px]"></i>`;
+        btn.disabled = false;
+      }
+      isAnimeLoading = false;
+    };
+
     window.loadMoreContent = async function(type) {
+      if (type === 'anime') {
+        return loadMoreAnime();
+      }
+      
       pageState[type] += 1;
       const page = pageState[type];
       const genreId = activeGenreFilter[type];
@@ -854,89 +985,32 @@
 
       showToast('Loading more ' + type + ' (Page ' + page + ')...');
 
-      if (type === 'movies' || type === 'tv') {
-        let endpoint = type === 'movies' ? ('/discover/movie?page=' + page) : ('/discover/tv?page=' + page);
-        if (genreId && genreId !== 'all') endpoint += '&with_genres=' + genreId;
+      let endpoint = type === 'movies' ? ('/discover/movie?page=' + page) : ('/discover/tv?page=' + page);
+      if (genreId && genreId !== 'all') endpoint += '&with_genres=' + genreId;
 
-        const data = await fetchFromTMDB(endpoint);
-        if (data && data.results && data.results.length) {
-          cacheData[type] = cacheData[type].concat(data.results);
-          const gridEl = document.getElementById(containerId);
-          if (gridEl) {
-            gridEl.insertAdjacentHTML('beforeend', data.results.map(createCardHTML).join(''));
-          }
-          showToast('Loaded page ' + page + ' successfully!');
-          return;
-        }
-
-        // Fallback batch generation if API rate-limits
-        const fallbackBatch = (type === 'movies' ? FALLBACK_MOVIES : FALLBACK_TV).map(item => ({
-          ...item,
-          id: item.id + page * 1000,
-          title: item.title ? (item.title + ' (Vol. ' + page + ')') : undefined,
-          name: item.name ? (item.name + ' (Season ' + page + ')') : undefined
-        }));
-        cacheData[type] = cacheData[type].concat(fallbackBatch);
+      const data = await fetchFromTMDB(endpoint);
+      if (data && data.results && data.results.length) {
+        cacheData[type] = cacheData[type].concat(data.results);
         const gridEl = document.getElementById(containerId);
         if (gridEl) {
-          gridEl.insertAdjacentHTML('beforeend', fallbackBatch.map(createCardHTML).join(''));
+          gridEl.insertAdjacentHTML('beforeend', data.results.map(createCardHTML).join(''));
         }
-        showToast('Loaded more titles.');
-
-      } else if (type === 'anime') {
-        try {
-          await new Promise(r => setTimeout(r, 400)); // Respect Jikan rate limit
-          const res = await fetch('https://api.jikan.moe/v4/top/anime?page=' + page);
-          if (res.ok) {
-            const json = await res.json();
-            if (json.data && json.data.length) {
-              const animeList = json.data.map(item => ({
-                id: item.mal_id + page * 10000,
-                title: item.title_english || item.title || 'Anime Series',
-                poster_path: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || '',
-                backdrop_path: item.images?.jpg?.large_image_url || '',
-                vote_average: item.score || 8.5,
-                release_date: item.aired?.prop?.from?.year ? String(item.aired.prop.from.year) : '2024',
-                overview: item.synopsis || 'No synopsis available.',
-                genres: item.genres ? item.genres.map(g => g.name) : ['Action', 'Fantasy'],
-                media_type: 'anime'
-              }));
-              cacheData.anime = cacheData.anime.concat(animeList);
-              const gridEl = document.getElementById(containerId);
-              if (gridEl) {
-                gridEl.insertAdjacentHTML('beforeend', animeList.map(createCardHTML).join(''));
-              }
-              showToast('Loaded more anime (Page ' + page + ')!');
-              return;
-            }
-          }
-        } catch (err) {}
-
-        // Expanded Dynamic Anime Fallback Generator for guaranteed infinite scroll load-more
-        const extraAnimeTitles = [
-          'Jujutsu Kaisen Season ' + page, 'Chainsaw Man Act ' + page, 'Bleach: Thousand-Year Blood War - Cour ' + page,
-          'Tokyo Revengers Vol. ' + page, 'Blue Lock Stage ' + page, 'Vinland Saga Season ' + page,
-          'Spy x Family Season ' + page, 'Mob Psycho 100 Chapter ' + page, 'Dr. STONE Science ' + page
-        ];
-        
-        const animeBatch = extraAnimeTitles.map((t, idx) => {
-          const base = FALLBACK_ANIME[idx % FALLBACK_ANIME.length];
-          return {
-            ...base,
-            id: base.id + page * 5000 + idx,
-            title: t,
-            vote_average: Number((8.2 + Math.random() * 0.7).toFixed(1)),
-            release_date: String(2020 + (page % 5))
-          };
-        });
-
-        cacheData.anime = cacheData.anime.concat(animeBatch);
-        const gridEl = document.getElementById(containerId);
-        if (gridEl) {
-          gridEl.insertAdjacentHTML('beforeend', animeBatch.map(createCardHTML).join(''));
-        }
-        showToast('Loaded more anime series!');
+        showToast('Loaded page ' + page + ' successfully!');
+        return;
       }
+
+      const fallbackBatch = (type === 'movies' ? FALLBACK_MOVIES : FALLBACK_TV).map(item => ({
+        ...item,
+        id: item.id + page * 1000,
+        title: item.title ? (item.title + ' (Vol. ' + page + ')') : undefined,
+        name: item.name ? (item.name + ' (Season ' + page + ')') : undefined
+      }));
+      cacheData[type] = cacheData[type].concat(fallbackBatch);
+      const gridEl = document.getElementById(containerId);
+      if (gridEl) {
+        gridEl.insertAdjacentHTML('beforeend', fallbackBatch.map(createCardHTML).join(''));
+      }
+      showToast('Loaded more titles.');
     };
 
     window.filterByGenre = async function(type, genreId) {
