@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -540,8 +541,15 @@
 
   <!-- STREAMING & DETAILS MODAL -->
   <div id="mediaModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-    <div id="modalContentBox" class="glass-card w-full max-w-4xl rounded-2xl border border-white/20 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] transform scale-95 transition-transform duration-300">
+    <div id="modalContentBox" class="glass-card w-full max-w-4xl rounded-2xl border border-white/20 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] transform scale-95 transition-transform duration-300 relative">
       
+      <!-- Sticky Mobile Close Button Banner -->
+      <div class="sm:hidden absolute top-2 right-2 z-50">
+        <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-black/80 border border-white/30 text-white flex items-center justify-center shadow-lg cursor-pointer active:scale-95">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
       <!-- Modal Header Bar -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#07090e]/90">
         <div class="flex items-center gap-2">
@@ -550,7 +558,7 @@
           <span class="text-gray-400 text-xs">•</span>
           <span id="modalYear" class="text-gray-300 text-xs">2026</span>
         </div>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-accent text-white flex items-center justify-center transition-colors cursor-pointer">
+        <button onclick="closeModal()" class="hidden sm:flex w-8 h-8 rounded-full bg-white/10 hover:bg-accent text-white items-center justify-center transition-colors cursor-pointer">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
