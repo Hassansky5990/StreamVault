@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -12,9 +13,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://api.themoviedb.org">
   <link rel="preconnect" href="https://image.tmdb.org">
-  <link rel="preconnect" href="https://apiplayer.ru">
-  <link rel="preconnect" href="https://framextv.cc">
-  <link rel="preconnect" href="https://embed.vidrift.net">
+  <link rel="preconnect" href="https://vidlink.pro">
+  <link rel="preconnect" href="https://vidsrc.xyz">
+  <link rel="preconnect" href="https://embed.su">
 
   <!-- Suppress Tailwind CDN warning -->
   <script>
@@ -563,18 +564,18 @@
           <!-- Embedded iframe or video player injected dynamically -->
         </div>
 
-        <!-- Title & Simplified Server Selector Controls -->
+        <!-- Title & Server Selector Controls -->
         <div class="space-y-3">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <h2 id="modalTitle" class="text-lg sm:text-2xl font-heading font-black text-white">Title Name</h2>
             
             <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto">
-              <!-- Compact Server Dropdown Selector -->
+              <!-- Compact Server Dropdown Selector (Only Vidpro, FrameX, VidRift, and Trailer) -->
               <div class="relative flex-1 sm:flex-none">
                 <select id="serverSelectDropdown" onchange="setPlayerMode(this.value)" class="w-full bg-[#111520] border border-white/20 text-white text-xs font-bold font-heading rounded-xl px-3 py-1.5 pr-8 appearance-none focus:outline-none focus:border-accent cursor-pointer shadow-md">
-                  <option value="main">Server 1 (APIPlayer)</option>
-                  <option value="alt">Server 2 (FrameX)</option>
-                  <option value="third">Server 3 (VidRift)</option>
+                  <option value="main">Vidpro (Server 1)</option>
+                  <option value="alt">FrameX (Server 2)</option>
+                  <option value="third">VidRift (Server 3)</option>
                   <option value="trailer">Trailer Preview</option>
                 </select>
                 <i class="fa-solid fa-server absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
@@ -588,29 +589,19 @@
             </div>
           </div>
 
-          <p id="modalOverview" class="text-xs sm:text-sm text-gray-300 leading-relaxed">
-            Overview description goes here...
-          </p>
+          <!-- Description -->
+          <p id="modalOverview" class="text-xs text-gray-300 leading-relaxed">Description text goes here.</p>
 
-          <!-- Seasons & Search Episode Section for TV Series / Anime -->
+          <!-- Seasons & Episodes (for TV Shows) -->
           <div id="seasonsSection" class="hidden space-y-3 pt-2 border-t border-white/10">
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 bg-white/5 p-2 rounded-xl border border-white/10">
-              <div class="flex items-center gap-2 shrink-0">
-                <i class="fa-solid fa-layer-group text-accent text-sm"></i>
-                <span class="text-xs font-heading font-bold text-white">Season</span>
-                <div class="relative">
-                  <select id="seasonSelectDropdown" onchange="onSeasonSelectChange(this.value)" class="bg-[#111520] border border-white/20 text-white text-xs font-bold font-heading rounded-lg px-2.5 py-1 pr-7 appearance-none focus:outline-none focus:border-accent cursor-pointer shadow-md">
-                    <!-- Season options populated here -->
-                  </select>
-                  <i class="fa-solid fa-chevron-down absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-gray-400 pointer-events-none"></i>
-                </div>
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-heading font-bold text-white uppercase tracking-wider">Season:</span>
+                <select id="seasonSelectDropdown" onchange="onSeasonSelectChange(this.value)" class="bg-[#111520] border border-white/20 text-white text-xs font-bold font-heading rounded-lg px-2.5 py-1 focus:outline-none focus:border-accent cursor-pointer">
+                  <!-- Seasons injected dynamically -->
+                </select>
               </div>
-              
-              <!-- Episode Search Field -->
-              <div class="relative flex-grow max-w-full sm:max-w-xs">
-                <input type="text" id="epSearchInput" onkeyup="filterEpisodes(this.value)" placeholder="Search episode # or title..." class="w-full bg-[#111520] border border-white/15 rounded-lg py-1 pl-7 pr-2 text-xs text-white placeholder-gray-400 focus:outline-none focus:border-accent">
-                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
-              </div>
+              <input type="text" id="epSearchInput" placeholder="Filter episodes..." oninput="filterEpisodes(this.value)" class="bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-[11px] text-white placeholder-gray-400 focus:outline-none focus:border-accent w-36">
             </div>
 
             <!-- Episodes Grid -->
@@ -643,7 +634,7 @@
     let activeEpisodeNumber = 1;
     let tvSeasonsDetailsCache = {};
     let currentTrailerKey = null;
-    let currentPlayerMode = 'main'; // 'main', 'alt', 'third', 'trailer'
+    let currentPlayerMode = 'main'; // 'main' (Vidpro), 'alt' (FrameX), 'third' (VidRift), 'trailer'
     let currentSeasonEpisodes = [];
 
     // Helper method to accurately extract rating
@@ -1327,6 +1318,8 @@
     function loadPlayer(item, type, seasonNum, episodeNum) {
       const playerContainer = document.getElementById('modalPlayerContainer');
       const tmdbId = item.id;
+      const s = seasonNum || 1;
+      const e = episodeNum || 1;
       
       let embedUrl = '';
       if (currentPlayerMode === 'trailer') {
@@ -1339,7 +1332,7 @@
           playerContainer.innerHTML = `
             <div class="flex flex-col items-center justify-center text-gray-400 text-xs p-4 text-center">
               <i class="fa-solid fa-triangle-exclamation text-accent text-2xl mb-2"></i>
-              <span>No official trailer preview found for this title. Please switch to Server 1, 2, or 3 to stream.</span>
+              <span>No official trailer preview found for this title. Please switch to Vidpro, FrameX, or VidRift to stream.</span>
             </div>
           `;
         }
@@ -1347,27 +1340,30 @@
       }
 
       if (currentPlayerMode === 'alt') {
+        // FrameX Provider (VidSrc)
         if (type === 'movie') {
-          embedUrl = `https://framextv.cc/embed/movie/${tmdbId}`;
+          embedUrl = `https://vidsrc.xyz/embed/movie?tmdb=${tmdbId}`;
         } else {
-          embedUrl = `https://framextv.cc/embed/tv/${tmdbId}/${seasonNum || 1}/${episodeNum || 1}`;
+          embedUrl = `https://vidsrc.xyz/embed/tv?tmdb=${tmdbId}&season=${s}&episode=${e}`;
         }
       } else if (currentPlayerMode === 'third') {
+        // VidRift Provider (Embed.su)
         if (type === 'movie') {
-          embedUrl = `https://embed.vidrift.net/embed/movie/${tmdbId}`;
+          embedUrl = `https://embed.su/embed/movie/${tmdbId}`;
         } else {
-          embedUrl = `https://embed.vidrift.net/embed/tv/${tmdbId}/${seasonNum || 1}/${episodeNum || 1}`;
+          embedUrl = `https://embed.su/embed/tv/${tmdbId}/${s}/${e}`;
         }
       } else {
+        // Vidpro Provider (VidLink - Default Server 1)
         if (type === 'movie') {
-          embedUrl = `https://apiplayer.ru/embed/movie/${tmdbId}`;
+          embedUrl = `https://vidlink.pro/movie/${tmdbId}`;
         } else {
-          embedUrl = `https://apiplayer.ru/embed/tv/${tmdbId}/${seasonNum || 1}/${episodeNum || 1}`;
+          embedUrl = `https://vidlink.pro/tv/${tmdbId}/${s}/${e}`;
         }
       }
 
       playerContainer.innerHTML = `
-        <iframe src="${embedUrl}" class="w-full h-full border-0 absolute inset-0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        <iframe src="${embedUrl}" class="w-full h-full border-0 absolute inset-0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="origin"></iframe>
       `;
     }
 
