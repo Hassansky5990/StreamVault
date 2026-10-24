@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -1332,11 +1333,11 @@
       }
 
       if (currentPlayerMode === 'alt') {
-        // FrameX Provider (VidSrc)
+        // FrameX Provider
         if (type === 'movie') {
-          embedUrl = `https://vidsrc.xyz/embed/movie?tmdb=${tmdbId}`;
+          embedUrl = `https://framextv.xyz/embed/${tmdbId}?autoplay=1&muted=0`;
         } else {
-          embedUrl = `https://vidsrc.xyz/embed/tv?tmdb=${tmdbId}&season=${s}&episode=${e}`;
+          embedUrl = `https://framextv.xyz/embed/${tmdbId}/${s}/${e}?autoplay=1&muted=0`;
         }
       } else if (currentPlayerMode === 'third') {
         // VidRift Provider (Embed.su)
@@ -1346,7 +1347,7 @@
           embedUrl = `https://embed.su/embed/tv/${tmdbId}/${s}/${e}`;
         }
       } else {
-        // Vidnest Provider (Vidnest.fun - Default Server 1)
+        // Vidnest Provider (Vidnest.fun)
         if (type === 'movie') {
           embedUrl = `https://vidnest.fun/movie/${tmdbId}`;
         } else {
